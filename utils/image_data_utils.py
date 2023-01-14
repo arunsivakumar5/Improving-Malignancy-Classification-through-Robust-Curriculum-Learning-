@@ -255,7 +255,7 @@ def sort_df(images_df,mode='default'):
 
     
     
-    if mode=='default:
+    if mode=='default':
         images_df.sort_values(by=['wMSE'],inplace=True)
         images_df.reset_index(drop=True,inplace=True)
 
