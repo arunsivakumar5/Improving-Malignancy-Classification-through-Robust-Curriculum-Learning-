@@ -71,7 +71,7 @@ from math import ceil
 import utils.image_data_utils as im_utils
 import utils.data_utils as d_utils
 import models
-from datasets import LIDC_Dataset
+from dataset import LIDC_Dataset
 from loss import LossComputer
 from train import train_erm,train_gdro
 from d_utils import random_split,evaluate,Average,report_CI
@@ -192,6 +192,15 @@ for i in range(5):
   
 
     if method =='ERM':
+
+        params ={
+            'learning_rate': 0.01,
+            'patience':90,
+            'batch_size': 64,
+            'w_d': 0.3,
+            'factor': 0.3,
+            'scheduler_choice': 2,
+            'opt': 'SGD' }
         
         split_file = os.path.join('./data/Train_splits/nodule_split_', str(i) ,'.csv').replace("\\","")
         
@@ -213,7 +222,7 @@ for i in range(5):
         test=test_dataset
 
 
-        train_weights = get_sampler_weights(trainDataset.subclasses)    
+        train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
 
 
         sampler = torch.utils.data.WeightedRandomSampler(
