@@ -164,7 +164,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--method', '-n', default='ERM', help='The method using which the classifier is trained ')
 parser.add_argument('--prop', '-t', default=100, help='The proprtion by which the dataset is to be split. The given proprtion goes to classifier retraining Note: This parameter is needed for CRIS ')
-parser.add_argument('--curriculum', action='store',  help='If curriculum information has to be used to sort the instances by Easy to hard as data is fed into the classiifer '))
+parser.add_argument('--curriculum', action='store',  help='If curriculum information has to be used to sort the instances by Easy to hard as data is fed into the classiifer ')
 
 args = parser.parse_args()
 
