@@ -185,8 +185,7 @@ if method =='random':
 else:
     pass
 
-
-
+DEVICE =  torch.device('cuda')
 for i in range(5):
 
   
@@ -205,9 +204,9 @@ for i in range(5):
         split_file = os.path.join('./data/Train_splits/nodule_split_', str(i) ,'.csv').replace("\\","")
         
         if args.curriculum == 'yes':
-            datas = im_utils.get_erm_features(device=DEVICE, subclass_label=True,file=split_file,mode='curriculum')
+            datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
         else:
-            datas = im_utils.get_erm_features(device=DEVICE, subclass_label=True,file=split_file,mode='traditional')
+            datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
         train_data,cv_data,test_data = datas
 
@@ -229,7 +228,7 @@ for i in range(5):
                     train_weights,
                     len(train_weights))
 
-        train_dataloader = DataLoader(tr, params['batch_size'],weights=utils.get_sampler_weights(tr.labels))
+        train_dataloader = DataLoader(tr, batch_size =params['batch_size'],weights=train_weights,sampler=sampler )
         val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
         test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)    
         
