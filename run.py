@@ -186,7 +186,7 @@ else:
     pass
 
 DEVICE =  torch.device('cuda')
-for i in range(5):
+for i in range(1,6):
 
   
 
