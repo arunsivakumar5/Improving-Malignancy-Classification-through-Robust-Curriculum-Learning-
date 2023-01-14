@@ -260,7 +260,7 @@ def sort_df(images_df,mode='default'):
         images_df.reset_index(drop=True,inplace=True)
 
     else:
-         images_df1 = images_df[images_df['malignancy']== 0 ]
+        images_df1 = images_df[images_df['malignancy']== 0 ]
         images_df2 = images_df[images_df['malignancy']== 1 ]
         images_df3 = images_df[images_df['malignancy']== 2 ]
         images_df4 = images_df[images_df['malignancy']== 3 ]
