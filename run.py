@@ -68,7 +68,8 @@ from math import ceil
 
 
 
-import utils.image_data_utils,utils.data_utils as im_utils,d_utils
+import utils.image_data_utils as im_utils
+import utils.data_utils as d_utils
 import models
 from datasets import LIDC_Dataset
 from loss import LossComputer
