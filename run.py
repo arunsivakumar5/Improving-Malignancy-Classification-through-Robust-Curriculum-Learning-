@@ -74,7 +74,7 @@ import models
 from dataset import LIDC_Dataset
 from loss import LossComputer
 from train import train_erm,train_gdro
-from d_utils import random_split,evaluate,Average,report_CI
+#from d_utils import random_split,evaluate,Average,report_CI
 
 
 
@@ -255,7 +255,7 @@ for i in range(5):
             modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
             print("ERM trained!")
 
-        over_acc_erm,erm1,erm2,erm3,erm4,erm5 = utils.evaluate(test_dataloader,modelA, 4,verbose = True)
+        over_acc_erm,erm1,erm2,erm3,erm4,erm5 = d_utils.evaluate(test_dataloader,modelA, 4,verbose = True)
 
     elif method =='gdro':
 
