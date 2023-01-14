@@ -147,7 +147,7 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
 
 
 
-def train_final_dro(params,model, train_dataloader, val_dataloader,test_dataloader, use_cuda = False, robust=False, num_epochs = 0,stable= True, size_adjustment = None,w=None,m =None):
+def train_gdro(params,model, train_dataloader, val_dataloader,test_dataloader, use_cuda = False, robust=False, num_epochs = 0,stable= True, size_adjustment = None,w=None,m =None):
     
     
     device = torch.device("cuda")
