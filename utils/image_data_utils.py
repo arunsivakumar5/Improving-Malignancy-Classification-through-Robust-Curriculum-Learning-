@@ -384,29 +384,25 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
             dfs2.append(i)
         
         for i, d in enumerate(dfs2):
-                if images:
-
-                    # If the training dataset, we need to do data augmentation
-                    if i == 0:
+                # If the training dataset, we need to do data augmentation
+                if i == 0:
                     
-                        imgs = []
-                        for img in d['image']:
-                            imgs.extend(augment_image(img))
-                        X = torch.stack(imgs).to(device=device, dtype=torch.float32)
+                    imgs = []
+                    for img in d['image']:
+                        imgs.extend(augment_image(img))
+                    X = torch.stack(imgs).to(device=device, dtype=torch.float32)
 
-                        # hacky way to repeat the labels for the additional augmented images
-                        augments = X.shape[0] // len(d)
-                        d_temp = pd.DataFrame()
-                        d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
-                        d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
-                        d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
-                        d = d_temp
-                        d.reset_index(drop=True, inplace=True)
-                    else:
-                        X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
+                    # hacky way to repeat the labels for the additional augmented images
+                    augments = X.shape[0] // len(d)
+                    d_temp = pd.DataFrame()
+                    d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
+                    d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
+                    d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
+                    d = d_temp
+                    d.reset_index(drop=True, inplace=True)
                 else:
-                    X = torch.tensor(d.drop(['noduleID', 'clusters', 'malignancy_b','cur_cls'], axis=1).values,
-                                 device=device, dtype=torch.float32)
+                    X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
+                
 
                 y = torch.tensor(d['malignancy_b'].values, device=device, dtype=torch.long)
                 c = torch.tensor(d['clusters'].values, device=device, dtype=torch.long)
@@ -415,29 +411,24 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
                 datas.append((X, y, c))
     else:
         for i, d in enumerate(dfs):
-                if images:
-
-                    # If the training dataset, we need to do data augmentation
-                    if i == 0:
+                if i == 0:
                     
-                        imgs = []
-                        for img in d['image']:
-                            imgs.extend(augment_image(img))
-                        X = torch.stack(imgs).to(device=device, dtype=torch.float32)
+                    imgs = []
+                    for img in d['image']:
+                        imgs.extend(augment_image(img))
+                    X = torch.stack(imgs).to(device=device, dtype=torch.float32)
 
-                        # hacky way to repeat the labels for the additional augmented images
-                        augments = X.shape[0] // len(d)
-                        d_temp = pd.DataFrame()
-                        d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
-                        d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
-                        d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
-                        d = d_temp
-                        d.reset_index(drop=True, inplace=True)
-                    else:
-                        X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
+                    # hacky way to repeat the labels for the additional augmented images
+                    augments = X.shape[0] // len(d)
+                    d_temp = pd.DataFrame()
+                    d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
+                    d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
+                    d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
+                    d = d_temp
+                    d.reset_index(drop=True, inplace=True)
                 else:
-                    X = torch.tensor(d.drop(['noduleID', 'clusters', 'malignancy_b','cur_cls'], axis=1).values,
-                                 device=device, dtype=torch.float32)
+                    X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
+                
 
                 y = torch.tensor(d['malignancy_b'].values, device=device, dtype=torch.long)
                 c = torch.tensor(d['clusters'].values, device=device, dtype=torch.long)
