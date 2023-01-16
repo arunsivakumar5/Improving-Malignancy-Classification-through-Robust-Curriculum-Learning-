@@ -1,5 +1,5 @@
 import scipy.stats as st
-
+import numpy as np
 def Average(lst):
     return sum(lst) / len(lst)
 
