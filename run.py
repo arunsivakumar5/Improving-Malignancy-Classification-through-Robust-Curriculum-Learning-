@@ -125,11 +125,12 @@ acc_list = []
 acc_list2 = []
 
 
-over_acc_erm = []
-erm1 = []
-erm2 = []
-erm3 = []
-erm4 = []
+over_acc_erm_lst= []
+erm1_lst = []
+erm2_lst = []
+erm3_lst = []
+erm4_lst = []
+erm5_lst = []
 
 acc_list_train =[]
 acc_lists = []
@@ -617,33 +618,33 @@ for i in range(1,6):
         
     if method =='ERM':
 
-        over_acc_erm.append(over_test_acc)
-        erm1.append(acc1)
-        erm2.append(acc2)
-        erm3.append(acc3)
-        erm4.append(acc4)
-        erm5.append(acc5)
+        over_acc_erm_lst.append(over_acc_erm)
+        erm1_lst.append(erm1)
+        erm2_lst.append(erm2)
+        erm3_lst.append(erm3)
+        erm4_lst.append(erm4)
+        erm5_lst.append(erm5)
         
-        itemlist =over_acc_erm
+        itemlist =over_acc_erm_lst
         with open('./test_results/over_test_acc_erm.txt', 'wb') as fp:
             pickle.dump(itemlist, fp)
 
-        itemlist = erm1
+        itemlist = erm1_lst
         with open('./test_results/acc1_erm.txt', 'wb') as fp:
             pickle.dump(itemlist, fp)
 
-        itemlist = erm2
+        itemlist = erm2_lst
         with open('./test_results/acc2_erm.txt', 'wb') as fp:
             pickle.dump(itemlist, fp)
 
-        itemlist = erm3
+        itemlist = erm3_lst
         with open('./test_results/acc3_erm.txt', 'wb') as fp:
             pickle.dump(itemlist, fp)
 
-        itemlist = erm4
+        itemlist = erm4_lst
         with open('./test_results/acc4_erm.txt', 'wb') as fp:
             pickle.dump(itemlist, fp)
-        itemlist = erm5
+        itemlist = erm5_lst
         with open('./test_results/acc5_erm.txt', 'wb') as fp:
             pickle.dump(itemlist, fp)
     else:
