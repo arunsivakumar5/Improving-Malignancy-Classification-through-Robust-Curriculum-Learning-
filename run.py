@@ -230,7 +230,7 @@ for i in range(1,6):
                     train_weights,
                     len(train_weights))
 
-        train_dataloader = DataLoader(tr, batch_size =params['batch_size'],weights=train_weights,sampler=sampler )
+        train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
         val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
         test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)    
         
