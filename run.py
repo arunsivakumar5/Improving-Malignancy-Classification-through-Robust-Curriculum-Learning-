@@ -201,8 +201,10 @@ for i in range(1,6):
             'scheduler_choice': 2,
             'opt': 'SGD' }
         
-        split_file = os.path.join('./data/Train_split/nodule_split_1','.csv').replace("\\"," ")
         
+        split_file = os.path.join(('C:/Users/ASIVAKUM/Desktop/Train_splits/nodule_split_', (str(i) ,'.csv').replace("/"," ")).replace("\\","")
+
+
         if args.curriculum == 'yes':
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
         else:
