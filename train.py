@@ -47,7 +47,8 @@ import torch.optim as optimizers
 import torch.optim.lr_scheduler as schedulers
 import os
 
-
+import utils.image_data_utils as im_utils
+import utils.data_utils as d_utils
 
 def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode='erm'):
 
@@ -108,7 +109,7 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
             
             with torch.no_grad():
 
-                    acc,a1,a2,a3,a4,a5 = evaluate(validDataloader,model,5,verbose = True)
+                    acc,a1,a2,a3,a4,a5 = d_utils.evaluate(validDataloader,model,5,verbose = True)
                     if scheduler:
                         scheduler.step(acc) 
                     else:
@@ -121,13 +122,13 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
                         model = cur_model
                         old_model = model
                         if mode=='erm':
-                            torch.save(model.state_dict(), 'C://Users//ASIVAKUM//Desktop//Best_model_erm.pth')
+                            torch.save(model.state_dict(), './data/models/Best_model_erm.pth')
                         elif mode=='cur_erm':
-                            torch.save(model.state_dict(), 'C://Users//ASIVAKUM//Desktop//Best_model_cur_erm.pth')
+                            torch.save(model.state_dict(), './data/models/Best_model_cur_erm.pth')
                         elif mode=='random_feature_ext':
-                            torch.save(model.state_dict(), 'C://Users//ASIVAKUM//Desktop//Best_model_rand1.pth')
+                            torch.save(model.state_dict(), './data/models/Best_model_rand1.pth')
                         elif mode=='Cur_feature_ext':
-                            torch.save(model.state_dict(), 'C://Users//ASIVAKUM//Desktop//Best_model_cur1.pth')
+                            torch.save(model.state_dict(), './data/models/Best_model_cur1.pth')
                         else:
                             print("Model weights unsaved")
                             pass
@@ -226,7 +227,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader,test_dataloader, u
             
         model.eval() 
         cur_model = model       
-        over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = evaluate(val_dataloader,model, 5)
+        over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(val_dataloader,model, 5)
         valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
         print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
         if valacc > max_val_acc:
@@ -234,13 +235,13 @@ def train_gdro(params,model, train_dataloader, val_dataloader,test_dataloader, u
             model = cur_model
             old_model = model
             if mode=='gDRO':
-                torch.save(model.state_dict(), 'C://Users//ASIVAKUM//Desktop//Best_model_gdro.pth')
+                torch.save(model.state_dict(), './data/models/Best_model_gdro.pth')
             elif mode=='cur_gDRO':
-                torch.save(model.state_dict(), 'C://Users//ASIVAKUM//Desktop//Best_model_cur_gdro.pth')
+                torch.save(model.state_dict(), './data/models/Best_model_cur_gdro.pth')
             elif mode=='random_gDRO':
-                torch.save(model.state_dict(), 'C://Users//ASIVAKUM//Desktop//Best_model_rand2.pth')
+                torch.save(model.state_dict(), './data/models/Best_model_rand2.pth')
             elif mode=='Cur_gDRO':
-                torch.save(model.state_dict(), 'C://Users//ASIVAKUM//Desktop//Best_model_cur2.pth')
+                torch.save(model.state_dict(), './data/models/Best_model_cur2.pth')
             else:
                 print("Model weights unsaved")
                 pass
