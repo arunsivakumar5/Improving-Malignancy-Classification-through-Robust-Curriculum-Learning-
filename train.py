@@ -122,13 +122,13 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
                         model = cur_model
                         old_model = model
                         if mode=='erm':
-                            torch.save(model.state_dict(), './data/models/Best_model_erm.pth')
+                            torch.save(model.state_dict(), './models/Best_model_erm.pth')
                         elif mode=='cur_erm':
-                            torch.save(model.state_dict(), './data/models/Best_model_cur_erm.pth')
+                            torch.save(model.state_dict(), './models/Best_model_cur_erm.pth')
                         elif mode=='random_feature_ext':
-                            torch.save(model.state_dict(), './data/models/Best_model_rand1.pth')
+                            torch.save(model.state_dict(), './models/Best_model_rand1.pth')
                         elif mode=='Cur_feature_ext':
-                            torch.save(model.state_dict(), './data/models/Best_model_cur1.pth')
+                            torch.save(model.state_dict(), './models/Best_model_cur1.pth')
                         else:
                             print("Model weights unsaved")
                             pass
@@ -235,13 +235,13 @@ def train_gdro(params,model, train_dataloader, val_dataloader,test_dataloader, u
             model = cur_model
             old_model = model
             if mode=='gDRO':
-                torch.save(model.state_dict(), './data/models/Best_model_gdro.pth')
+                torch.save(model.state_dict(), './models/Best_model_gdro.pth')
             elif mode=='cur_gDRO':
-                torch.save(model.state_dict(), './data/models/Best_model_cur_gdro.pth')
+                torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
             elif mode=='random_gDRO':
-                torch.save(model.state_dict(), './data/models/Best_model_rand2.pth')
+                torch.save(model.state_dict(), './models/Best_model_rand2.pth')
             elif mode=='Cur_gDRO':
-                torch.save(model.state_dict(), './data/models/Best_model_cur2.pth')
+                torch.save(model.state_dict(), './models/Best_model_cur2.pth')
             else:
                 print("Model weights unsaved")
                 pass
