@@ -212,15 +212,15 @@ for i in range(1,6):
 
         train_data,cv_data,test_data = datas
 
-        train_dataset = LIDC_Dataset(*train_data)
-        val_dataset = LIDC_Dataset(*cv_data)
-        test_dataset = LIDC_Dataset(*test_data)
+        trainDataset = LIDC_Dataset(*train_data)
+        validDataset = LIDC_Dataset(*cv_data)
+        testDataset = LIDC_Dataset(*test_data)
 
 
 
-        tr = train_dataset
-        val = val_dataset
-        test=test_dataset
+        tr = trainDataset
+        val = validDataset
+        test=testDataset
 
 
         train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
