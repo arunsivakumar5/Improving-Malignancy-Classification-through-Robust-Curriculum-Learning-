@@ -256,7 +256,7 @@ for i in range(1,6):
             modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
             print("ERM trained!")
 
-        over_acc_erm,erm1,erm2,erm3,erm4,erm5 = d_utils.evaluate(test_dataloader,modelA, 4,verbose = True)
+        over_acc_erm,erm1,erm2,erm3,erm4,erm5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
 
     elif method =='gdro':
 
