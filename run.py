@@ -202,7 +202,7 @@ for i in range(1,6):
             'opt': 'SGD' }
         
         
-        split_file = os.path.join(('C:/Users/ASIVAKUM/Desktop/Train_splits/nodule_split_', (str(i) ,'.csv').replace("/"," ")).replace("\\","")
+        split_file = os.path.join('C:/Users/ASIVAKUM/Desktop/Train_splits/nodule_split_', (str(i) ,'.csv').replace("/"," ")).replace("\\","")
 
 
         if args.curriculum == 'yes':
