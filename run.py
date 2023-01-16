@@ -2,6 +2,8 @@ import argparse
 
 import matplotlib.pyplot as plt
 import numpy as np 
+import pingouin as pg
+from scipy import stats
 
 import torch 
 import torchvision 
@@ -167,6 +169,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--method', '-n', default='ERM', help='The method using which the classifier is trained ')
 parser.add_argument('--prop', '-t', default=100, help='The proprtion by which the dataset is to be split. The given proprtion goes to classifier retraining Note: This parameter is needed for CRIS ')
 parser.add_argument('--curriculum', action='store',  help='If curriculum information has to be used to sort the instances by Easy to hard as data is fed into the classiifer ')
+parser.add_argument('--significance', action='store',  help='If significance tests should be carried out between a set of classifier ')
+
 
 args = parser.parse_args()
 
@@ -679,5 +683,60 @@ for i in range(1,6):
             itemlist = erm5_lst
             with open('./test_results/acc5_erm_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
+    else:
+        pass
+
+    if args.significance =='Yes':
+
+        with open ('C:/Users/ASIVAKUM/Desktop/over_acc_erm.txt', 'rb') as fp:
+            acc_erm = pickle.load(fp)
+
+        with open ('./test_results/acc1_erm.txt', 'rb') as fp:
+            acc_erm1 = pickle.load(fp)
+
+        with open ('./test_results/acc2_erm.txt', 'rb') as fp:
+            acc_erm2 = pickle.load(fp)
+
+        with open ('./test_results/acc3_erm.txt', 'rb') as fp:
+            acc_erm3 = pickle.load(fp)
+    
+        with open ('./test_results/acc4_erm.txt', 'rb') as fp:
+            acc_erm4 = pickle.load(fp)
+    
+        with open ('./test_results/acc5_erm.txt', 'rb') as fp:
+            acc_erm5 = pickle.load(fp)
+    
+
+
+       
+    
+        with open ('./test_results/acc_erm_cur.txt', 'rb') as fp:
+            acc_erm_cur = pickle.load(fp)
+
+        with open ('./test_results/acc1_erm_cur.txt', 'rb') as fp:
+            acc_erm_cur1 = pickle.load(fp)
+
+        with open ('./test_results/acc2_erm_cur.txt', 'rb') as fp:
+            acc_erm_cur2 = pickle.load(fp)
+
+        with open ('./test_results/acc3_erm_cur.txt', 'rb') as fp:
+            acc_erm_cur3 = pickle.load(fp)
+    
+        with open ('./test_results/acc4_erm_cur.txt', 'rb') as fp:
+            acc_erm_cur4 = pickle.load(fp)
+    
+        with open ('./test_results/acc5_erm_cur.txt', 'rb') as fp:
+            acc_erm_cur5 = pickle.load(fp)
+
+
+    
+
+        res = stats.ttest_rel(acc_erm_cur,acc_erm)
+    
+        print("overall accuracy ERM", acc_erm)
+        print("overall accuracy curriculum ERM", acc_erm_cur)
+
+        display(res)
+
     else:
         pass
