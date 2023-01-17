@@ -209,13 +209,13 @@ for i in range(1,6):
             'opt': 'SGD' }
         
         params2 ={
-            'learning_rate': 0.1
-            'patience': 20
-            'batch_size': 1024
-            'w_d': 0.9
-            'factor': 0.3
-            'scheduler_choice': 1
-            'opt': SGD  }
+            'learning_rate': 0.1,
+            'patience': 20,
+            'batch_size': 1024,
+            'w_d': 0.9,
+            'factor': 0.3,
+            'scheduler_choice': 1,
+            'opt': 'SGD'  }
 
 
         if args.curriculum == 'Yes':
