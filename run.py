@@ -193,568 +193,568 @@ else:
     pass
 
 DEVICE =  torch.device('cuda')
-for i in range(1,6):
+i= 5
 
-    split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
+split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
 
-    if method =='ERM':
+if method =='ERM':
 
-        params ={
-            'learning_rate': 0.01,
-            'patience':90,
-            'batch_size': 64,
-            'w_d': 0.3,
-            'factor': 0.3,
-            'scheduler_choice': 2,
-            'opt': 'SGD' }
+    params ={
+        'learning_rate': 0.01,
+        'patience':90,
+        'batch_size': 64,
+        'w_d': 0.3,
+        'factor': 0.3,
+        'scheduler_choice': 2,
+        'opt': 'SGD' }
         
-        params2 ={
-            'learning_rate': 0.1,
-            'patience': 20,
-            'batch_size': 1024,
-            'w_d': 0.9,
-            'factor': 0.3,
-            'scheduler_choice': 1,
-            'opt': 'SGD'  }
+    params2 ={
+        'learning_rate': 0.1,
+        'patience': 20,
+        'batch_size': 1024,
+        'w_d': 0.9,
+        'factor': 0.3,
+        'scheduler_choice': 1,
+        'opt': 'SGD'  }
 
 
-        if args.curriculum == 'Yes':
-            datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
+    if args.curriculum == 'Yes':
+        datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
 
-
-        else:
-            datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
-
-        
-        train_data,cv_data,test_data = datas
-
-        trainDataset = LIDC_Dataset(*train_data)
-        validDataset = LIDC_Dataset(*cv_data)
-        testDataset = LIDC_Dataset(*test_data)
-
-
-        tr = trainDataset
-        val = validDataset
-        test=testDataset
-
-
-        
-        
-        if args.curriculum == 'Yes':
-
-            sampler = SequentialSampler(trainDataset)
-
-            train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
-        else:
-            train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
-
-
-            sampler = torch.utils.data.WeightedRandomSampler(
-                        train_weights,
-                        len(train_weights))
-            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
-        val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
-        test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)    
-        
-
-        device = torch.device('cuda')
-
-
-
-
-        
-        model = models.TransferModel18()
-
-
-
-
-        #Training ERM model
-        if args.curriculum == 'Yes':
-            modelA,max_acc = train_erm(params2,train_dataloader,val_dataloader,model,num_epochs=150,mode='cur_erm')
-            modelA.load_state_dict(torch.load('.//models//Best_model_cur_erm.pth'))
-            print("Cur ERM trained!")
-        else:
-            modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=150,mode='erm')
-            modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
-            print("Traditional ERM trained!")
-
-        over_acc_erm,erm1,erm2,erm3,erm4,erm5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
-
-    elif method =='gdro':
-
-        meta_train,meta_valid, meta_test,root,transform = utils.get_celeba_ondemand_datasets(device=DEVICE, subclass_label=True)
-
-        
-        model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
-        modelB = models.TransferModel50(*model_args)
-
-        
-
-        train_dataset = SubclassedDataset2(meta_train,root,transform,mode ='train', subclass_label=False)
-        val_dataset = SubclassedDataset2(meta_valid,root,transform,mode = 'val', subclass_label=False)
-        test_dataset = SubclassedDataset2(meta_test,root,transform,mode ='test', subclass_label=False)
-
-
-        tr = train_dataset
-        val = val_dataset
-        test = test_dataset
-
-        train_dataloader2 = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.subclasses))
-        val_dataloader2 = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.subclasses))
-        test_dataloader = InfiniteDataLoader(test, 512,weights=utils.get_sampler_weights(test.subclasses))
-
-        modelB,avg_loss_cris,val_loss_list_cris,tl = train_gdro(train_dataloader2, val_dataloader2,test_dataloader,modelB, num_epochs = 2)
-        print("gDRO trained!")
-        modelB.load_state_dict(torch.load('.//models//Best_model_crois.pth'))
-        over_test_acc,acc1,acc2,acc3,acc4 = utils.evaluate(test_dataloader,modelB, 4,verbose = True)
 
     else:
+        datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
-        meta_train,meta_valid, meta_test,root,transform = utils.get_celeba_ondemand_datasets(device=DEVICE, subclass_label=True)
-
-        df_sample = meta_train.sample(frac=1)
-
-        df_sample0 = df_sample[df_sample['y'] == 0 ]
-        df_sample1 = df_sample[df_sample['y'] == 1 ]
         
-        df_size = int(0.50*len(df_sample0))
-        df_size1 = int(0.50*len(df_sample1))
+    train_data,cv_data,test_data = datas
 
-        metadata_00 = df_sample0[:df_size]
-        metadata_01 = df_sample0[df_size:]
+    trainDataset = LIDC_Dataset(*train_data)
+    validDataset = LIDC_Dataset(*cv_data)
+    testDataset = LIDC_Dataset(*test_data)
 
-        metadata_10 = df_sample1[:df_size1]
-        metadata_11 = df_sample1[df_size1:]
 
-        meta_train1  = pd.concat([metadata_00,metadata_10], axis=0,sort = True,ignore_index=True)
-        meta_train2 = pd.concat([metadata_01, metadata_11], axis=0,sort = True,ignore_index=True)
+    tr = trainDataset
+    val = validDataset
+    test=testDataset
 
-        v_sample = meta_valid.sample(frac=1)
 
-        df_sample0 = v_sample[v_sample['y'] == 0 ]
-        df_sample1 = v_sample[v_sample['y'] == 1 ]
         
-        df_size = int(0.50*len(df_sample0))
-        df_size1 = int(0.50*len(df_sample1))
-
-        metadata_00 = df_sample0[:df_size]
-        metadata_01 = df_sample0[df_size:]
-
-        metadata_10 = df_sample1[:df_size1]
-        metadata_11 = df_sample1[df_size1:]
-
-        meta_valid1  = pd.concat([metadata_00,metadata_10], axis=0,sort = True,ignore_index=True)
-        meta_valid2 = pd.concat([metadata_01, metadata_11], axis=0,sort = True,ignore_index=True)
-
-
-        meta_train1 = meta_train1.reset_index(drop = True)
-        meta_valid1 = meta_valid1.reset_index(drop =True)
-
-
-        meta_train2 = meta_train2.reset_index(drop = True)
-        meta_valid2 = meta_valid2.reset_index(drop =True)
-
-        try:
-            meta_train1 = meta_train1.drop(columns='index')
-            meta_train2 = meta_train2.drop(columns='index')
-            meta_valid1 = meta_valid1.drop(columns='index')
-            meta_valid2 = meta_valid2.drop(columns='index')
-
-            columnsTitles = ['image_id','partition','y',  'place' 	]
-            meta_train1 = meta_train1.reindex(columns=columnsTitles)
-            meta_train2 = meta_train2.reindex(columns=columnsTitles)
-            meta_valid1 = meta_valid1.reindex(columns=columnsTitles)
-            meta_valid2 = meta_valid2.reindex(columns=columnsTitles)
         
-            print("after", meta_train1)
-        except:
-            print("no indexing needed", meta_train1)
+    if args.curriculum == 'Yes':
 
-        train_dataset = SubclassedDataset_getinstances(meta_train1,root,transform,mode ='train', subclass_label=False)
-        val_dataset = SubclassedDataset2(meta_valid1,root,transform,mode = 'val', subclass_label=False)
-        test_dataset = SubclassedDataset2(meta_test,root,transform,mode ='test', subclass_label=False)
+        sampler = SequentialSampler(trainDataset)
+
+        train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
+    else:
+        train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
 
 
-
-        tr = train_dataset
-        val = val_dataset
-        test=test_dataset
-
-        train_dataloader = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.labels))
-        val_dataloader = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.labels))
-        test_dataloader = InfiniteDataLoader(test, 512,weights=utils.get_sampler_weights(test.subclasses))    
+        sampler = torch.utils.data.WeightedRandomSampler(
+                    train_weights,
+                    len(train_weights))
+        train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
+    val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
+    test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)    
         
 
-        device = torch.device('cuda')
+    device = torch.device('cuda')
 
 
 
 
-        model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
-        model = models.TransferModel50(*model_args)
+        
+    model = models.TransferModel18()
 
 
 
 
-        #Training ERM model
-        modelA,avg_loss,val_loss_list,trainids1 = train_feature_ext(train_dataloader,val_dataloader,model,num_epochs=2,mode ='same_instances',trainset = train_dataset)
+    #Training ERM model
+    if args.curriculum == 'Yes':
+        modelA,max_acc = train_erm(params2,train_dataloader,val_dataloader,model,num_epochs=150,mode='cur_erm')
+        modelA.load_state_dict(torch.load('.//models//Best_model_cur_erm.pth'))
+        print("Cur ERM trained!")
+    else:
+        modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=150,mode='erm')
         modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
-        print("ERM trained!")
+        print("Traditional ERM trained!")
 
-        over_acc_erm,erm1,erm2,erm3,erm4 = utils.evaluate(test_dataloader,modelA, 4,verbose = True)
+    over_acc_erm,erm1,erm2,erm3,erm4,erm5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
+
+elif method =='gdro':
+
+    meta_train,meta_valid, meta_test,root,transform = utils.get_celeba_ondemand_datasets(device=DEVICE, subclass_label=True)
+
+        
+    model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
+    modelB = models.TransferModel50(*model_args)
+
+        
+
+    train_dataset = SubclassedDataset2(meta_train,root,transform,mode ='train', subclass_label=False)
+    val_dataset = SubclassedDataset2(meta_valid,root,transform,mode = 'val', subclass_label=False)
+    test_dataset = SubclassedDataset2(meta_test,root,transform,mode ='test', subclass_label=False)
 
 
-        print(trainids1)
+    tr = train_dataset
+    val = val_dataset
+    test = test_dataset
+
+    train_dataloader2 = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.subclasses))
+    val_dataloader2 = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.subclasses))
+    test_dataloader = InfiniteDataLoader(test, 512,weights=utils.get_sampler_weights(test.subclasses))
+
+    modelB,avg_loss_cris,val_loss_list_cris,tl = train_gdro(train_dataloader2, val_dataloader2,test_dataloader,modelB, num_epochs = 2)
+    print("gDRO trained!")
+    modelB.load_state_dict(torch.load('.//models//Best_model_crois.pth'))
+    over_test_acc,acc1,acc2,acc3,acc4 = utils.evaluate(test_dataloader,modelB, 4,verbose = True)
+
+else:
+
+    meta_train,meta_valid, meta_test,root,transform = utils.get_celeba_ondemand_datasets(device=DEVICE, subclass_label=True)
+
+    df_sample = meta_train.sample(frac=1)
+
+    df_sample0 = df_sample[df_sample['y'] == 0 ]
+    df_sample1 = df_sample[df_sample['y'] == 1 ]
+        
+    df_size = int(0.50*len(df_sample0))
+    df_size1 = int(0.50*len(df_sample1))
+
+    metadata_00 = df_sample0[:df_size]
+    metadata_01 = df_sample0[df_size:]
+
+    metadata_10 = df_sample1[:df_size1]
+    metadata_11 = df_sample1[df_size1:]
+
+    meta_train1  = pd.concat([metadata_00,metadata_10], axis=0,sort = True,ignore_index=True)
+    meta_train2 = pd.concat([metadata_01, metadata_11], axis=0,sort = True,ignore_index=True)
+
+    v_sample = meta_valid.sample(frac=1)
+
+    df_sample0 = v_sample[v_sample['y'] == 0 ]
+    df_sample1 = v_sample[v_sample['y'] == 1 ]
+        
+    df_size = int(0.50*len(df_sample0))
+    df_size1 = int(0.50*len(df_sample1))
+
+    metadata_00 = df_sample0[:df_size]
+    metadata_01 = df_sample0[df_size:]
+
+    metadata_10 = df_sample1[:df_size1]
+    metadata_11 = df_sample1[df_size1:]
+
+    meta_valid1  = pd.concat([metadata_00,metadata_10], axis=0,sort = True,ignore_index=True)
+    meta_valid2 = pd.concat([metadata_01, metadata_11], axis=0,sort = True,ignore_index=True)
 
 
-        import copy
+    meta_train1 = meta_train1.reset_index(drop = True)
+    meta_valid1 = meta_valid1.reset_index(drop =True)
+
+
+    meta_train2 = meta_train2.reset_index(drop = True)
+    meta_valid2 = meta_valid2.reset_index(drop =True)
+
+    try:
+        meta_train1 = meta_train1.drop(columns='index')
+        meta_train2 = meta_train2.drop(columns='index')
+        meta_valid1 = meta_valid1.drop(columns='index')
+        meta_valid2 = meta_valid2.drop(columns='index')
+
+        columnsTitles = ['image_id','partition','y',  'place' 	]
+        meta_train1 = meta_train1.reindex(columns=columnsTitles)
+        meta_train2 = meta_train2.reindex(columns=columnsTitles)
+        meta_valid1 = meta_valid1.reindex(columns=columnsTitles)
+        meta_valid2 = meta_valid2.reindex(columns=columnsTitles)
+        
+        print("after", meta_train1)
+    except:
+        print("no indexing needed", meta_train1)
+
+    train_dataset = SubclassedDataset_getinstances(meta_train1,root,transform,mode ='train', subclass_label=False)
+    val_dataset = SubclassedDataset2(meta_valid1,root,transform,mode = 'val', subclass_label=False)
+    test_dataset = SubclassedDataset2(meta_test,root,transform,mode ='test', subclass_label=False)
 
 
 
-        model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
-        modelB = models.TransferModel50(*model_args)
+    tr = train_dataset
+    val = val_dataset
+    test=test_dataset
+
+    train_dataloader = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.labels))
+    val_dataloader = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.labels))
+    test_dataloader = InfiniteDataLoader(test, 512,weights=utils.get_sampler_weights(test.subclasses))    
+        
+
+    device = torch.device('cuda')
 
 
 
 
-        modelB.load_state_dict(modelA.state_dict())
+    model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
+    model = models.TransferModel50(*model_args)
 
-        #Checking if the weights and bias of the new intialized model match the ERM feature extractor model weights in each layer.
-        for (nameA, paramA), (nameB, paramB) in zip(modelA.named_parameters(), modelB.named_parameters()):
-            if (paramA == paramB).all():
-                print('{} matches {}'.format(nameA, nameB))
-            else:
-                print('{} does not match {}'.format(nameA, nameB))
 
-        train_dataset2 = SubclassedDataset2(meta_train2,root,transform,mode ='train', subclass_label=False)
-        val_dataset2 = SubclassedDataset2(meta_valid2,root,transform,mode = 'val', subclass_label=False)
+
+
+    #Training ERM model
+    modelA,avg_loss,val_loss_list,trainids1 = train_feature_ext(train_dataloader,val_dataloader,model,num_epochs=2,mode ='same_instances',trainset = train_dataset)
+    modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
+    print("ERM trained!")
+
+    over_acc_erm,erm1,erm2,erm3,erm4 = utils.evaluate(test_dataloader,modelA, 4,verbose = True)
+
+
+    print(trainids1)
+
+
+    import copy
+
+
+
+    model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
+    modelB = models.TransferModel50(*model_args)
+
+
+
+
+    modelB.load_state_dict(modelA.state_dict())
+
+    #Checking if the weights and bias of the new intialized model match the ERM feature extractor model weights in each layer.
+    for (nameA, paramA), (nameB, paramB) in zip(modelA.named_parameters(), modelB.named_parameters()):
+        if (paramA == paramB).all():
+            print('{} matches {}'.format(nameA, nameB))
+        else:
+            print('{} does not match {}'.format(nameA, nameB))
+
+    train_dataset2 = SubclassedDataset2(meta_train2,root,transform,mode ='train', subclass_label=False)
+    val_dataset2 = SubclassedDataset2(meta_valid2,root,transform,mode = 'val', subclass_label=False)
         
 
 
 
-        tr = train_dataset2
-        val = val_dataset2
+    tr = train_dataset2
+    val = val_dataset2
 
-        train_dataloader2 = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.subclasses))
-        val_dataloader2 = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.subclasses))
+    train_dataloader2 = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.subclasses))
+    val_dataloader2 = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.subclasses))
          
 
-        modelB,avg_loss_cris,val_loss_list_cris,tl,trainids2 = train_gdro(train_dataloader2, val_dataloader2,test_dataloader,modelB, num_epochs = 10,mode ='same_instances',trainset = train_dataset)
-        print("gDRO trained!")
-        modelB.load_state_dict(torch.load('.//models//Best_model_crois.pth'))
+    modelB,avg_loss_cris,val_loss_list_cris,tl,trainids2 = train_gdro(train_dataloader2, val_dataloader2,test_dataloader,modelB, num_epochs = 10,mode ='same_instances',trainset = train_dataset)
+    print("gDRO trained!")
+    modelB.load_state_dict(torch.load('.//models//Best_model_crois.pth'))
 
 
         
 
         
 
-        over_test_acc,acc1,acc2,acc3,acc4 = utils.evaluate(test_dataloader,modelB, 4,verbose = True)
-        print("Random CRIS trained!")
-        over_acc_cris_rand.append(over_test_acc)
-        cris_rand_1.append(acc1)
-        cris_rand_2.append(acc2)
-        cris_rand_3.append(acc3)
-        cris_rand_4.append(acc4)
+    over_test_acc,acc1,acc2,acc3,acc4 = utils.evaluate(test_dataloader,modelB, 4,verbose = True)
+    print("Random CRIS trained!")
+    over_acc_cris_rand.append(over_test_acc)
+    cris_rand_1.append(acc1)
+    cris_rand_2.append(acc2)
+    cris_rand_3.append(acc3)
+    cris_rand_4.append(acc4)
 
         
-        itemlist =over_acc_cris_rand
-        with open('./test_results/over_test_acc_cris.txt', 'wb') as fp:
-            pickle.dump(itemlist, fp)
+    itemlist =over_acc_cris_rand
+    with open('./test_results/over_test_acc_cris.txt', 'wb') as fp:
+        pickle.dump(itemlist, fp)
 
 
 
 
-        itemlist = cris_rand_1
-        with open('./test_results/acc1_cris.txt', 'wb') as fp:
-            pickle.dump(itemlist, fp)
+    itemlist = cris_rand_1
+    with open('./test_results/acc1_cris.txt', 'wb') as fp:
+        pickle.dump(itemlist, fp)
 
 
 
 
-        itemlist = cris_rand_2
-        with open('./test_results/acc2_cris.txt', 'wb') as fp:
-            pickle.dump(itemlist, fp)
+    itemlist = cris_rand_2
+    with open('./test_results/acc2_cris.txt', 'wb') as fp:
+        pickle.dump(itemlist, fp)
 
 
 
 
-        itemlist = cris_rand_3
-        with open('./test_results/acc3_cris.txt', 'wb') as fp:
-            pickle.dump(itemlist, fp)
+    itemlist = cris_rand_3
+    with open('./test_results/acc3_cris.txt', 'wb') as fp:
+        pickle.dump(itemlist, fp)
 
-        itemlist = cris_rand_4
-        with open('./test_results/acc4_cris.txt', 'wb') as fp:
-            pickle.dump(itemlist, fp)
+    itemlist = cris_rand_4
+    with open('./test_results/acc4_cris.txt', 'wb') as fp:
+        pickle.dump(itemlist, fp)
 
-        trainids1.extend(trainids2)
-        trainids1 = list(trainids1)
-        s = set()
+    trainids1.extend(trainids2)
+    trainids1 = list(trainids1)
+    s = set()
         
-        for i in trainids1:
-            s.add(i)
+    for i in trainids1:
+        s.add(i)
         
-        trainids =  list(s)
-        print("length of chosen random data",len(trainids))
+    trainids =  list(s)
+    print("length of chosen random data",len(trainids))
         
-        meta_train_ids = meta_train.iloc[trainids].reset_index(drop=True)
-        #meta_train_ids = pd.DataFrame(trainids,columns =['image_id'])
+    meta_train_ids = meta_train.iloc[trainids].reset_index(drop=True)
+    #meta_train_ids = pd.DataFrame(trainids,columns =['image_id'])
 
 
 
-        #meta_train = pd.merge(meta_train,meta_train_ids, on='image_id', how="outer")
-        meta_train = meta_train.fillna(False)
-
-        
-
-        prop = prop
-
-        meta_train1,meta_valid1,meta_train2,meta_valid2 = utils.get_celeba_central_splits_new(prop= prop,train=meta_train, val = meta_valid,device=DEVICE, subclass_label=True,instances='same',root = root,transform=transform)
-
-
-        train_dataset = SubclassedDataset2(meta_train1,root,transform,mode ='train', subclass_label=False)
-        val_dataset = SubclassedDataset2(meta_valid1,root,transform,mode = 'val', subclass_label=False)
-        test_dataset = SubclassedDataset2(meta_test,root,transform,mode ='test', subclass_label=False)
-
-
-
-        tr = train_dataset
-        val = val_dataset
-        test=test_dataset
-
-        train_dataloader = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.labels))
-        val_dataloader = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.labels))
-        test_dataloader = InfiniteDataLoader(test, 512,weights=utils.get_sampler_weights(test.subclasses))    
-        
-
-        device = torch.device('cuda')
-
-
-
-
-        model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
-        model = models.TransferModel50(*model_args)
-
-
-
-
-        #Training ERM model
-        modelA,avg_loss,val_loss_list = train_feature_ext(train_dataloader,val_dataloader,model,num_epochs=2)
-        modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
-        print("ERM trained!")
-
-        over_acc_erm,erm1,erm2,erm3,erm4 = utils.evaluate(test_dataloader,modelA, 4,verbose = True)
-
-
-
-
-
-        import copy
-
-
-
-        model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
-        modelB = models.TransferModel50(*model_args)
-
-
-
-
-        modelB.load_state_dict(modelA.state_dict())
-
-        #Checking if the weights and bias of the new intialized model match the ERM feature extractor model weights in each layer.
-        for (nameA, paramA), (nameB, paramB) in zip(modelA.named_parameters(), modelB.named_parameters()):
-            if (paramA == paramB).all():
-                print('{} matches {}'.format(nameA, nameB))
-            else:
-                print('{} does not match {}'.format(nameA, nameB))
-
-        train_dataset = SubclassedDataset2(meta_train2,root,transform,mode ='train', subclass_label=False)
-        val_dataset = SubclassedDataset2(meta_valid2,root,transform,mode = 'val', subclass_label=False)
-        
-
-
-
-        tr = train_dataset
-        val = val_dataset
-
-        train_dataloader2 = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.subclasses))
-        val_dataloader2 = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.subclasses))
-
-
-        
-        modelB,avg_loss_cris,val_loss_list_cris,tl,trainids2 = train_gdro(train_dataloader2, val_dataloader2,test_dataloader,modelB, num_epochs = 2)
-        print("gDRO trained!")
-        modelB.load_state_dict(torch.load('.//models//Best_model_crois.pth'))
-
-
-
-       
+    #meta_train = pd.merge(meta_train,meta_train_ids, on='image_id', how="outer")
+    meta_train = meta_train.fillna(False)
 
         
 
-        over_test_acc,acc1,acc2,acc3,acc4 = utils.evaluate(test_dataloader,modelB, 4,verbose = True)
+    prop = prop
 
-        over_acc_cris_rep.append(over_test_acc)
-        cris_rep_1.append(acc1)
-        cris_rep_2.append(acc2)
-        cris_rep_3.append(acc3)
-        cris_rep_4.append(acc4)
+    meta_train1,meta_valid1,meta_train2,meta_valid2 = utils.get_celeba_central_splits_new(prop= prop,train=meta_train, val = meta_valid,device=DEVICE, subclass_label=True,instances='same',root = root,transform=transform)
 
 
-        itemlist = over_acc_cris_rep
-        with open('./test_results/over_test_acc_cris_rep.txt', 'wb') as fp:
-            pickle.dump(itemlist, fp)
+    train_dataset = SubclassedDataset2(meta_train1,root,transform,mode ='train', subclass_label=False)
+    val_dataset = SubclassedDataset2(meta_valid1,root,transform,mode = 'val', subclass_label=False)
+    test_dataset = SubclassedDataset2(meta_test,root,transform,mode ='test', subclass_label=False)
 
 
 
+    tr = train_dataset
+    val = val_dataset
+    test=test_dataset
 
-        itemlist = cris_rep_1
-        with open('./test_results/acc1_cris_rep.txt', 'wb') as fp:
-            pickle.dump(itemlist, fp)
-
-
-
-
-        itemlist = cris_rep_2
-        with open('./test_results/acc2_cris_rep.txt', 'wb') as fp:
-            pickle.dump(itemlist, fp)
-
-
-
-
-        itemlist = cris_rep_3
-        with open('./test_results/acc3_cris_rep.txt', 'wb') as fp:
-            pickle.dump(itemlist, fp)
-
-
-
-
-
-
-        itemlist = cris_rep_4
-
-        with open('./test_results/acc4_cris.txt', 'wb') as fp:
-            pickle.dump(itemlist, fp)
-
-
+    train_dataloader = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.labels))
+    val_dataloader = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.labels))
+    test_dataloader = InfiniteDataLoader(test, 512,weights=utils.get_sampler_weights(test.subclasses))    
         
-    if method =='ERM':
-        
-        if args.curriculum =='No':
-            over_acc_erm_lst.append(over_acc_erm)
-            erm1_lst.append(erm1)
-            erm2_lst.append(erm2)
-            erm3_lst.append(erm3)
-            erm4_lst.append(erm4)
-            erm5_lst.append(erm5)
-        
-            itemlist =over_acc_erm_lst
-            with open('./test_results/over_test_acc_erm.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
-            itemlist = erm1_lst
-            with open('./test_results/acc1_erm.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
+    device = torch.device('cuda')
 
-            itemlist = erm2_lst
-            with open('./test_results/acc2_erm.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
-            itemlist = erm3_lst
-            with open('./test_results/acc3_erm.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
-            itemlist = erm4_lst
-            with open('./test_results/acc4_erm.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-            itemlist = erm5_lst
-            with open('./test_results/acc5_erm.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
+    model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
+    model = models.TransferModel50(*model_args)
+
+
+
+
+    #Training ERM model
+    modelA,avg_loss,val_loss_list = train_feature_ext(train_dataloader,val_dataloader,model,num_epochs=2)
+    modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
+    print("ERM trained!")
+
+    over_acc_erm,erm1,erm2,erm3,erm4 = utils.evaluate(test_dataloader,modelA, 4,verbose = True)
+
+
+
+
+
+    import copy
+
+
+
+    model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
+    modelB = models.TransferModel50(*model_args)
+
+
+
+
+    modelB.load_state_dict(modelA.state_dict())
+
+    #Checking if the weights and bias of the new intialized model match the ERM feature extractor model weights in each layer.
+    for (nameA, paramA), (nameB, paramB) in zip(modelA.named_parameters(), modelB.named_parameters()):
+        if (paramA == paramB).all():
+            print('{} matches {}'.format(nameA, nameB))
         else:
-            over_acc_erm_lst_cur.append(over_acc_erm)
-            erm1_lst_cur.append(erm1)
-            erm2_lst_cur.append(erm2)
-            erm3_lst_cur.append(erm3)
-            erm4_lst_cur.append(erm4)
-            erm5_lst_cur.append(erm5)
+            print('{} does not match {}'.format(nameA, nameB))
+
+    train_dataset = SubclassedDataset2(meta_train2,root,transform,mode ='train', subclass_label=False)
+    val_dataset = SubclassedDataset2(meta_valid2,root,transform,mode = 'val', subclass_label=False)
         
-            itemlist =over_acc_erm_lst_cur
-            with open('./test_results/over_test_acc_erm_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
-            itemlist = erm1_lst_cur
-            with open('./test_results/acc1_erm_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
-            itemlist = erm2_lst_cur
-            with open('./test_results/acc2_erm_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
-            itemlist = erm3_lst_cur
-            with open('./test_results/acc3_erm_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
+    tr = train_dataset
+    val = val_dataset
 
-            itemlist = erm4_lst_cur
-            with open('./test_results/acc4_erm_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
+    train_dataloader2 = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.subclasses))
+    val_dataloader2 = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.subclasses))
 
-            itemlist = erm5_lst_cur
-            with open('./test_results/acc5_erm_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
+
+        
+    modelB,avg_loss_cris,val_loss_list_cris,tl,trainids2 = train_gdro(train_dataloader2, val_dataloader2,test_dataloader,modelB, num_epochs = 2)
+    print("gDRO trained!")
+    modelB.load_state_dict(torch.load('.//models//Best_model_crois.pth'))
+
+
+
+       
+
+        
+
+    over_test_acc,acc1,acc2,acc3,acc4 = utils.evaluate(test_dataloader,modelB, 4,verbose = True)
+
+    over_acc_cris_rep.append(over_test_acc)
+    cris_rep_1.append(acc1)
+    cris_rep_2.append(acc2)
+    cris_rep_3.append(acc3)
+    cris_rep_4.append(acc4)
+
+
+    itemlist = over_acc_cris_rep
+    with open('./test_results/over_test_acc_cris_rep.txt', 'wb') as fp:
+        pickle.dump(itemlist, fp)
+
+
+
+
+    itemlist = cris_rep_1
+    with open('./test_results/acc1_cris_rep.txt', 'wb') as fp:
+        pickle.dump(itemlist, fp)
+
+
+
+
+    itemlist = cris_rep_2
+    with open('./test_results/acc2_cris_rep.txt', 'wb') as fp:
+        pickle.dump(itemlist, fp)
+
+
+
+
+    itemlist = cris_rep_3
+    with open('./test_results/acc3_cris_rep.txt', 'wb') as fp:
+        pickle.dump(itemlist, fp)
+
+
+
+
+
+
+    itemlist = cris_rep_4
+
+    with open('./test_results/acc4_cris.txt', 'wb') as fp:
+        pickle.dump(itemlist, fp)
+
+
+        
+if method =='ERM':
+        
+    if args.curriculum =='No':
+        over_acc_erm_lst.append(over_acc_erm)
+        erm1_lst.append(erm1)
+        erm2_lst.append(erm2)
+        erm3_lst.append(erm3)
+        erm4_lst.append(erm4)
+        erm5_lst.append(erm5)
+        
+        itemlist =over_acc_erm_lst
+        with open('./test_results/over_test_acc_erm.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
+
+        itemlist = erm1_lst
+        with open('./test_results/acc1_erm.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
+
+        itemlist = erm2_lst
+        with open('./test_results/acc2_erm.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
+
+        itemlist = erm3_lst
+        with open('./test_results/acc3_erm.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
+
+        itemlist = erm4_lst
+        with open('./test_results/acc4_erm.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
+        itemlist = erm5_lst
+        with open('./test_results/acc5_erm.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
+
     else:
-        pass
+        over_acc_erm_lst_cur.append(over_acc_erm)
+        erm1_lst_cur.append(erm1)
+        erm2_lst_cur.append(erm2)
+        erm3_lst_cur.append(erm3)
+        erm4_lst_cur.append(erm4)
+        erm5_lst_cur.append(erm5)
+        
+        itemlist =over_acc_erm_lst_cur
+        with open('./test_results/over_test_acc_erm_cur.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
 
-    if args.significance =='Yes':
+        itemlist = erm1_lst_cur
+        with open('./test_results/acc1_erm_cur.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
 
-        with open ('./test_results/over_test_acc_erm.txt', 'rb') as fp:
-            acc_erm = pickle.load(fp)
+        itemlist = erm2_lst_cur
+        with open('./test_results/acc2_erm_cur.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
 
-        with open ('./test_results/acc1_erm.txt', 'rb') as fp:
-            acc_erm1 = pickle.load(fp)
+        itemlist = erm3_lst_cur
+        with open('./test_results/acc3_erm_cur.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
 
-        with open ('./test_results/acc2_erm.txt', 'rb') as fp:
-            acc_erm2 = pickle.load(fp)
+        itemlist = erm4_lst_cur
+        with open('./test_results/acc4_erm_cur.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
 
-        with open ('./test_results/acc3_erm.txt', 'rb') as fp:
-            acc_erm3 = pickle.load(fp)
+        itemlist = erm5_lst_cur
+        with open('./test_results/acc5_erm_cur.txt', 'wb') as fp:
+            pickle.dump(itemlist, fp)
+else:
+    pass
+
+if args.significance =='Yes':
+
+    with open ('./test_results/over_test_acc_erm.txt', 'rb') as fp:
+        acc_erm = pickle.load(fp)
+
+    with open ('./test_results/acc1_erm.txt', 'rb') as fp:
+        acc_erm1 = pickle.load(fp)
+
+    with open ('./test_results/acc2_erm.txt', 'rb') as fp:
+        acc_erm2 = pickle.load(fp)
+
+    with open ('./test_results/acc3_erm.txt', 'rb') as fp:
+        acc_erm3 = pickle.load(fp)
     
-        with open ('./test_results/acc4_erm.txt', 'rb') as fp:
-            acc_erm4 = pickle.load(fp)
+    with open ('./test_results/acc4_erm.txt', 'rb') as fp:
+        acc_erm4 = pickle.load(fp)
     
-        with open ('./test_results/acc5_erm.txt', 'rb') as fp:
-            acc_erm5 = pickle.load(fp)
+    with open ('./test_results/acc5_erm.txt', 'rb') as fp:
+        acc_erm5 = pickle.load(fp)
     
 
 
        
     
-        with open ('./test_results/over_test_acc_erm_cur.txt', 'rb') as fp:
-            acc_erm_cur = pickle.load(fp)
+    with open ('./test_results/over_test_acc_erm_cur.txt', 'rb') as fp:
+        acc_erm_cur = pickle.load(fp)
 
-        with open ('./test_results/acc1_erm_cur.txt', 'rb') as fp:
-            acc_erm_cur1 = pickle.load(fp)
+    with open ('./test_results/acc1_erm_cur.txt', 'rb') as fp:
+        acc_erm_cur1 = pickle.load(fp)
 
-        with open ('./test_results/acc2_erm_cur.txt', 'rb') as fp:
-            acc_erm_cur2 = pickle.load(fp)
+    with open ('./test_results/acc2_erm_cur.txt', 'rb') as fp:
+        acc_erm_cur2 = pickle.load(fp)
 
-        with open ('./test_results/acc3_erm_cur.txt', 'rb') as fp:
-            acc_erm_cur3 = pickle.load(fp)
+    with open ('./test_results/acc3_erm_cur.txt', 'rb') as fp:
+        acc_erm_cur3 = pickle.load(fp)
     
-        with open ('./test_results/acc4_erm_cur.txt', 'rb') as fp:
-            acc_erm_cur4 = pickle.load(fp)
+    with open ('./test_results/acc4_erm_cur.txt', 'rb') as fp:
+        acc_erm_cur4 = pickle.load(fp)
     
-        with open ('./test_results/acc5_erm_cur.txt', 'rb') as fp:
-            acc_erm_cur5 = pickle.load(fp)
+    with open ('./test_results/acc5_erm_cur.txt', 'rb') as fp:
+        acc_erm_cur5 = pickle.load(fp)
 
 
-        print("overall accuracy ERM", d_utils.Average(acc_erm), 'trials',len(acc_erm))
-        print("overall accuracy curriculum ERM", d_utils.Average(acc_erm_cur),'trials',len(acc_erm_cur))
+    print("overall accuracy ERM", d_utils.Average(acc_erm), 'trials',len(acc_erm))
+    print("overall accuracy curriculum ERM", d_utils.Average(acc_erm_cur),'trials',len(acc_erm_cur))
 
-        res = stats.ttest_rel(acc_erm_cur,acc_erm)
+    res = stats.ttest_rel(acc_erm_cur,acc_erm)
     
         
 
-        display(res)
+    display(res)
 
-    else:
-        pass
+else:
+    pass
