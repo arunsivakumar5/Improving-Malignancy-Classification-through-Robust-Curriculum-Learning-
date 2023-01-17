@@ -259,7 +259,7 @@ def sort_df(images_df,mode='default'):
         images_df.sort_values(by=['wMSE'],inplace=True)
         images_df.reset_index(drop=True,inplace=True)
 
-        return images_df
+        
     else:
         images_df1 = images_df[images_df['malignancy']== 0 ]
         images_df2 = images_df[images_df['malignancy']== 1 ]
@@ -289,7 +289,7 @@ def sort_df(images_df,mode='default'):
         df_new.reset_index(inplace=True,drop=True)
         images_df= df_new
         
-        return images_df
+    return images_df
 
 
 def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
@@ -436,4 +436,4 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
                
                 datas.append((X, y, c))
     
-        return datas
+    return datas
