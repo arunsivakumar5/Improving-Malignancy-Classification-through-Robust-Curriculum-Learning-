@@ -62,7 +62,7 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
         optimizer = torch.optim.SGD(model.parameters(), lr =params['learning_rate'],weight_decay =params['w_d']) 
         
     if params['scheduler_choice'] == 1:
-        scheduler = init_scheduler({'class_args': {'patience':params['patience'],'factor': params['factor'],'mode':'max'},'class_name': 'ReduceLROnPlateau'},optimizer)   
+        scheduler = d_utils.init_scheduler({'class_args': {'patience':params['patience'],'factor': params['factor'],'mode':'max'},'class_name': 'ReduceLROnPlateau'},optimizer)   
     else:
         scheduler = None
 
