@@ -879,10 +879,14 @@ if args.significance =='Yes':
     
     with open ('./test_results/acc5_erm_cur.txt', 'rb') as fp:
         acc_erm_cur5 = pickle.load(fp)
+    
 
 
     print("overall accuracy ERM", d_utils.Average(acc_erm), 'trials',len(acc_erm))
+    print(d_utils.Average(acc_erm1),d_utils.Average(acc_erm2),d_utils.Average(acc_erm3),d_utils.Average(acc_erm4),d_utils.Average(acc_erm5))
+
     print("overall accuracy curriculum ERM", d_utils.Average(acc_erm_cur),'trials',len(acc_erm_cur))
+    print(d_utils.Average(acc_erm_cur1),d_utils.Average(acc_erm_cur2),d_utils.Average(acc_erm_cur3),d_utils.Average(acc_erm_cur4),d_utils.Average(acc_erm_cur5))
 
     res = stats.ttest_rel(acc_erm_cur,acc_erm)
     
