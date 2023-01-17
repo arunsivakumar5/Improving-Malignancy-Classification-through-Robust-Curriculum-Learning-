@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np 
 import pingouin as pg
 from scipy import stats
-
+from IPython.display import display
 import torch 
 import torchvision 
 import torchvision.transforms as transforms 
@@ -210,7 +210,7 @@ for i in range(1,6):
         
 
 
-        if args.curriculum == 'yes':
+        if args.curriculum == 'Yes':
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
         else:
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
@@ -252,7 +252,7 @@ for i in range(1,6):
 
 
         #Training ERM model
-        if args.curriculum == 'yes':
+        if args.curriculum == 'Yes':
             modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=100,mode='cur_erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_erm.pth'))
             print("ERM trained!")
