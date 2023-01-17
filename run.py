@@ -169,7 +169,7 @@ parser = argparse.ArgumentParser()
 
 
 parser.add_argument('--method', '-n', default='ERM', help='The method using which the classifier is trained ')
-parser.add_argument('--trials', '-t', default=30, help='The number of times we repeat the experiment with different train-validation-test splits ')
+parser.add_argument('--trials',  type=int, default=30, help='The number of times we repeat the experiment with different train-validation-test splits ')
 parser.add_argument('--prop', '-t', default=100, help='The proprtion by which the dataset is to be split. The given proprtion goes to classifier retraining Note: This parameter is needed for CRIS ')
 parser.add_argument('--curriculum', action='store',  help='If curriculum information has to be used to sort the instances by Easy to hard as data is fed into the classiifer ')
 parser.add_argument('--significance', action='store',  help='If significance tests should be carried out between a set of classifier ')
