@@ -733,8 +733,8 @@ for i in range(1,6):
 
         res = stats.ttest_rel(acc_erm_cur,acc_erm)
     
-        print("overall accuracy ERM", d_utils.Average(acc_erm))
-        print("overall accuracy curriculum ERM", d_utils.Average(acc_erm_cur))
+        print("overall accuracy ERM", d_utils.Average(acc_erm), 'trials',len(acc_erm))
+        print("overall accuracy curriculum ERM", d_utils.Average(acc_erm_cur),'trials',len(acc_erm_cur))
 
         display(res)
 
