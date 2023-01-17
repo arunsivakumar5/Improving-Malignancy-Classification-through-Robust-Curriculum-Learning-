@@ -115,12 +115,12 @@ all_spec_ls = []
 all_sens_ls = []
 
 
-test_acc_list0 = []
-
-acc_per_class_0 = []
-acc_per_class_1 = []
-acc_per_class_2 = []
-acc_per_class_3 = []
+over_acc_erm_lst_cur = []
+erm1_lst_cur = []
+erm2_lst_cur = []
+erm3_lst_cur = []
+erm4_lst_cur = []
+erm5_lst_cur = []
 
 
 acc_list = []
@@ -136,6 +136,8 @@ erm5_lst = []
 
 acc_list_train =[]
 acc_lists = []
+
+
 
 over_acc_cris_rand = []
 cris_rand_1 = []
@@ -212,9 +214,12 @@ for i in range(1,6):
 
         if args.curriculum == 'Yes':
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
+
+
         else:
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
+        
         train_data,cv_data,test_data = datas
 
         trainDataset = LIDC_Dataset(*train_data)
@@ -222,20 +227,26 @@ for i in range(1,6):
         testDataset = LIDC_Dataset(*test_data)
 
 
-
         tr = trainDataset
         val = validDataset
         test=testDataset
 
 
-        train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
+        
+        
+        if args.curriculum == 'Yes':
+
+            sampler = SequentialSampler(trainDataset)
+
+            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
+        else:
+            train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
 
 
-        sampler = torch.utils.data.WeightedRandomSampler(
-                    train_weights,
-                    len(train_weights))
-
-        train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
+            sampler = torch.utils.data.WeightedRandomSampler(
+                        train_weights,
+                        len(train_weights))
+            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
         val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
         test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)    
         
@@ -255,11 +266,11 @@ for i in range(1,6):
         if args.curriculum == 'Yes':
             modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=100,mode='cur_erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_erm.pth'))
-            print("ERM trained!")
+            print("Cur ERM trained!")
         else:
             modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=100,mode='erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
-            print("ERM trained!")
+            print("Traditional ERM trained!")
 
         over_acc_erm,erm1,erm2,erm3,erm4,erm5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
 
@@ -654,33 +665,34 @@ for i in range(1,6):
                 pickle.dump(itemlist, fp)
 
         else:
-            over_acc_erm_lst.append(over_acc_erm)
-            erm1_lst.append(erm1)
-            erm2_lst.append(erm2)
-            erm3_lst.append(erm3)
-            erm4_lst.append(erm4)
-            erm5_lst.append(erm5)
+            over_acc_erm_lst_cur.append(over_acc_erm)
+            erm1_lst_cur.append(erm1)
+            erm2_lst_cur.append(erm2)
+            erm3_lst_cur.append(erm3)
+            erm4_lst_cur.append(erm4)
+            erm5_lst_cur.append(erm5)
         
-            itemlist =over_acc_erm_lst
+            itemlist =over_acc_erm_lst_cur
             with open('./test_results/over_test_acc_erm_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
 
-            itemlist = erm1_lst
+            itemlist = erm1_lst_cur
             with open('./test_results/acc1_erm_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
 
-            itemlist = erm2_lst
+            itemlist = erm2_lst_cur
             with open('./test_results/acc2_erm_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
 
-            itemlist = erm3_lst
+            itemlist = erm3_lst_cur
             with open('./test_results/acc3_erm_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
 
-            itemlist = erm4_lst
+            itemlist = erm4_lst_cur
             with open('./test_results/acc4_erm_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
-            itemlist = erm5_lst
+
+            itemlist = erm5_lst_cur
             with open('./test_results/acc5_erm_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
     else:
