@@ -193,7 +193,7 @@ DEVICE =  torch.device('cuda')
 
 
 
-split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
+
 
 if method =='ERM':
 
@@ -217,8 +217,10 @@ if method =='ERM':
         
     if args.curriculum == 'Both':
 
-        for i in range(1,args.trials): 
-
+        for i in range(1,args.trials + 1): 
+            
+            split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
+            
             datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
 
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
