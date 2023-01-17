@@ -338,3 +338,9 @@ def random_split(prop,split_file):
 
     
     return df_split1,df_split2
+
+
+def init_scheduler(scheduler_config, optimizer):
+    
+        scheduler_class = getattr(schedulers, scheduler_config['class_name'])
+        return scheduler_class(optimizer, **scheduler_config['class_args'])
