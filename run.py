@@ -223,8 +223,6 @@ if method =='ERM':
             
             datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
 
-            datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
-
             train_data,cv_data,test_data = datas_cur
 
             trainDataset = LIDC_Dataset(*train_data)
@@ -295,7 +293,7 @@ if method =='ERM':
 
             tr = trainDataset
             val = validDataset
-            test=testDataset
+            test= testDataset
 
             train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
 
@@ -351,8 +349,6 @@ if method =='ERM':
             
     if args.curriculum == 'Yes':
         datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
-
-
     else:
         datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
@@ -374,8 +370,8 @@ if method =='ERM':
     if args.curriculum == 'Yes':
 
         sampler = SequentialSampler(trainDataset)
-
         train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
+
     else:
         train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
 
@@ -384,6 +380,7 @@ if method =='ERM':
                     train_weights,
                     len(train_weights))
         train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
+
     val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
     test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)    
         
@@ -413,31 +410,119 @@ if method =='ERM':
 
 elif method =='gdro':
 
-    meta_train,meta_valid, meta_test,root,transform = utils.get_celeba_ondemand_datasets(device=DEVICE, subclass_label=True)
+    if args.curriculum == 'Both':
 
+        for i in range(1,args.trials + 1): 
+
+            params ={'learning_rate': 0.0005,
+                    'patience':2,
+                    'batch_size': 128,
+                    'w_d': 0.005,
+                    'factor': 0.2,
+                    'scheduler_choice':1,
+                    'opt': 'Adam' 
+                    }
+            params2={'learning_rate': 0.0001,
+                    'patience':60,
+                    'batch_size': 256,
+                    'w_d': 0.2,
+                    'factor': 0.6,
+                    'scheduler_choice':1,
+                    'opt': 'SGD' 
+                    }
+            split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
+            
+            datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
+
+            train_data,cv_data,test_data = datas_cur
+
+            trainDataset = LIDC_Dataset(*train_data)
+            validDataset = LIDC_Dataset(*cv_data)
+            testDataset = LIDC_Dataset(*test_data)
+
+
+            tr = trainDataset
+            val = validDataset
+            test=testDataset
+
+            sampler = SequentialSampler(trainDataset)
+
+            train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
+
+            val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
+            test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)   
+
+            device = torch.device('cuda')
+
+            model = models.TransferModel18()
+
+            modelA,max_acc = train_gdro(params2,,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO')
+            modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
+            print("Cur gDRO trained!")
+      
+            
+
+            datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
+
+            train_data,cv_data,test_data = datas
+
+            trainDataset = LIDC_Dataset(*train_data)
+            validDataset = LIDC_Dataset(*cv_data)
+            testDataset = LIDC_Dataset(*test_data)
+
+
+            tr = trainDataset
+            val = validDataset
+            test= testDataset
+
+            train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
+
+
+            sampler = torch.utils.data.WeightedRandomSampler(
+                        train_weights,
+                        len(train_weights))
+            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
+            val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
+            test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)
+
+            device = torch.device('cuda')
+            model = models.TransferModel18()
+
+            modelA,max_acc = train_gdro(params,train_dataloader,val_dataloader,model,num_epochs=150,mode ='gDRO')
+            modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
+            print("Traditional gDRO trained!")
+
+            over_acc_gdro,gdro1,gdro2,gdro3,gdro4,gdro5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
+
+            over_acc_gdro_lst.append(over_acc_gdro)
+            gdro1_lst.append(gdro1)
+            gdro2_lst.append(gdro2)
+            gdro3_lst.append(gdro3)
+            gdro4_lst.append(gdro4)
+            gdro5_lst.append(gdro5)
         
-    model_args= {'num_labels':2,'pretrained':True, 'freeze': True, 'device': 'cuda'}
-    modelB = models.TransferModel50(*model_args)
+            itemlist =over_acc_gdro_lst
+            with open('./test_results/over_test_acc_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
 
-        
+            itemlist = gdro1_lst
+            with open('./test_results/acc1_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
 
-    train_dataset = SubclassedDataset2(meta_train,root,transform,mode ='train', subclass_label=False)
-    val_dataset = SubclassedDataset2(meta_valid,root,transform,mode = 'val', subclass_label=False)
-    test_dataset = SubclassedDataset2(meta_test,root,transform,mode ='test', subclass_label=False)
+            itemlist = gdro2_lst
+            with open('./test_results/acc2_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
 
+            itemlist = gdro3_lst
+            with open('./test_results/acc3_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
 
-    tr = train_dataset
-    val = val_dataset
-    test = test_dataset
-
-    train_dataloader2 = InfiniteDataLoader(tr, 32,weights=utils.get_sampler_weights(tr.subclasses))
-    val_dataloader2 = InfiniteDataLoader(val,512,weights=utils.get_sampler_weights(val.subclasses))
-    test_dataloader = InfiniteDataLoader(test, 512,weights=utils.get_sampler_weights(test.subclasses))
-
-    modelB,avg_loss_cris,val_loss_list_cris,tl = train_gdro(train_dataloader2, val_dataloader2,test_dataloader,modelB, num_epochs = 2)
-    print("gDRO trained!")
-    modelB.load_state_dict(torch.load('.//models//Best_model_crois.pth'))
-    over_test_acc,acc1,acc2,acc3,acc4 = utils.evaluate(test_dataloader,modelB, 4,verbose = True)
+            itemlist = gdro4_lst
+            with open('./test_results/acc4_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+            itemlist = gdro5_lst
+            with open('./test_results/acc5_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
 
 else:
 
@@ -840,59 +925,120 @@ else:
 
 if args.significance =='Yes':
 
-    with open ('./test_results/over_test_acc_erm.txt', 'rb') as fp:
-        acc_erm = pickle.load(fp)
+        if method ='ERM':
 
-    with open ('./test_results/acc1_erm.txt', 'rb') as fp:
-        acc_erm1 = pickle.load(fp)
+            with open ('./test_results/over_test_acc_erm.txt', 'rb') as fp:
+                acc_erm = pickle.load(fp)
 
-    with open ('./test_results/acc2_erm.txt', 'rb') as fp:
-        acc_erm2 = pickle.load(fp)
+            with open ('./test_results/acc1_erm.txt', 'rb') as fp:
+                acc_erm1 = pickle.load(fp)
 
-    with open ('./test_results/acc3_erm.txt', 'rb') as fp:
-        acc_erm3 = pickle.load(fp)
+            with open ('./test_results/acc2_erm.txt', 'rb') as fp:
+                acc_erm2 = pickle.load(fp)
+
+            with open ('./test_results/acc3_erm.txt', 'rb') as fp:
+                acc_erm3 = pickle.load(fp)
     
-    with open ('./test_results/acc4_erm.txt', 'rb') as fp:
-        acc_erm4 = pickle.load(fp)
+            with open ('./test_results/acc4_erm.txt', 'rb') as fp:
+                acc_erm4 = pickle.load(fp)
     
-    with open ('./test_results/acc5_erm.txt', 'rb') as fp:
-        acc_erm5 = pickle.load(fp)
+            with open ('./test_results/acc5_erm.txt', 'rb') as fp:
+                acc_erm5 = pickle.load(fp)
     
 
 
        
     
-    with open ('./test_results/over_test_acc_erm_cur.txt', 'rb') as fp:
-        acc_erm_cur = pickle.load(fp)
+            with open ('./test_results/over_test_acc_erm_cur.txt', 'rb') as fp:
+                acc_erm_cur = pickle.load(fp)
 
-    with open ('./test_results/acc1_erm_cur.txt', 'rb') as fp:
-        acc_erm_cur1 = pickle.load(fp)
+            with open ('./test_results/acc1_erm_cur.txt', 'rb') as fp:
+                acc_erm_cur1 = pickle.load(fp)
 
-    with open ('./test_results/acc2_erm_cur.txt', 'rb') as fp:
-        acc_erm_cur2 = pickle.load(fp)
+            with open ('./test_results/acc2_erm_cur.txt', 'rb') as fp:
+                acc_erm_cur2 = pickle.load(fp)
 
-    with open ('./test_results/acc3_erm_cur.txt', 'rb') as fp:
-        acc_erm_cur3 = pickle.load(fp)
+            with open ('./test_results/acc3_erm_cur.txt', 'rb') as fp:
+                acc_erm_cur3 = pickle.load(fp)
     
-    with open ('./test_results/acc4_erm_cur.txt', 'rb') as fp:
-        acc_erm_cur4 = pickle.load(fp)
+            with open ('./test_results/acc4_erm_cur.txt', 'rb') as fp:
+                acc_erm_cur4 = pickle.load(fp)
     
-    with open ('./test_results/acc5_erm_cur.txt', 'rb') as fp:
-        acc_erm_cur5 = pickle.load(fp)
+            with open ('./test_results/acc5_erm_cur.txt', 'rb') as fp:
+                acc_erm_cur5 = pickle.load(fp)
     
 
 
-    print("overall accuracy ERM", d_utils.Average(acc_erm), 'trials',len(acc_erm))
-    print(d_utils.Average(acc_erm1),d_utils.Average(acc_erm2),d_utils.Average(acc_erm3),d_utils.Average(acc_erm4),d_utils.Average(acc_erm5))
+            print("overall accuracy ERM", d_utils.Average(acc_erm), 'trials',len(acc_erm))
+            print(d_utils.Average(acc_erm1),d_utils.Average(acc_erm2),d_utils.Average(acc_erm3),d_utils.Average(acc_erm4),d_utils.Average(acc_erm5))
 
-    print("overall accuracy curriculum ERM", d_utils.Average(acc_erm_cur),'trials',len(acc_erm_cur))
-    print(d_utils.Average(acc_erm_cur1),d_utils.Average(acc_erm_cur2),d_utils.Average(acc_erm_cur3),d_utils.Average(acc_erm_cur4),d_utils.Average(acc_erm_cur5))
+            print("overall accuracy curriculum ERM", d_utils.Average(acc_erm_cur),'trials',len(acc_erm_cur))
+            print(d_utils.Average(acc_erm_cur1),d_utils.Average(acc_erm_cur2),d_utils.Average(acc_erm_cur3),d_utils.Average(acc_erm_cur4),d_utils.Average(acc_erm_cur5))
 
-    res = stats.ttest_rel(acc_erm_cur,acc_erm)
+            res = stats.ttest_rel(acc_erm_cur,acc_erm)
     
-        
+            display(res)
 
-    display(res)
+    elif method == 'gDRO'
+        with open ('./test_results/over_test_acc_gdro.txt', 'rb') as fp:
+            acc_gdro = pickle.load(fp)
 
+        with open ('./test_results/acc1_gdro.txt', 'rb') as fp:
+            acc_gdro1 = pickle.load(fp)
+
+        with open ('./test_results/acc2_gdro.txt', 'rb') as fp:
+            acc_gdro2 = pickle.load(fp)
+
+        with open ('./test_results/acc3_gdro.txt', 'rb') as fp:
+            acc_gdro3 = pickle.load(fp)
+    
+        with open ('./test_results/acc4_gdro.txt', 'rb') as fp:
+            acc_gdro4 = pickle.load(fp)
+    
+        with open ('./test_results/acc5_gdro.txt', 'rb') as fp:
+            acc_gdro5 = pickle.load(fp)
+    
+
+
+       
+    
+        with open ('./test_results/over_test_acc_gdro_cur.txt', 'rb') as fp:
+            acc_gdro_cur = pickle.load(fp)
+
+        with open ('./test_results/acc1_gdro_cur.txt', 'rb') as fp:
+            acc_gdro_cur1 = pickle.load(fp)
+
+        with open ('./test_results/acc2_gdro_cur.txt', 'rb') as fp:
+            acc_gdro_cur2 = pickle.load(fp)
+
+        with open ('./test_results/acc3_gdro_cur.txt', 'rb') as fp:
+            acc_gdro_cur3 = pickle.load(fp)
+    
+        with open ('./test_results/acc4_gdro_cur.txt', 'rb') as fp:
+            acc_gdro_cur4 = pickle.load(fp)
+    
+        with open ('./test_results/acc5_gdro_cur.txt', 'rb') as fp:
+            acc_gdro_cur5 = pickle.load(fp)
+    
+
+
+        print("overall accuracy gdro", d_utils.Average(acc_gdro), 'trials',len(acc_gdro))
+        print(d_utils.Average(acc_gdro1),d_utils.Average(acc_gdro2),d_utils.Average(acc_gdro3),d_utils.Average(acc_gdro4),d_utils.Average(acc_gdro5))
+
+        print("overall accuracy curriculum gdro", d_utils.Average(acc_gdro_cur),'trials',len(acc_gdro_cur))
+        print(d_utils.Average(acc_gdro_cur1),d_utils.Average(acc_gdro_cur2),d_utils.Average(acc_gdro_cur3),d_utils.Average(acc_gdro_cur4),d_utils.Average(acc_gdro_cur5))
+	
+	    print("Overall significance")
+	
+        res = stats.ttest_rel(acc_gdro_cur,acc_gdro)
+   
+        display(res)
+	
+	    print("Worst group significance")
+	
+	    res = stats.ttest_rel(acc_gdro_cur2,acc_gdro2)
+
+    else:
+        pass
 else:
     pass

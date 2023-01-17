@@ -11,7 +11,7 @@ import torch.optim as optim # optimzer
 import torch.optim.lr_scheduler as schedulers
 import sklearn 
 from sklearn.metrics import accuracy_score
-
+from loss import LossComputer
 import pickle
 from torchvision import datasets, models, transforms
 
@@ -148,7 +148,7 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
 
 
 
-def train_gdro(params,model, train_dataloader, val_dataloader,test_dataloader, use_cuda = False, robust=False, num_epochs = 0,stable= True, size_adjustment = None,w=None,m =None):
+def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None):
     
     
     device = torch.device("cuda")
@@ -169,7 +169,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader,test_dataloader, u
         optimizer = torch.optim.SGD(model.parameters(), lr =params['learning_rate'],weight_decay =params['w_d']) 
         
     if params['scheduler_choice'] == 1:
-        scheduler = init_scheduler({'class_args': {'patience':params['patience'],'factor': params['factor'],'mode':'min'},'class_name': 'ReduceLROnPlateau'},optimizer) 
+        scheduler = init_scheduler({'class_args': {'patience':params['patience'],'factor': params['factor'],'mode':'max'},'class_name': 'ReduceLROnPlateau'},optimizer) 
     else:
         scheduler = None
     
@@ -202,7 +202,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader,test_dataloader, u
             loss_targets_cur = loss_targets_cur.to(device)
             logits = model(inputs)
             logits = logits.to(device)
-            co = criterion(logits, loss_targets,loss_targets_cur,mode,w=None,epoch=epoch)
+            co = criterion(logits, loss_targets,loss_targets_cur)
             
             
             loss, (losses, corrects) = co
