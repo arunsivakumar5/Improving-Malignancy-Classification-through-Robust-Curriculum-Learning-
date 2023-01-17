@@ -208,8 +208,14 @@ for i in range(1,6):
             'scheduler_choice': 2,
             'opt': 'SGD' }
         
-        
-        
+        params2 ={
+            'learning_rate': 0.1
+            'patience': 20
+            'batch_size': 1024
+            'w_d': 0.9
+            'factor': 0.3
+            'scheduler_choice': 1
+            'opt': SGD  }
 
 
         if args.curriculum == 'Yes':
@@ -238,7 +244,7 @@ for i in range(1,6):
 
             sampler = SequentialSampler(trainDataset)
 
-            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
+            train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
         else:
             train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
 
@@ -264,11 +270,11 @@ for i in range(1,6):
 
         #Training ERM model
         if args.curriculum == 'Yes':
-            modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=100,mode='cur_erm')
+            modelA,max_acc = train_erm(params2,train_dataloader,val_dataloader,model,num_epochs=150,mode='cur_erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_erm.pth'))
             print("Cur ERM trained!")
         else:
-            modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=100,mode='erm')
+            modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=150,mode='erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
             print("Traditional ERM trained!")
 
