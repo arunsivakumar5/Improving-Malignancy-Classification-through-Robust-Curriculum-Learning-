@@ -979,66 +979,66 @@ if args.significance =='Yes':
     
             display(res)
 
-    elif method == 'gDRO':
-        with open ('./test_results/over_test_acc_gdro.txt', 'rb') as fp:
-            acc_gdro = pickle.load(fp)
+        elif method == 'gDRO':
+            with open ('./test_results/over_test_acc_gdro.txt', 'rb') as fp:
+                acc_gdro = pickle.load(fp)
 
-        with open ('./test_results/acc1_gdro.txt', 'rb') as fp:
-            acc_gdro1 = pickle.load(fp)
+            with open ('./test_results/acc1_gdro.txt', 'rb') as fp:
+                acc_gdro1 = pickle.load(fp)
 
-        with open ('./test_results/acc2_gdro.txt', 'rb') as fp:
-            acc_gdro2 = pickle.load(fp)
+            with open ('./test_results/acc2_gdro.txt', 'rb') as fp:
+                acc_gdro2 = pickle.load(fp)
 
-        with open ('./test_results/acc3_gdro.txt', 'rb') as fp:
-            acc_gdro3 = pickle.load(fp)
+            with open ('./test_results/acc3_gdro.txt', 'rb') as fp:
+                acc_gdro3 = pickle.load(fp)
     
-        with open ('./test_results/acc4_gdro.txt', 'rb') as fp:
-            acc_gdro4 = pickle.load(fp)
+            with open ('./test_results/acc4_gdro.txt', 'rb') as fp:
+                acc_gdro4 = pickle.load(fp)
     
-        with open ('./test_results/acc5_gdro.txt', 'rb') as fp:
-            acc_gdro5 = pickle.load(fp)
+            with open ('./test_results/acc5_gdro.txt', 'rb') as fp:
+                acc_gdro5 = pickle.load(fp)
     
 
 
        
     
-        with open ('./test_results/over_test_acc_gdro_cur.txt', 'rb') as fp:
-            acc_gdro_cur = pickle.load(fp)
+            with open ('./test_results/over_test_acc_gdro_cur.txt', 'rb') as fp:
+                acc_gdro_cur = pickle.load(fp)
 
-        with open ('./test_results/acc1_gdro_cur.txt', 'rb') as fp:
-            acc_gdro_cur1 = pickle.load(fp)
+            with open ('./test_results/acc1_gdro_cur.txt', 'rb') as fp:
+                acc_gdro_cur1 = pickle.load(fp)
 
-        with open ('./test_results/acc2_gdro_cur.txt', 'rb') as fp:
-            acc_gdro_cur2 = pickle.load(fp)
+            with open ('./test_results/acc2_gdro_cur.txt', 'rb') as fp:
+                acc_gdro_cur2 = pickle.load(fp)
 
-        with open ('./test_results/acc3_gdro_cur.txt', 'rb') as fp:
-            acc_gdro_cur3 = pickle.load(fp)
+            with open ('./test_results/acc3_gdro_cur.txt', 'rb') as fp:
+                acc_gdro_cur3 = pickle.load(fp)
     
-        with open ('./test_results/acc4_gdro_cur.txt', 'rb') as fp:
-            acc_gdro_cur4 = pickle.load(fp)
+            with open ('./test_results/acc4_gdro_cur.txt', 'rb') as fp:
+                acc_gdro_cur4 = pickle.load(fp)
     
-        with open ('./test_results/acc5_gdro_cur.txt', 'rb') as fp:
-            acc_gdro_cur5 = pickle.load(fp)
+            with open ('./test_results/acc5_gdro_cur.txt', 'rb') as fp:
+                acc_gdro_cur5 = pickle.load(fp)
     
 
 
-        print("overall accuracy gdro", d_utils.Average(acc_gdro), 'trials',len(acc_gdro))
-        print(d_utils.Average(acc_gdro1),d_utils.Average(acc_gdro2),d_utils.Average(acc_gdro3),d_utils.Average(acc_gdro4),d_utils.Average(acc_gdro5))
+            print("overall accuracy gdro", d_utils.Average(acc_gdro), 'trials',len(acc_gdro))
+            print(d_utils.Average(acc_gdro1),d_utils.Average(acc_gdro2),d_utils.Average(acc_gdro3),d_utils.Average(acc_gdro4),d_utils.Average(acc_gdro5))
 
-        print("overall accuracy curriculum gdro", d_utils.Average(acc_gdro_cur),'trials',len(acc_gdro_cur))
-        print(d_utils.Average(acc_gdro_cur1),d_utils.Average(acc_gdro_cur2),d_utils.Average(acc_gdro_cur3),d_utils.Average(acc_gdro_cur4),d_utils.Average(acc_gdro_cur5))
+            print("overall accuracy curriculum gdro", d_utils.Average(acc_gdro_cur),'trials',len(acc_gdro_cur))
+            print(d_utils.Average(acc_gdro_cur1),d_utils.Average(acc_gdro_cur2),d_utils.Average(acc_gdro_cur3),d_utils.Average(acc_gdro_cur4),d_utils.Average(acc_gdro_cur5))
 	
-	    print("Overall significance")
+	        print("Overall significance")
 	
-        res = stats.ttest_rel(acc_gdro_cur,acc_gdro)
+            res = stats.ttest_rel(acc_gdro_cur,acc_gdro)
    
-        display(res)
+            display(res)
 	
-	    print("Worst group significance")
+	        print("Worst group significance")
 	
-	    res = stats.ttest_rel(acc_gdro_cur2,acc_gdro2)
+	        res = stats.ttest_rel(acc_gdro_cur2,acc_gdro2)
 
-    else:
-        pass
+        else:
+            pass
 else:
     pass
