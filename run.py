@@ -925,7 +925,7 @@ else:
 
 if args.significance =='Yes':
 
-        if method ='ERM':
+        if method =='ERM':
 
             with open ('./test_results/over_test_acc_erm.txt', 'rb') as fp:
                 acc_erm = pickle.load(fp)
