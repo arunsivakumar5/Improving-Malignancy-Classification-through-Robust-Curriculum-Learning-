@@ -191,7 +191,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
         for batch_idx, (inputs, targets) in enumerate(train_dataloader):
             
            
-            mode = 'traditional'
+  
             model.train()
             
             inputs = inputs.to(device)
