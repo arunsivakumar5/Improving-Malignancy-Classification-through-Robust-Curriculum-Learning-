@@ -438,22 +438,7 @@ elif method =='gDRO':
                     'scheduler_choice':1,
                     'opt': 'Adam' 
                     }
-            params2 ={'learning_rate': 0.0005,
-                    'patience':2,
-                    'batch_size': 32,
-                    'w_d': 0.005,
-                    'factor': 0.2,
-                    'scheduler_choice':1,
-                    'opt': 'Adam' 
-                    }
-            params3 ={'learning_rate':  1e-05,
-                    'patience':90,
-                    'batch_size': 128,
-                    'w_d': 0.3,
-                    'factor': 0.1,
-                    'scheduler_choice':2,
-                    'opt': 'Adam' 
-                    }
+            
             
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
@@ -475,14 +460,14 @@ elif method =='gDRO':
             train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler,shuffle=False)
 
             sampler2 = SequentialSampler(val)
-            val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False,sampler=sampler2)
+            val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False,sampler=sampler2,batch_size=32)
             test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)   
 
             device = torch.device('cuda')
 
             model = models.TransferModel18()
 
-            modelA,max_acc = train_gdro(params2,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO',subclass_counts=subclass_counts)
+            modelA,max_acc = train_gdro(params2,model,train_dataloader,val_dataloader,num_epochs=300,mode='cur_gDRO',subclass_counts=subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
@@ -540,13 +525,13 @@ elif method =='gDRO':
                         train_weights,
                         len(train_weights))
             train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
-            val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
+            val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0,batch_size=32)
             test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)
 
             device = torch.device('cuda')
             model = models.TransferModel18()
 
-            modelA,max_acc = train_gdro(params2,model,train_dataloader,val_dataloader,num_epochs=150,mode ='gDRO',subclass_counts = subclass_counts)
+            modelA,max_acc = train_gdro(params2,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
