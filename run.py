@@ -440,7 +440,7 @@ elif method =='gDRO':
                     }
             params2 ={'learning_rate': 0.0005,
                     'patience':2,
-                    'batch_size': 128,
+                    'batch_size': 32,
                     'w_d': 0.005,
                     'factor': 0.2,
                     'scheduler_choice':1,
