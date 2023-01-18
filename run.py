@@ -980,6 +980,7 @@ if args.significance =='Yes':
             display(res)
 
         elif method == 'gDRO':
+
             with open ('./test_results/over_test_acc_gdro.txt', 'rb') as fp:
                 acc_gdro = pickle.load(fp)
 
@@ -1029,14 +1030,12 @@ if args.significance =='Yes':
             print(d_utils.Average(acc_gdro_cur1),d_utils.Average(acc_gdro_cur2),d_utils.Average(acc_gdro_cur3),d_utils.Average(acc_gdro_cur4),d_utils.Average(acc_gdro_cur5))
 	
 	        print("Overall significance")
-	
-            res = stats.ttest_rel(acc_gdro_cur,acc_gdro)
-   
-            display(res)
+	        res = stats.ttest_rel(acc_gdro_cur,acc_gdro)
+            print(res)
 	
 	        print("Worst group significance")
-	
 	        res = stats.ttest_rel(acc_gdro_cur2,acc_gdro2)
+            print(res)
 
         else:
             pass
