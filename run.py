@@ -457,7 +457,7 @@ elif method =='gDRO':
 
             sampler = SequentialSampler(trainDataset)
             subclass_counts=trainDataset.get_class_counts('subclass')
-            train_dataloader = DataLoader(tr, batch_size =32,sampler=sampler,shuffle=False)
+            train_dataloader = DataLoader(tr, batch_size =1024,sampler=sampler,shuffle=False)
 
             sampler2 = SequentialSampler(validDataset)
             val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler=sampler2)
