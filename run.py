@@ -491,7 +491,7 @@ elif method =='gdro':
             device = torch.device('cuda')
             model = models.TransferModel18()
 
-            modelA,max_acc = train_gdro(params,train_dataloader,val_dataloader,model,num_epochs=150,mode ='gDRO'subclass_counts = subclass_counts)
+            modelA,max_acc = train_gdro(params,train_dataloader,val_dataloader,model,num_epochs=150,mode ='gDRO',subclass_counts = subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
