@@ -979,7 +979,7 @@ if args.significance =='Yes':
     
             display(res)
 
-    elif method == 'gDRO'
+    elif method == 'gDRO':
         with open ('./test_results/over_test_acc_gdro.txt', 'rb') as fp:
             acc_gdro = pickle.load(fp)
 
