@@ -235,11 +235,21 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
             model = cur_model
             old_model = model
             if mode=='gDRO':
-                torch.save(model.state_dict(), './models/Best_model_gdro.pth')
+                try:
+                    torch.save(model.state_dict(), './models/Best_model_gdro.pth')
+                    path = './models/Best_model_gdro.pth'
+                except:
+                    os.makedirs(path)
             elif mode=='cur_gDRO':
-                torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
+                try:
+                    torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
+                    path = './models/Best_model_cur_gdro.pth'
+                else:
+                    os.makedirs(path)
             elif mode=='random_gDRO':
-                torch.save(model.state_dict(), './models/Best_model_rand2.pth')
+                try:
+                    torch.save(model.state_dict(), './models/Best_model_rand2.pth')
+                    
             elif mode=='Cur_gDRO':
                 torch.save(model.state_dict(), './models/Best_model_cur2.pth')
             else:
