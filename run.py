@@ -438,14 +438,13 @@ elif method =='gDRO':
                     'scheduler_choice':1,
                     'opt': 'Adam' 
                     }
-            params2={'learning_rate': 0.0001,
-                    'patience':40,
+            params2={'learning_rate': 0.01,
+                    'patience': 20,
                     'batch_size': 128,
-                    'w_d': 0.8,
-                    'factor': 0.2,
-                    'scheduler_choice':1,
-                    'opt': 'Adam' 
-                    }
+                    'w_d': 0.1,
+                    'factor': 0.6,
+                    'scheduler_choice': 1,
+                    'opt': 'Adam' }
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
             datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
