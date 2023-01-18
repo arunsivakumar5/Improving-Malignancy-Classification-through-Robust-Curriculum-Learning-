@@ -379,7 +379,7 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         dfs2=[]
     
         for i in dfs:
-            i = sort_df(i,mode='uniform')
+            i = sort_df(i)
             dfs2.append(i)
         
         print(dfs2)
