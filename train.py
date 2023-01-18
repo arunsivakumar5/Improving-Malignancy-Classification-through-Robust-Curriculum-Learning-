@@ -169,7 +169,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
         optimizer = torch.optim.SGD(model.parameters(), lr =params['learning_rate'],weight_decay =params['w_d']) 
         
     if params['scheduler_choice'] == 1:
-        scheduler =  d_utils.init_scheduler({'class_args': {'patience':params['patience'],'factor': params['factor'],'mode':'max'},'class_name': 'ReduceLROnPlateau'},optimizer) 
+        scheduler =  d_utils.init_scheduler({'class_args': {'patience':params['patience'],'factor': params['factor'],'mode':'min'},'class_name': 'ReduceLROnPlateau'},optimizer) 
     else:
         scheduler = None
     
