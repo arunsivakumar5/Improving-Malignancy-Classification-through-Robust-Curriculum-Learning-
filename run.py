@@ -447,6 +447,8 @@ elif method =='gdro':
 
             sampler = SequentialSampler(trainDataset)
 
+            subclass_counts=trainDataset.get_class_counts('subclass')
+
             train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
 
             val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
@@ -456,7 +458,7 @@ elif method =='gdro':
 
             model = models.TransferModel18()
 
-            modelA,max_acc = train_gdro(params2,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO')
+            modelA,max_acc = train_gdro(params2,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO',subclass_counts=subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
       
@@ -470,6 +472,7 @@ elif method =='gdro':
             validDataset = LIDC_Dataset(*cv_data)
             testDataset = LIDC_Dataset(*test_data)
 
+            subclass_counts=trainDataset.get_class_counts('subclass')
 
             tr = trainDataset
             val = validDataset
@@ -488,7 +491,7 @@ elif method =='gdro':
             device = torch.device('cuda')
             model = models.TransferModel18()
 
-            modelA,max_acc = train_gdro(params,train_dataloader,val_dataloader,model,num_epochs=150,mode ='gDRO')
+            modelA,max_acc = train_gdro(params,train_dataloader,val_dataloader,model,num_epochs=150,mode ='gDRO'subclass_counts = subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 

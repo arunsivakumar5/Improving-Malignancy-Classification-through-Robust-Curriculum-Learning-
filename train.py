@@ -148,14 +148,14 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
 
 
 
-def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None):
+def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts=None):
     
     
     device = torch.device("cuda")
     model = model.to(device)
     
     
-    subclass_counts = trainDataset.get_class_counts('subclass')
+    
     
     print('subclass_counts',subclass_counts)
     criterion = torch.nn.CrossEntropyLoss(reduction='none')
