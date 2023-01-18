@@ -457,10 +457,10 @@ elif method =='gDRO':
 
             sampler = SequentialSampler(trainDataset)
             subclass_counts=trainDataset.get_class_counts('subclass')
-            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler,shuffle=False)
+            train_dataloader = DataLoader(tr, batch_size =32,sampler=sampler,shuffle=False)
 
             sampler2 = SequentialSampler(validDataset)
-            val_dataloader = DataLoader(val,shuffle = False,sampler=sampler2,batch_size=128)
+            val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler=sampler2)
             test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)   
 
             device = torch.device('cuda')
