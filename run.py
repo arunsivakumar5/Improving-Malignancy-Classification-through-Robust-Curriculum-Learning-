@@ -438,7 +438,7 @@ elif method =='gDRO':
                     'scheduler_choice':1,
                     'opt': 'Adam' 
                     }
-            params2={'learning_rate': 0.0001,
+            params2={'learning_rate': 0.0005,
                     'patience':60,
                     'batch_size': 256,
                     'w_d': 0.2,
@@ -465,7 +465,7 @@ elif method =='gDRO':
 
             subclass_counts=trainDataset.get_class_counts('subclass')
 
-            train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
+            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
 
             val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
             test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)   
@@ -474,7 +474,7 @@ elif method =='gDRO':
 
             model = models.TransferModel18()
 
-            modelA,max_acc = train_gdro(params2,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO',subclass_counts=subclass_counts)
+            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO',subclass_counts=subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
