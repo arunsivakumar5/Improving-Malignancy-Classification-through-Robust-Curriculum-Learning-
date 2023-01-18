@@ -114,6 +114,15 @@ acc_list_new1 = []
 all_spec_ls = []
 all_sens_ls = []
 
+over_acc_cur_gdro_lst = []
+cur_gdro1_lst = []
+cur_gdro2_lst = []
+cur_gdro3_lst = []
+cur_gdro4_lst = []
+cur_gdro5_lst = []
+
+
+
 
 over_acc_erm_lst_cur = []
 erm1_lst_cur = []
