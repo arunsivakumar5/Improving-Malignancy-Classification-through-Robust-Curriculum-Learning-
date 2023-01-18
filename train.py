@@ -244,12 +244,13 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
                 try:
                     torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
                     path = './models/Best_model_cur_gdro.pth'
-                else:
+                except:
                     os.makedirs(path)
             elif mode=='random_gDRO':
                 try:
                     torch.save(model.state_dict(), './models/Best_model_rand2.pth')
-                    
+                except:
+                    pass
             elif mode=='Cur_gDRO':
                 torch.save(model.state_dict(), './models/Best_model_cur2.pth')
             else:
