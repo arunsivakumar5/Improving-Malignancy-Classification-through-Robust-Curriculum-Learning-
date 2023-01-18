@@ -456,7 +456,7 @@ elif method =='gdro':
 
             model = models.TransferModel18()
 
-            modelA,max_acc = train_gdro(params2,,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO')
+            modelA,max_acc = train_gdro(params2,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO')
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
       
