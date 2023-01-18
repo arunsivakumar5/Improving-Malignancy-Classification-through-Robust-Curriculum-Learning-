@@ -524,7 +524,7 @@ elif method =='gDRO':
             sampler = torch.utils.data.WeightedRandomSampler(
                         train_weights,
                         len(train_weights))
-            train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
+            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
 
             val_weights = im_utils.get_sampler_weights(validDataset.subclasses)
             sampler2 = torch.utils.data.WeightedRandomSampler(
@@ -536,7 +536,7 @@ elif method =='gDRO':
             device = torch.device('cuda')
             model = models.TransferModel18()
 
-            modelA,max_acc = train_gdro(params2,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts)
+            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
