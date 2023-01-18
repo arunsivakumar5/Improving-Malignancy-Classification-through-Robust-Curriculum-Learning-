@@ -408,7 +408,7 @@ if method =='ERM':
 
     over_acc_erm,erm1,erm2,erm3,erm4,erm5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
 
-elif method =='gdro':
+elif method =='gDRO':
 
     if args.curriculum == 'Both':
 
