@@ -442,7 +442,7 @@ elif method =='gDRO':
             
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
-            datas_cur,datas_cur2 = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
+            datas_cur,datas_cur2 = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='split')
 
             train_data,cv_data,_ = datas_cur
             train_data2,cv_data2,test_data = datas_cur2
