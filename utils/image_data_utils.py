@@ -378,44 +378,44 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         dfs = []
     
         for i in range(3):
-            dfs.append(df_features.loc[(df_splits['splits'] == i).values])
+            dfs.append(df_features.loc[(df_splits1['splits'] == i).values])
 
         datas = []
 
         # If we choose to do curriculum learning, sort data based on wMSE computed from multiple radiologist labels
         dfs2=[]
     
-            for i in dfs:
-                i = sort_df(i)
-                dfs2.append(i)
+        for i in dfs:
+            i = sort_df(i)
+            dfs2.append(i)
         
-            print(dfs2)
-            for i, d in enumerate(dfs2):
-                    # If the training dataset, we need to do data augmentation
-                    if i == 0:
+        print(dfs2)
+        for i, d in enumerate(dfs2):
+                # If the training dataset, we need to do data augmentation
+                if i == 0:
                     
-                        imgs = []
-                        for img in d['image']:
-                            imgs.extend(augment_image(img))
-                        X = torch.stack(imgs).to(device=device, dtype=torch.float32)
+                    imgs = []
+                    for img in d['image']:
+                        imgs.extend(augment_image(img))
+                    X = torch.stack(imgs).to(device=device, dtype=torch.float32)
 
-                        # hacky way to repeat the labels for the additional augmented images
-                        augments = X.shape[0] // len(d)
-                        d_temp = pd.DataFrame()
-                        d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
-                        d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
-                        d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
-                        d = d_temp
-                        d.reset_index(drop=True, inplace=True)
-                    else:
-                        X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
+                    # hacky way to repeat the labels for the additional augmented images
+                    augments = X.shape[0] // len(d)
+                    d_temp = pd.DataFrame()
+                    d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
+                    d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
+                    d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
+                    d = d_temp
+                    d.reset_index(drop=True, inplace=True)
+                else:
+                    X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
                 
 
-                    y = torch.tensor(d['malignancy_b'].values, device=device, dtype=torch.long)
-                    c = torch.tensor(d['clusters'].values, device=device, dtype=torch.long)
+                y = torch.tensor(d['malignancy_b'].values, device=device, dtype=torch.long)
+                c = torch.tensor(d['clusters'].values, device=device, dtype=torch.long)
             
                
-                    datas.append((X, y, c))
+                datas.append((X, y, c))
 
         
 
@@ -472,7 +472,7 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         dfs = []
     
         for i in range(3):
-            dfs.append(df_features.loc[(df_splits['splits'] == i).values])
+            dfs.append(df_features.loc[(df_splits1['splits'] == i).values])
 
         datas2 = []
 
