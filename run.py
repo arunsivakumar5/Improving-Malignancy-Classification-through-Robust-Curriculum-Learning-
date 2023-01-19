@@ -438,14 +438,7 @@ elif method =='gDRO':
                     'scheduler_choice':1,
                     'opt': 'Adam' 
                     }
-            params2 ={'learning_rate': 0.0005,
-                    'patience':2,
-                    
-                    'w_d': 0.5,
-                    'factor': 0.7,
-                    'scheduler_choice':1,
-                    'opt': 'Adam' 
-                    }
+            
             
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
