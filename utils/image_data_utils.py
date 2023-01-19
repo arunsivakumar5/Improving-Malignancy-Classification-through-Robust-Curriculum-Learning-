@@ -330,7 +330,8 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         df_features = images_to_df()
     
 
-    
+        df_features = df_features.loc[df_features["curriculum"] == "0"]
+        df_features.reset_index(inplace=True,drop = True)
         
     
         df_features['clusters'] = df_features['malignancy']
