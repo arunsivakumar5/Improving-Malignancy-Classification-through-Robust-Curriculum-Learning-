@@ -13,7 +13,7 @@ class TransferModel18(nn.Module):
         super(TransferModel18, self).__init__()
 
         
-        self.model = torchvision.models.resnet18(pretrained=True).to(device)
+        self.model = torchvision.models.resnet18(weights='DEFAULT').to(device)
         
 
         for param in self.model.parameters():
