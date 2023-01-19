@@ -438,14 +438,7 @@ elif method =='gDRO':
                     'scheduler_choice':1,
                     'opt': 'Adam' 
                     }
-            params_cur={'learning_rate': 0.0005,
-                    'patience':2,
-                    'batch_size': 1024,
-                    'w_d': 0.5,
-                    'factor': 0.2,
-                    'scheduler_choice':1,
-                    'opt': 'Adam' 
-                    }
+            
             
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
@@ -466,7 +459,7 @@ elif method =='gDRO':
 
             sampler = SequentialSampler(trainDataset)
             subclass_counts=trainDataset.get_class_counts('subclass')
-            train_dataloader = DataLoader(tr, batch_size =1024,sampler=sampler,shuffle=False)
+            train_dataloader = DataLoader(tr, batch_size =128,sampler=sampler,shuffle=False)
 
             val_weights = im_utils.get_sampler_weights(validDataset.subclasses)
             sampler2 = torch.utils.data.WeightedRandomSampler(
@@ -521,7 +514,7 @@ elif method =='gDRO':
 
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
-            train_data,cv_data,test_data = datas2
+            train_data,cv_data,test_data = datas
 
             trainDataset = LIDC_Dataset(*train_data)
             
