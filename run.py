@@ -438,14 +438,7 @@ elif method =='gDRO':
                     'scheduler_choice':1,
                     'opt': 'Adam' 
                     }
-            params2 ={
-                'learning_rate': 0.1,
-                'patience': 20,
-                'batch_size': 1024,
-                'w_d': 0.9,
-                'factor': 0.3,
-                'scheduler_choice': 1,
-                'opt': 'SGD'  }
+            
             
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
@@ -464,9 +457,12 @@ elif method =='gDRO':
 
             sampler = SequentialSampler(trainDataset)
             subclass_counts=trainDataset.get_class_counts('subclass')
-            train_dataloader = DataLoader(tr, batch_size =1024,sampler=sampler,shuffle=False)
+            train_dataloader = DataLoader(tr, batch_size =128,sampler=sampler,shuffle=False)
 
-            sampler2 = SequentialSampler(validDataset)
+            val_weights = im_utils.get_sampler_weights(validDataset.subclasses)
+            sampler2 = torch.utils.data.WeightedRandomSampler(
+                        val_weights,
+                        len(val_weights))
             val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler=sampler2)
             test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)   
 
@@ -474,7 +470,7 @@ elif method =='gDRO':
 
             model = models.TransferModel18()
 
-            modelA,max_acc = train_gdro(params2,model,train_dataloader,val_dataloader,num_epochs=300,mode='cur_gDRO',subclass_counts=subclass_counts)
+            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=300,mode='cur_gDRO',subclass_counts=subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
@@ -516,14 +512,12 @@ elif method =='gDRO':
             train_data,cv_data,test_data = datas
 
             trainDataset = LIDC_Dataset(*train_data)
-            validDataset = LIDC_Dataset(*cv_data)
-            testDataset = LIDC_Dataset(*test_data)
+            
 
             subclass_counts=trainDataset.get_class_counts('subclass')
 
             tr = trainDataset
-            val = validDataset
-            test= testDataset
+            
 
             train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
 
