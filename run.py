@@ -442,14 +442,17 @@ elif method =='gDRO':
             
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
-            datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
+            datas_cur,datas_cur2 = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
 
-            train_data,cv_data,test_data = datas_cur
+            train_data,cv_data,_ = datas_cur
+            train_data2,cv_data2,test_data = datas_cur2
 
             trainDataset = LIDC_Dataset(*train_data)
             validDataset = LIDC_Dataset(*cv_data)
             testDataset = LIDC_Dataset(*test_data)
 
+            trainDataset2 = LIDC_Dataset(*train_data2)
+            validDataset2 = LIDC_Dataset(*cv_data2)
 
             tr = trainDataset
             val = validDataset
@@ -464,13 +467,23 @@ elif method =='gDRO':
                         val_weights,
                         len(val_weights))
             val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler=sampler2)
-            test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)   
+            test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)  
+            
+
+            train_dataloader2 = DataLoader(trainDataset2, batch_size =128,sampler=sampler,shuffle=False)
+
+            val_weights = im_utils.get_sampler_weights(validDataset2.subclasses)
+            sampler2 = torch.utils.data.WeightedRandomSampler(
+                        val_weights,
+                        len(val_weights))
+            val_dataloader2 = DataLoader(validDataset2,batch_size = len(validDataset2) ,shuffle = False,sampler=sampler2)
 
             device = torch.device('cuda')
 
             model = models.TransferModel18()
 
-            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=300,mode='cur_gDRO',subclass_counts=subclass_counts)
+            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=50,mode='cur_gDRO',subclass_counts=subclass_counts)
+            modelA,max_acc = train_gdro(params,modelA,train_dataloader2,val_dataloader2,num_epochs=200,mode='cur_gDRO',subclass_counts=subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
