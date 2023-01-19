@@ -315,125 +315,322 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
            datas[i]: a list of size three, of features, labels, subclass labels
     '''
 
+    if mode =='split':
+        
+        mask_var = df_splits['wMSE'] == 0
+
+        df_splits = pd.read_csv(file, index_col=0)
+
+        df_splits1 = df_splits[mask_var]
+        df_splits1.reset_index(drop=True, inplace=True)
+        df_splits2 = df_splits[~mask_var]
+        df_splits2.reset_index(drop=True, inplace=True)
+
+        df_features = images_to_df()
     
 
-    df_features = images_to_df()
+    
+        
+    
+        df_features['clusters'] = df_features['malignancy']
+    
+        df_features.sort_values('noduleID', inplace=True)
+        df_features.reset_index(drop=True, inplace=True)
     
 
+        def label_cls (row):
+                if row['clusters'] < 3 :
+                    return 0
+                elif row['clusters'] == 3 :
+                    return 1
+                else:
+                    return 2
+        def label_cls_subclass (row):
+                if row['clusters']==1 :
+                    return 0
+                elif row['clusters']==2:
+                    return 1
+                elif row['clusters']==3:
+                    return 2
+                elif row['clusters']==4:
+                    return 3
+                elif row['clusters']==5:
+                    return 4
     
-    df_splits = pd.read_csv(file, index_col=0)
-    df_splits.reset_index(inplace=True,drop = True)
     
-    df_features['clusters'] = df_features['malignancy']
+        df_features['cur_cls'] = df_features['clusters'].astype(int)
     
-    df_features.sort_values('noduleID', inplace=True)
-    df_features.reset_index(drop=True, inplace=True)
-    
+        df_features['clusters'] = df_features['clusters'].astype(int)
+        df_features['malignancy_b'] =  df_features.apply(lambda row: label_cls(row), axis=1)
+        df_features['malignancy'] =  df_features.apply(lambda row: label_cls_subclass(row), axis=1)
 
-    def label_cls (row):
-            if row['clusters'] < 3 :
-                return 0
-            elif row['clusters'] == 3 :
-                return 1
-            else:
-                return 2
-    def label_cls_subclass (row):
-            if row['clusters']==1 :
-                return 0
-            elif row['clusters']==2:
-                return 1
-            elif row['clusters']==3:
-                return 2
-            elif row['clusters']==4:
-                return 3
-            elif row['clusters']==5:
-                return 4
-    
-    
-    df_features['cur_cls'] = df_features['clusters'].astype(int)
-    
-    df_features['clusters'] = df_features['clusters'].astype(int)
-    df_features['malignancy_b'] =  df_features.apply(lambda row: label_cls(row), axis=1)
-    df_features['malignancy'] =  df_features.apply(lambda row: label_cls_subclass(row), axis=1)
-
-    df_features['clusters'] = df_features['malignancy']
+        df_features['clusters'] = df_features['malignancy']
 
     
     
     
-    df_splits = pd.read_csv(file,index_col=0)
-    df_splits = df_splits[df_splits['noduleID'].isin(df_features['noduleID'])]
+        
+        df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
 
-    df_splits.sort_values('noduleID', inplace=True)
-    df_splits.reset_index(drop=True, inplace=True)
+        df_splits1.sort_values('noduleID', inplace=True)
+        df_splits1.reset_index(drop=True, inplace=True)
     
-    dfs = []
+        dfs = []
     
-    for i in range(3):
-        dfs.append(df_features.loc[(df_splits['splits'] == i).values])
+        for i in range(3):
+            dfs.append(df_features.loc[(df_splits['splits'] == i).values])
 
-    datas = []
+        datas = []
 
-    # If we choose to do curriculum learning, sort data based on wMSE computed from multiple radiologist labels
-    if mode=='curriculum':
+        # If we choose to do curriculum learning, sort data based on wMSE computed from multiple radiologist labels
         dfs2=[]
     
-        for i in dfs:
-            i = sort_df(i)
-            dfs2.append(i)
+            for i in dfs:
+                i = sort_df(i)
+                dfs2.append(i)
         
-        print(dfs2)
-        for i, d in enumerate(dfs2):
-                # If the training dataset, we need to do data augmentation
-                if i == 0:
+            print(dfs2)
+            for i, d in enumerate(dfs2):
+                    # If the training dataset, we need to do data augmentation
+                    if i == 0:
                     
-                    imgs = []
-                    for img in d['image']:
-                        imgs.extend(augment_image(img))
-                    X = torch.stack(imgs).to(device=device, dtype=torch.float32)
+                        imgs = []
+                        for img in d['image']:
+                            imgs.extend(augment_image(img))
+                        X = torch.stack(imgs).to(device=device, dtype=torch.float32)
 
-                    # hacky way to repeat the labels for the additional augmented images
-                    augments = X.shape[0] // len(d)
-                    d_temp = pd.DataFrame()
-                    d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
-                    d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
-                    d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
-                    d = d_temp
-                    d.reset_index(drop=True, inplace=True)
-                else:
-                    X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
+                        # hacky way to repeat the labels for the additional augmented images
+                        augments = X.shape[0] // len(d)
+                        d_temp = pd.DataFrame()
+                        d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
+                        d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
+                        d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
+                        d = d_temp
+                        d.reset_index(drop=True, inplace=True)
+                    else:
+                        X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
                 
 
-                y = torch.tensor(d['malignancy_b'].values, device=device, dtype=torch.long)
-                c = torch.tensor(d['clusters'].values, device=device, dtype=torch.long)
+                    y = torch.tensor(d['malignancy_b'].values, device=device, dtype=torch.long)
+                    c = torch.tensor(d['clusters'].values, device=device, dtype=torch.long)
             
                
-                datas.append((X, y, c))
-    else:
-        for i, d in enumerate(dfs):
-                if i == 0:
-                    
-                    imgs = []
-                    for img in d['image']:
-                        imgs.extend(augment_image(img))
-                    X = torch.stack(imgs).to(device=device, dtype=torch.float32)
+                    datas.append((X, y, c))
 
-                    # hacky way to repeat the labels for the additional augmented images
-                    augments = X.shape[0] // len(d)
-                    d_temp = pd.DataFrame()
-                    d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
-                    d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
-                    d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
-                    d = d_temp
-                    d.reset_index(drop=True, inplace=True)
-                else:
-                    X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
-                
+        
 
-                y = torch.tensor(d['malignancy_b'].values, device=device, dtype=torch.long)
-                c = torch.tensor(d['clusters'].values, device=device, dtype=torch.long)
-            
-               
-                datas.append((X, y, c))
+
+        df_features = images_to_df()
     
-    return datas
+
+    
+        
+    
+        df_features['clusters'] = df_features['malignancy']
+    
+        df_features.sort_values('noduleID', inplace=True)
+        df_features.reset_index(drop=True, inplace=True)
+    
+
+        def label_cls (row):
+                if row['clusters'] < 3 :
+                    return 0
+                elif row['clusters'] == 3 :
+                    return 1
+                else:
+                    return 2
+        def label_cls_subclass (row):
+                if row['clusters']==1 :
+                    return 0
+                elif row['clusters']==2:
+                    return 1
+                elif row['clusters']==3:
+                    return 2
+                elif row['clusters']==4:
+                    return 3
+                elif row['clusters']==5:
+                    return 4
+    
+    
+        df_features['cur_cls'] = df_features['clusters'].astype(int)
+    
+        df_features['clusters'] = df_features['clusters'].astype(int)
+        df_features['malignancy_b'] =  df_features.apply(lambda row: label_cls(row), axis=1)
+        df_features['malignancy'] =  df_features.apply(lambda row: label_cls_subclass(row), axis=1)
+
+        df_features['clusters'] = df_features['malignancy']
+
+        
+    
+    
+        df_splits1 = pd.read_csv(file,index_col=0)
+        df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
+
+        df_splits1.sort_values('noduleID', inplace=True)
+        df_splits1.reset_index(drop=True, inplace=True)
+    
+        dfs = []
+    
+        for i in range(3):
+            dfs.append(df_features.loc[(df_splits['splits'] == i).values])
+
+        datas2 = []
+
+        # If we choose to do curriculum learning, sort data based on wMSE computed from multiple radiologist labels
+        dfs2=[]
+    
+            for i in dfs:
+                i = sort_df(i)
+                dfs2.append(i)
+        
+            print(dfs2)
+            for i, d in enumerate(dfs2):
+                    # If the training dataset, we need to do data augmentation
+                    if i == 0:
+                    
+                        imgs = []
+                        for img in d['image']:
+                            imgs.extend(augment_image(img))
+                        X = torch.stack(imgs).to(device=device, dtype=torch.float32)
+
+                        # hacky way to repeat the labels for the additional augmented images
+                        augments = X.shape[0] // len(d)
+                        d_temp = pd.DataFrame()
+                        d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
+                        d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
+                        d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
+                        d = d_temp
+                        d.reset_index(drop=True, inplace=True)
+                    else:
+                        X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
+                
+
+                    y = torch.tensor(d['malignancy_b'].values, device=device, dtype=torch.long)
+                    c = torch.tensor(d['clusters'].values, device=device, dtype=torch.long)
+            
+               
+                    datas2.append((X, y, c))
+
+        return datas,datas2
+            
+    else:
+        df_features = images_to_df()
+    
+
+    
+        df_splits = pd.read_csv(file, index_col=0)
+        df_splits.reset_index(inplace=True,drop = True)
+    
+        df_features['clusters'] = df_features['malignancy']
+    
+        df_features.sort_values('noduleID', inplace=True)
+        df_features.reset_index(drop=True, inplace=True)
+    
+
+        def label_cls (row):
+                if row['clusters'] < 3 :
+                    return 0
+                elif row['clusters'] == 3 :
+                    return 1
+                else:
+                    return 2
+        def label_cls_subclass (row):
+                if row['clusters']==1 :
+                    return 0
+                elif row['clusters']==2:
+                    return 1
+                elif row['clusters']==3:
+                    return 2
+                elif row['clusters']==4:
+                    return 3
+                elif row['clusters']==5:
+                    return 4
+    
+    
+        df_features['cur_cls'] = df_features['clusters'].astype(int)
+    
+        df_features['clusters'] = df_features['clusters'].astype(int)
+        df_features['malignancy_b'] =  df_features.apply(lambda row: label_cls(row), axis=1)
+        df_features['malignancy'] =  df_features.apply(lambda row: label_cls_subclass(row), axis=1)
+
+        df_features['clusters'] = df_features['malignancy']
+
+    
+    
+    
+        df_splits = pd.read_csv(file,index_col=0)
+        df_splits = df_splits[df_splits['noduleID'].isin(df_features['noduleID'])]
+
+        df_splits.sort_values('noduleID', inplace=True)
+        df_splits.reset_index(drop=True, inplace=True)
+    
+        dfs = []
+    
+        for i in range(3):
+            dfs.append(df_features.loc[(df_splits['splits'] == i).values])
+
+        datas = []
+
+        # If we choose to do curriculum learning, sort data based on wMSE computed from multiple radiologist labels
+        if mode=='curriculum':
+            dfs2=[]
+    
+            for i in dfs:
+                i = sort_df(i)
+                dfs2.append(i)
+        
+            print(dfs2)
+            for i, d in enumerate(dfs2):
+                    # If the training dataset, we need to do data augmentation
+                    if i == 0:
+                    
+                        imgs = []
+                        for img in d['image']:
+                            imgs.extend(augment_image(img))
+                        X = torch.stack(imgs).to(device=device, dtype=torch.float32)
+
+                        # hacky way to repeat the labels for the additional augmented images
+                        augments = X.shape[0] // len(d)
+                        d_temp = pd.DataFrame()
+                        d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
+                        d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
+                        d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
+                        d = d_temp
+                        d.reset_index(drop=True, inplace=True)
+                    else:
+                        X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
+                
+
+                    y = torch.tensor(d['malignancy_b'].values, device=device, dtype=torch.long)
+                    c = torch.tensor(d['clusters'].values, device=device, dtype=torch.long)
+            
+               
+                    datas.append((X, y, c))
+        else:
+            for i, d in enumerate(dfs):
+                    if i == 0:
+                    
+                        imgs = []
+                        for img in d['image']:
+                            imgs.extend(augment_image(img))
+                        X = torch.stack(imgs).to(device=device, dtype=torch.float32)
+
+                        # hacky way to repeat the labels for the additional augmented images
+                        augments = X.shape[0] // len(d)
+                        d_temp = pd.DataFrame()
+                        d_temp['cur_cls'] = np.repeat(d['cur_cls'].values, augments)
+                        d_temp['malignancy_b'] = np.repeat(d['malignancy_b'].values, augments)
+                        d_temp['clusters'] = np.repeat(d['clusters'].values, augments)
+                        d = d_temp
+                        d.reset_index(drop=True, inplace=True)
+                    else:
+                        X = torch.stack(list(d['image'])).to(device=device, dtype=torch.float32)
+                
+
+                    y = torch.tensor(d['malignancy_b'].values, device=device, dtype=torch.long)
+                    c = torch.tensor(d['clusters'].values, device=device, dtype=torch.long)
+            
+               
+                    datas.append((X, y, c))
+    
+        return datas
