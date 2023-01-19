@@ -469,7 +469,7 @@ elif method =='gDRO':
             val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler=sampler2)
             test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)  
             
-
+            sampler = SequentialSampler(trainDataset2)
             train_dataloader2 = DataLoader(trainDataset2, batch_size =128,sampler=sampler,shuffle=False)
 
             val_weights = im_utils.get_sampler_weights(validDataset2.subclasses)
@@ -522,7 +522,7 @@ elif method =='gDRO':
 
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
-            train_data,cv_data,test_data = datas
+            train_data,cv_data,test_data = datas2
 
             trainDataset = LIDC_Dataset(*train_data)
             
