@@ -438,7 +438,14 @@ elif method =='gDRO':
                     'scheduler_choice':1,
                     'opt': 'Adam' 
                     }
-            
+            params_cur ={'learning_rate': 0.0001,
+                    'patience':2,
+                    'batch_size': 128,
+                    'w_d': 0.005,
+                    'factor': 0.91,
+                    'scheduler_choice':1,
+                    'opt': 'Adam' 
+                    }
             
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
@@ -475,7 +482,7 @@ elif method =='gDRO':
             model = models.TransferModel18()
 
             
-            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=300,mode='cur_gDRO',subclass_counts=subclass_counts)
+            modelA,max_acc = train_gdro(params_cur,model,train_dataloader,val_dataloader,num_epochs=300,mode='cur_gDRO',subclass_counts=subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
