@@ -316,10 +316,11 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
     '''
 
     if mode =='split':
-        
-        mask_var = df_splits['wMSE'] == 0
 
         df_splits = pd.read_csv(file, index_col=0)
+        mask_var = df_splits['wMSE'] == 0
+
+        
 
         df_splits1 = df_splits[mask_var]
         df_splits1.reset_index(drop=True, inplace=True)
