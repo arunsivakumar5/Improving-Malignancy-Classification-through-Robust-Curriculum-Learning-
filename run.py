@@ -231,7 +231,7 @@ if method =='ERM':
         'factor': 0.3,
         'scheduler_choice': 1,
         'opt': 'SGD'  }
-        
+     
     if args.curriculum == 'Both':
 
         for i in range(1,args.trials + 1): 
@@ -253,7 +253,7 @@ if method =='ERM':
 
             sampler = SequentialSampler(trainDataset)
 
-            train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
+            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
 
             val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
             test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)   
@@ -264,7 +264,7 @@ if method =='ERM':
                 model = models.TransferModel18()
             else:
                 model = models.TransferModel18(freeze=False)
-            modelA,max_acc = train_erm(params2,train_dataloader,val_dataloader,model,num_epochs=150,mode='cur_erm')
+            modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=150,mode='cur_erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_erm.pth'))
             print("Cur ERM trained!")
       
