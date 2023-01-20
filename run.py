@@ -186,9 +186,10 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--method', '-n', default='ERM', help='The method using which the classifier is trained ')
 parser.add_argument('--trials',  type=int, default=30, help='The number of times we repeat the experiment with different train-validation-test splits ')
-parser.add_argument('--prop', '-t', default=100, help='The proprtion by which the dataset is to be split. The given proprtion goes to classifier retraining Note: This parameter is needed for CRIS ')
-parser.add_argument('--curriculum', action='store',  help='If curriculum information has to be used to sort the instances by Easy to hard as data is fed into the classiifer ')
-parser.add_argument('--significance', action='store',  help='If significance tests should be carried out between a set of classifier ')
+parser.add_argument('--freeze', action='store',  help='If all layers except the classifier layer are to be frozen to carry out transfer learning or to just use the pretrained weights as initial weights')
+parser.add_argument('--prop', '-t', default=100, help='The proprtion by which the dataset is to be split. The given proprtion goes to classifier retraining. Note: This parameter is needed for CRIS ')
+parser.add_argument('--curriculum', action='store',  help='If curriculum information has to be used to sort the instances by Easy to hard as data is fed into the classiifer sequentially')
+parser.add_argument('--significance', action='store',  help='If significance tests should be carried out between the results of a classifier with curriculum learning and the same classifier without curriculum learning')
 
 
 args = parser.parse_args()
@@ -259,8 +260,10 @@ if method =='ERM':
 
             device = torch.device('cuda')
 
-            model = models.TransferModel18()
-
+            if args.freeze == 'Yes':
+                model = models.TransferModel18()
+            else:
+                model = models.TransferModel18(freeze=False)
             modelA,max_acc = train_erm(params2,train_dataloader,val_dataloader,model,num_epochs=150,mode='cur_erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_erm.pth'))
             print("Cur ERM trained!")
@@ -322,7 +325,11 @@ if method =='ERM':
             test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)
 
             device = torch.device('cuda')
-            model = models.TransferModel18()
+
+            if args.freeze == 'Yes':
+                model = models.TransferModel18()
+            else:
+                model = models.TransferModel18(freeze=False)
 
             modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=150,mode='erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
@@ -486,7 +493,10 @@ elif method =='gDRO':
 
             device = torch.device('cuda')
 
-            model = models.TransferModel18()
+            if args.freeze == 'Yes':
+                model = models.TransferModel18()
+            else:
+                model = models.TransferModel18(freeze=False)
 
             
             modelA,max_acc = train_gdro(params_cur2,model,train_dataloader,val_dataloader,num_epochs=300,mode='cur_gDRO',subclass_counts=subclass_counts)
@@ -549,7 +559,10 @@ elif method =='gDRO':
             
 
             device = torch.device('cuda')
-            model = models.TransferModel18()
+            if args.freeze == 'Yes':
+                model = models.TransferModel18()
+            else:
+                model = models.TransferModel18(freeze=False)
 
             modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
