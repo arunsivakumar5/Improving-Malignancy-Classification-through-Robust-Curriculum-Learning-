@@ -453,7 +453,7 @@ elif method =='gDRO':
                     #'scheduler_choice':1,
                     #'opt': 'Adam' 
                     #}
-            if freeze =='Yes':
+            if args.freeze =='Yes':
                 params_cur = {'learning_rate': 0.01,
                                 'patience': 50,
                                 'batch_size': 512,
