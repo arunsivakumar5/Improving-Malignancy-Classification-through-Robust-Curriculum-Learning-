@@ -474,7 +474,7 @@ elif method =='gDRO':
 
             sampler = SequentialSampler(trainDataset)
             subclass_counts=trainDataset.get_class_counts('subclass')
-            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler,shuffle=False)
+            train_dataloader = DataLoader(tr, batch_size =params_cur['batch_size'],sampler=sampler,shuffle=False)
 
             val_weights =   im_utils.get_sampler_weights(validDataset.subclasses)
             test_weights =   im_utils.get_sampler_weights(testDataset.subclasses)
@@ -493,7 +493,7 @@ elif method =='gDRO':
                 model = models.TransferModel18(freeze=False)
 
             
-            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO',subclass_counts=subclass_counts)
+            modelA,max_acc = train_gdro(params_cur,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO',subclass_counts=subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
