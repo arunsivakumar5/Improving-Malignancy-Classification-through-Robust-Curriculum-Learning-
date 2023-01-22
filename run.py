@@ -469,9 +469,12 @@ elif method =='gDRO':
             subclass_counts=trainDataset.get_class_counts('subclass')
             train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler,shuffle=False)
 
+            val_weights =   im_utils.get_sampler_weights(validDataset.subclasses)
+            test_weights =   im_utils.get_sampler_weights(testDataset.subclasses)
+
             
-            val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False)
-            test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False)  
+            val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights,len(val_weights)) )
+            test_dataloader = DataLoader(test, batch_size = len(testDataset) ,shuffle = False,sampler=torch.utils.data.WeightedRandomSampler(test_weights,len(test_weights)) )  
             
             
 
