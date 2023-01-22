@@ -452,7 +452,7 @@ elif method =='gDRO':
                     #'factor': 0.2,
                     #'scheduler_choice':1,
                     #'opt': 'Adam' 
-                    }
+                    #}
             if freeze =='Yes':
                 params_cur = {'learning_rate': 0.01,
                                 'patience': 50,
@@ -508,7 +508,7 @@ elif method =='gDRO':
                 model = models.TransferModel18(freeze=False)
 
             
-            modelA,max_acc = train_gdro(params_cur,model,train_dataloader,val_dataloader,num_epochs=300,mode='cur_gDRO',subclass_counts=subclass_counts)
+            modelA,max_acc = train_gdro(params_cur,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO',subclass_counts=subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
@@ -573,7 +573,7 @@ elif method =='gDRO':
             else:
                 model = models.TransferModel18(freeze=False)
 
-            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts)
+            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=150,mode ='gDRO',subclass_counts = subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
