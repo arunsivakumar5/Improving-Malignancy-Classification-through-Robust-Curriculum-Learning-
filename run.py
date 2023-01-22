@@ -439,23 +439,15 @@ elif method =='gDRO':
 
             
             
-            if args.freeze =='Yes':
-                params = {'learning_rate': 0.01,
-                                'patience': 50,
-                                'batch_size': 512,
-                                'w_d': 0.9,
-                                'factor': 0.3,
-                                'scheduler_choice': 2,
-                                'opt': 'Adam'}
-            else:
-                params= {'learning_rate': 0.0005,
-                        'patience':60,
-                        'batch_size': 256,
-                        'w_d': 0.2,
-                        'factor': 0.6,
+            
+            params ={'learning_rate': 0.0005,
+                        'patience':2,
+                        'batch_size': 128,
+                        'w_d': 0.005,
+                        'factor': 0.2,
                         'scheduler_choice':1,
-                        'opt': 'SGD' 
-                        }
+                        'opt': 'Adam' }
+}
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
             datas_cur= im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
@@ -477,12 +469,9 @@ elif method =='gDRO':
             subclass_counts=trainDataset.get_class_counts('subclass')
             train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler,shuffle=False)
 
-            val_weights = im_utils.get_sampler_weights(validDataset.subclasses)
-            sampler2 = torch.utils.data.WeightedRandomSampler(
-                        val_weights,
-                        len(val_weights))
-            val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler=sampler2)
-            test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)  
+            
+            val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False)
+            test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False)  
             
             
 
