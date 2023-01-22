@@ -447,7 +447,7 @@ elif method =='gDRO':
                         'factor': 0.2,
                         'scheduler_choice':1,
                         'opt': 'Adam' }
-}
+
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
             datas_cur= im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
