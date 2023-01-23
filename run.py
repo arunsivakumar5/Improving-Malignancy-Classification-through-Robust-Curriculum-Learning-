@@ -314,7 +314,7 @@ if method =='ERM':
             val = validDataset
             test= testDataset
 
-            train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
+            train_weights = im_utils.get_sampler_weights(trainDataset.labels)    
 
 
             sampler = torch.utils.data.WeightedRandomSampler(
