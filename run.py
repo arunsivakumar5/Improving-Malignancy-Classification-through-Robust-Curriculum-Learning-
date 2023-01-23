@@ -438,7 +438,7 @@ elif method =='gDRO':
         for i in range(1,args.trials + 1): 
 
             
-            if arges.freeze =='No':
+            if args.freeze =='No':
             
                 params ={'learning_rate': 0.0005,
                                 'patience':2,
