@@ -438,23 +438,39 @@ elif method =='gDRO':
         for i in range(1,args.trials + 1): 
 
             
+            if arges.freeze =='No':
             
+                params ={'learning_rate': 0.0005,
+                                'patience':2,
+                                'batch_size': 128,
+                                'w_d': 0.005,
+                                'factor': 0.2,
+                                'scheduler_choice':1,
+                                'opt': 'Adam' }
             
-            params ={'learning_rate': 0.0005,
-                            'patience':2,
-                            'batch_size': 128,
-                            'w_d': 0.005,
-                            'factor': 0.2,
-                            'scheduler_choice':1,
-                            'opt': 'Adam' }
-            
-            params_cur ={'learning_rate': 0.001,
-            'patience': 50,
-            'batch_size': 1024,
-            'w_d': 0.6,
-            'factor': 0.6,
-            'scheduler_choice': 2,
-            'opt': 'SGD'}
+                params_cur ={'learning_rate': 0.001,
+                            'patience': 50,
+                            'batch_size': 1024,
+                            'w_d': 0.6,
+                            'factor': 0.6,
+                            'scheduler_choice': 2,
+                            'opt': 'SGD'}
+            else:
+                params ={
+                        'learning_rate': 0.01,
+                        'patience2': 100,
+                        'batch_size': 256,
+                        'w_d': 0.4,
+                        'factor': 0.8,
+                        'scheduler_choice': 1,
+                        'opt': 'SGD' }
+                params_cur = {'learning_rate': 0.01,
+                            'patience': 50,
+                            'batch_size': 512,
+                            'w_d': 0.9,
+                            'factor': 0.3,
+                            'scheduler_choice': 2,
+                            'opt': 'Adam'}
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
             datas_cur= im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
