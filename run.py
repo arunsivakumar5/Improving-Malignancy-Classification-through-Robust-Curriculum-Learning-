@@ -458,7 +458,7 @@ elif method =='gDRO':
             else:
                 params ={
                         'learning_rate': 0.01,
-                        'patience2': 100,
+                        'patience': 100,
                         'batch_size': 256,
                         'w_d': 0.4,
                         'factor': 0.8,
