@@ -75,7 +75,7 @@ import utils.data_utils as d_utils
 import models
 from dataset import LIDC_Dataset
 from loss import LossComputer
-from train import train_erm,train_gdro
+from train import train_erm,train_gdro,train_gdro_ct
 
 
 
