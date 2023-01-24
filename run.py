@@ -473,24 +473,48 @@ elif method =='gDRO':
                             'opt': 'Adam'}
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
-            datas_cur= im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
+            data_easy,datas_hard = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='split')  #mode =='' curriculum
 
-            train_data,cv_data,test_data = datas_cur
+            datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum') 
+
+            _,cv_data,test_data = datas_cur
             
 
-            trainDataset = LIDC_Dataset(*train_data)
-            validDataset = LIDC_Dataset(*cv_data)
+            train_data_easy,cv_data_easy,_ = data_easy
+
+            train_data_hard,cv_data_hard,_ = datas_hard
+
+            trainDataset1 = LIDC_Dataset(*train_data_easy)
+            validDataset1 = LIDC_Dataset(*cv_data_easy)
+
+            trainDataset2 = LIDC_Dataset(*train_data_hard)
+            validDataset2 = LIDC_Dataset(*cv_data_hard)
+
             testDataset = LIDC_Dataset(*test_data)
 
             
 
-            tr = trainDataset
-            val = validDataset
+            tr = trainDataset1
+            val = validDataset1
             test=testDataset
 
-            sampler = SequentialSampler(trainDataset)
-            subclass_counts=trainDataset.get_class_counts('subclass')
-            train_dataloader = DataLoader(tr, batch_size =params_cur['batch_size'],sampler=sampler,shuffle=False)
+            
+            subclass_counts1=trainDataset1.get_class_counts('subclass')
+            train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset1),shuffle=False)
+
+            val_weights1 =   im_utils.get_sampler_weights(validDataset1.subclasses)
+            val_dataloader1 = DataLoader(val,batch_size = len(validDataset1) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights1,len(val_weights1)) )
+
+
+
+            tr = trainDataset2
+            val = validDataset2
+
+            subclass_counts2=trainDataset2.get_class_counts('subclass')
+            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset2),shuffle=False)
+
+            val_weights2 =   im_utils.get_sampler_weights(validDataset2.subclasses)
+            val_dataloader2 = DataLoader(val,batch_size = len(validDataset2) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights2,len(val_weights2)) )
 
             val_weights =   im_utils.get_sampler_weights(validDataset.subclasses)
             test_weights =   im_utils.get_sampler_weights(testDataset.subclasses)
@@ -509,7 +533,7 @@ elif method =='gDRO':
                 model = models.TransferModel18(freeze=False)
 
             
-            modelA,max_acc = train_gdro(params_cur,model,train_dataloader,val_dataloader,num_epochs=150,mode='cur_gDRO',subclass_counts=subclass_counts)
+            modelA,max_acc = train_gdro_ct(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=150,mode='cur_gDRO',subclass_counts=subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
