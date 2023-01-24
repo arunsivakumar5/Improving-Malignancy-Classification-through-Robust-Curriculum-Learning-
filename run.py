@@ -516,6 +516,13 @@ elif method =='gDRO':
             val_weights2 =   im_utils.get_sampler_weights(validDataset2.subclasses)
             val_dataloader2 = DataLoader(val,batch_size = len(validDataset2) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights2,len(val_weights2)) )
 
+
+            validDataset = LIDC_Dataset(*cv_data)
+            testDataset = LIDC_Dataset(*test_data)
+
+
+            tr = trainDataset
+            val = validDataset
             val_weights =   im_utils.get_sampler_weights(validDataset.subclasses)
             test_weights =   im_utils.get_sampler_weights(testDataset.subclasses)
 
