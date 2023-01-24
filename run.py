@@ -502,7 +502,11 @@ elif method =='gDRO':
             subclass_counts1=trainDataset1.get_class_counts('subclass')
             train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset1),shuffle=False)
 
-            val_weights1 =   im_utils.get_sampler_weights(validDataset1.subclasses)
+            try:
+                val_weights1 =   im_utils.get_sampler_weights(validDataset1.subclasses)
+            except:
+                val_weights1 =   im_utils.get_sampler_weights(validDataset1.labels)
+
             val_dataloader1 = DataLoader(val,batch_size = len(validDataset1) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights1,len(val_weights1)) )
 
 
