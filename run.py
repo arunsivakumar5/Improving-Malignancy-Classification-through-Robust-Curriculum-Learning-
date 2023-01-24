@@ -540,7 +540,7 @@ elif method =='gDRO':
                 model = models.TransferModel18(freeze=False)
 
             
-            modelA,max_acc = train_gdro_ct(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=150,mode='cur_gDRO',subclass_counts=subclass_counts)
+            modelA,max_acc = train_gdro_ct(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=150,mode='cur_gDRO',subclass_counts_easy=subclass_counts1,subclass_counts_hard=subclass_counts2)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
