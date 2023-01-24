@@ -521,7 +521,7 @@ elif method =='gDRO':
             testDataset = LIDC_Dataset(*test_data)
 
 
-            tr = trainDataset
+            
             val = validDataset
             val_weights =   im_utils.get_sampler_weights(validDataset.subclasses)
             test_weights =   im_utils.get_sampler_weights(testDataset.subclasses)
