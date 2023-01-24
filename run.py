@@ -327,9 +327,9 @@ if method =='ERM':
             device = torch.device('cuda')
 
             if args.freeze == 'Yes':
-                model = models.TransferModel18()
+                model = models.TransferModel18(num_classes=2)
             else:
-                model = models.TransferModel18(freeze=False)
+                model = models.TransferModel18(freeze=False,num_classes=2)
 
             modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=150,mode='erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
