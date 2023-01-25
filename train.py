@@ -332,6 +332,10 @@ def train_gdro_ct(params,model1,model2, train_dataloader1, val_dataloader1,train
                     loss_targets_cur = targets['subclass']
                     loss_targets = loss_targets.to(device)
                     loss_targets_cur = loss_targets_cur.to(device)
+                    if epoch ==1:
+                        print(model)
+                    else:
+                        pass
                     logits = model(inputs)
                     logits = logits.to(device)
                     co = criterion(logits, loss_targets,loss_targets_cur)
