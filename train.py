@@ -377,12 +377,18 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
                 model.eval() 
                 cur_model = model      
                 if epoch < 75:
-                    over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(valloader,model, 4)
+                    over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(valloader,model, 4)
                 else:
                     over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(valloader,model, 5)
                 
-                valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
-                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
+                
+                try:
+                    valacc = min(vacc1,vacc2,vacc3,vacc4)
+                    print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
+                except:
+                    valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
+                    print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
+
                 if valacc > max_val_acc:
                     max_val_acc = valacc
                     model = cur_model
