@@ -335,46 +335,71 @@ def train_gdro_ct(params,model1,model2, train_dataloader1, val_dataloader1,train
                 device = torch.device('cuda')   
                 model = model.to(device)
 
-                criterion = torch.nn.CrossEntropyLoss(reduction='none')
-                criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
+                
                 trainloader = train_dataloader2
                 valloader = val_dataloader2
+            
+            
+            model.train()
+            if epoch <75:
+                criterion = torch.nn.CrossEntropyLoss(reduction='none')
+                criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
+                for batch_idx, (inputs, targets) in enumerate(train_dataloader1):
+                                 
+            
+                    inputs = inputs.to(device)
+            
+                    loss_targets = targets['superclass']
+                    loss_targets_cur = targets['subclass']
+                    loss_targets = loss_targets.to(device)
+                    loss_targets_cur = loss_targets_cur.to(device)
+                    logits = model(inputs)
+                    logits = logits.to(device)
+                    co = criterion(logits, loss_targets,loss_targets_cur)
+            
+            
+                    loss, (losses, corrects) = co
+            
+                    optimizer.zero_grad()
+            
+                    loss.backward()
+                    predicteds = logits.argmax(1)
+                    actuals = targets['superclass']
+                    actuals = actuals.to(device)
+            
+                    trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
+            
+                    optimizer.step()
+
             else:
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
-                trainloader = train_dataloader2
-                valloader = val_dataloader2
+                for batch_idx, (inputs, targets) in enumerate(train_dataloader2):
+                                 
             
-            model.train()
-            for batch_idx, (inputs, targets) in enumerate(trainloader):
+                    inputs = inputs.to(device)
             
-           
-  
-                
-            
-                inputs = inputs.to(device)
-            
-                loss_targets = targets['superclass']
-                loss_targets_cur = targets['subclass']
-                loss_targets = loss_targets.to(device)
-                loss_targets_cur = loss_targets_cur.to(device)
-                logits = model(inputs)
-                logits = logits.to(device)
-                co = criterion(logits, loss_targets,loss_targets_cur)
+                    loss_targets = targets['superclass']
+                    loss_targets_cur = targets['subclass']
+                    loss_targets = loss_targets.to(device)
+                    loss_targets_cur = loss_targets_cur.to(device)
+                    logits = model(inputs)
+                    logits = logits.to(device)
+                    co = criterion(logits, loss_targets,loss_targets_cur)
             
             
-                loss, (losses, corrects) = co
+                    loss, (losses, corrects) = co
             
-                optimizer.zero_grad()
+                    optimizer.zero_grad()
             
-                loss.backward()
-                predicteds = logits.argmax(1)
-                actuals = targets['superclass']
-                actuals = actuals.to(device)
+                    loss.backward()
+                    predicteds = logits.argmax(1)
+                    actuals = targets['superclass']
+                    actuals = actuals.to(device)
             
-                trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
+                    trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
             
-                optimizer.step()
+                    optimizer.step()
             
         
         
