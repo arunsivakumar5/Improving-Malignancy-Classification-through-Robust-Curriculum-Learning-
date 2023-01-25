@@ -314,7 +314,7 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
             pass
         
     
-        if epoch<15:
+        if epoch<75:
             
             criterion = torch.nn.CrossEntropyLoss(reduction='none')
             criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
