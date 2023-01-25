@@ -319,7 +319,7 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 trainloader = train_dataloader1
-                valloader = val_dataloader
+                valloader = val_dataloader1
 
                 
             elif epoch ==75:
@@ -329,12 +329,12 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 trainloader = train_dataloader2
-                valloader = val_dataloader
+                valloader = val_dataloader2
             else:
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 trainloader = train_dataloader2
-                valloader = val_dataloader
+                valloader = val_dataloader2
             
             model.train()
             for batch_idx, (inputs, targets) in enumerate(trainloader):
