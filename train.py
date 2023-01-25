@@ -323,7 +323,7 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
             elif epoch ==75:
             
                 valacc = 0
-                model.fc = nn.Sequential(nn.Linear(in_features=512, out_features=2, bias=True, device=device),)
+                model.fc = nn.Sequential(nn.Linear(in_features=512, out_features=3, bias=True, device=device),)
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 trainloader = train_dataloader2
