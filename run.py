@@ -473,14 +473,7 @@ elif method =='gDRO':
                             'opt': 'Adam'}
 
 
-                params ={
-                        'learning_rate': 0.01,
-                        'patience': 10,
-                        'batch_size': 256,
-                        'w_d': 0.4,
-                        'factor': 0.8,
-                        'scheduler_choice': 1,
-                        'opt': 'SGD' }
+                
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
             data_easy,datas_hard = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='split')  #mode =='' curriculum
@@ -510,7 +503,7 @@ elif method =='gDRO':
 
             
             subclass_counts1=trainDataset1.get_class_counts('subclass')
-            train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset1),shuffle=False)
+            train_dataloader1 = DataLoader(tr, batch_size =params_cur['batch_size'],sampler=SequentialSampler(trainDataset1),shuffle=False)
 
             try:
                 val_weights1 =   im_utils.get_sampler_weights(validDataset1.subclasses)
@@ -525,7 +518,7 @@ elif method =='gDRO':
             val = validDataset2
 
             subclass_counts2=trainDataset2.get_class_counts('subclass')
-            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset2),shuffle=False)
+            train_dataloader2 = DataLoader(tr, batch_size =params_cur['batch_size'],sampler=SequentialSampler(trainDataset2),shuffle=False)
 
             val_weights2 =   im_utils.get_sampler_weights(validDataset2.subclasses)
             val_dataloader2 = DataLoader(val,batch_size = len(validDataset2) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights2,len(val_weights2)) )
@@ -554,7 +547,7 @@ elif method =='gDRO':
                 model = models.TransferModel18(freeze=False)
 
             
-            modelA,max_acc = train_gdro_ct(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=150,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2)
+            modelA,max_acc = train_gdro_ct(params_cur,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=150,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2)
             #modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
