@@ -326,11 +326,15 @@ def train_gdro_ct(params,model,model2, train_dataloader1, val_dataloader1,train_
             
                 valacc = -1
                 
-                model2.load_state_dict(model.state_dict())
-                num_ftrs = model2.fc.in_features
-                model2.fc = nn.Linear(num_ftrs, 3)   
+
+                model_new = torchvision.models.resnet18(pretrained=True).to(device)
+                num_ftrs = model_new.fc.in_features
+                model_new.fc = nn.Linear(num_ftrs, 2)
+                model_new.load_state_dict(model.state_dict())
+                num_ftrs = model_new.fc.in_features
+                model_new.fc = nn.Linear(num_ftrs, 3)   
                 device = torch.device('cuda')   
-                model = model2.to(device)
+                model = model_new.to(device)
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 trainloader = train_dataloader2
