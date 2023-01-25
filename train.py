@@ -279,7 +279,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
 
 
 
-def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,  use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts1=None,subclass_counts2=None):
+def train_gdro_ct(params,model,model2, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,  use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts1=None,subclass_counts2=None):
     
     
     device = torch.device("cuda")
@@ -324,8 +324,12 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
                 
             elif epoch ==75:
             
-                valacc = 0
-                model.fc = nn.Sequential(nn.Linear(in_features=512, out_features=3, bias=True, device=device),)
+                valacc = -1
+                
+                model2.load_state_dict(model.state_dict())
+                model2.fc = nn.Linear(num_ftrs, 3)   
+                device = torch.device('cuda')   
+                model = model2.to(device)
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 trainloader = train_dataloader2
