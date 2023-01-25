@@ -327,6 +327,7 @@ def train_gdro_ct(params,model,model2, train_dataloader1, val_dataloader1,train_
                 valacc = -1
                 
                 model2.load_state_dict(model.state_dict())
+                num_ftrs = model2.fc.in_features
                 model2.fc = nn.Linear(num_ftrs, 3)   
                 device = torch.device('cuda')   
                 model = model2.to(device)
