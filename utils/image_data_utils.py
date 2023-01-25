@@ -343,10 +343,8 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         def label_cls (row):
                 if row['clusters'] < 3 :
                     return 0
-                elif row['clusters'] == 3 :
-                    return 1
                 else:
-                    return 2
+                    return 1
         def label_cls_subclass (row):
                 if row['clusters']==1 :
                     return 0
