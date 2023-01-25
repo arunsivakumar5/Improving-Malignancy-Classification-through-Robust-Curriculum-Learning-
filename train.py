@@ -279,16 +279,18 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
 
 
 
-def train_gdro_ct(params,model,model2, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None, use_cuda = True, robust=True, stable= True, size_adjustment = None):
+def train_gdro_ct(params,model1,model2, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None, use_cuda = True, robust=True, stable= True, size_adjustment = None):
     
     
     device = torch.device("cuda")
     model = model.to(device)
     
+    model_new = torchvision.models.resnet18(pretrained=True).to(device)
+    num_ftrs = model_new.fc.in_features
+    model_new.fc = nn.Linear(num_ftrs, 2)
+    model = model_new
     
-    
-    
-    
+    model = model.to(device)
     
     
     
@@ -327,14 +329,12 @@ def train_gdro_ct(params,model,model2, train_dataloader1, val_dataloader1,train_
                 valacc = -1
                 
 
-                model_new = torchvision.models.resnet18(pretrained=True).to(device)
-                num_ftrs = model_new.fc.in_features
-                model_new.fc = nn.Linear(num_ftrs, 2)
-                model_new.load_state_dict(model.state_dict())
-                num_ftrs = model_new.fc.in_features
-                model_new.fc = nn.Linear(num_ftrs, 3)   
+                
+                num_ftrs = model.fc.in_features
+                model.fc = nn.Linear(num_ftrs, 3)   
                 device = torch.device('cuda')   
-                model = model_new.to(device)
+                model = model.to(device)
+
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 trainloader = train_dataloader2
@@ -429,13 +429,9 @@ def train_gdro_ct(params,model,model2, train_dataloader1, val_dataloader1,train_
                 
             
                 else:
-                    if epoch<75:
-                        try:
-                            model = old_model
-                        except:
-                            old_model = model
-                    else:
-                        pass
+                    model = old_model
+                    
+                    
                 if params['scheduler_choice'] == 1:
                     scheduler.step(valacc)
                 else:
