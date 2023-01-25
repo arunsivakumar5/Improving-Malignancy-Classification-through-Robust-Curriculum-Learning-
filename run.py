@@ -542,12 +542,12 @@ elif method =='gDRO':
             device = torch.device('cuda')
 
             if args.freeze == 'Yes':
-                model = models.TransferModel18()
+                model = models.TransferModel18(num_classes=2)
             else:
-                model = models.TransferModel18(freeze=False)
+                model = models.TransferModel18(freeze=False,num_classes=2)
 
             
-            modelA,max_acc = train_gdro_ct(params_cur,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=300,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2)
+            modelA,max_acc = train_gdro_ct(params_cur,model,train_dataloader1,val_dataloader,train_dataloader2,num_epochs=150,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
