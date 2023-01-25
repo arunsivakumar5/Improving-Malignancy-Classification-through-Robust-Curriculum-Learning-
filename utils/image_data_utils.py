@@ -419,7 +419,7 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
 
         
 
-
+        print( "easy",d['malignancy_b'].value_counts())
         df_features = images_to_df()
     
 
