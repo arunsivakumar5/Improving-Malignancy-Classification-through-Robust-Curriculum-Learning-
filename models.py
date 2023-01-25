@@ -9,7 +9,7 @@ class TransferModel18(nn.Module):
     ResNet18 transfer learning model
     
     """
-    def __init__(self, pretrained=True, freeze=True, device='cuda',num_classes=3):
+    def __init__(self, pretrained=True, freeze=True, device='cuda',num_classes=None):
         super(TransferModel18, self).__init__()
 
         if pretrained==True:
