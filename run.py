@@ -471,6 +471,16 @@ elif method =='gDRO':
                             'factor': 0.3,
                             'scheduler_choice': 2,
                             'opt': 'Adam'}
+
+
+                params ={
+                        'learning_rate': 0.01,
+                        'patience': 10,
+                        'batch_size': 256,
+                        'w_d': 0.4,
+                        'factor': 0.8,
+                        'scheduler_choice': 1,
+                        'opt': 'SGD' }
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
             data_easy,datas_hard = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='split')  #mode =='' curriculum
@@ -580,7 +590,15 @@ elif method =='gDRO':
             itemlist = cur_gdro5_lst
             with open('./test_results/acc5_gdro_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
-
+            
+            params ={
+                        'learning_rate': 0.01,
+                        'patience': 100,
+                        'batch_size': 256,
+                        'w_d': 0.4,
+                        'factor': 0.8,
+                        'scheduler_choice': 1,
+                        'opt': 'SGD' }
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
             train_data,cv_data,test_data = datas
