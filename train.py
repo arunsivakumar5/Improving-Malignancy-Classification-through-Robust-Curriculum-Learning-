@@ -279,7 +279,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
 
 
 
-def train_gdro_ct(params,model,model2, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,  use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts1=None,subclass_counts2=None):
+def train_gdro_ct(params,model,model2, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None, use_cuda = True, robust=True, stable= True, size_adjustment = None):
     
     
     device = torch.device("cuda")
