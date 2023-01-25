@@ -316,28 +316,7 @@ def train_gdro_ct(params,model1,model2, train_dataloader1, val_dataloader1,train
                 pass
         
     
-            if epoch<75:
             
-                criterion = torch.nn.CrossEntropyLoss(reduction='none')
-                criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
-                trainloader = train_dataloader1
-                valloader = val_dataloader1
-
-                
-            elif epoch ==75:
-            
-                valacc = -1
-                
-
-                
-                num_ftrs = model.fc.in_features
-                model.fc = nn.Linear(num_ftrs, 3)   
-                device = torch.device('cuda')   
-                model = model.to(device)
-
-                
-                trainloader = train_dataloader2
-                valloader = val_dataloader2
             
             
             model.train()
