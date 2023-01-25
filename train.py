@@ -279,7 +279,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
 
 
 
-def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloader2, val_dataloader2, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts1=None,subclass_counts2=None):
+def train_gdro_ct(params,model, train_dataloader1, val_dataloader,train_dataloader2,val_dataloader2,  use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts1=None,subclass_counts2=None):
     
     
     device = torch.device("cuda")
@@ -334,12 +334,12 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
                 trainloader = train_dataloader2
                 valloader = val_dataloader2
             
-
+            model.train()
             for batch_idx, (inputs, targets) in enumerate(trainloader):
             
            
   
-                model.train()
+                
             
                 inputs = inputs.to(device)
             
@@ -373,8 +373,12 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
             
             
                 model.eval() 
-                cur_model = model       
-                over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(valloader,model, 5)
+                cur_model = model      
+                if epoch < 75:
+                    over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(valloader,model, 4)
+                else:
+                    over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(valloader,model, 5)
+                
                 valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
                 print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
                 if valacc > max_val_acc:
@@ -408,11 +412,13 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
                 
             
                 else:
-                    try:
-                        model = old_model
-                    except:
-                        old_model = model
-                
+                    if epoch<75:
+                        try:
+                            model = old_model
+                        except:
+                            old_model = model
+                    else:
+                        pass
                 if params['scheduler_choice'] == 1:
                     scheduler.step(valacc)
                 else:
