@@ -372,53 +372,53 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
         
             
             
-        model.eval() 
-        cur_model = model       
-        over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(valloader,model, 5)
-        valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
-        print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
-        if valacc > max_val_acc:
-            max_val_acc = valacc
-            model = cur_model
-            old_model = model
-            if mode=='gDRO':
-                try:
-                    torch.save(model.state_dict(), './models/Best_model_gdro.pth')
-                    path = './models/Best_model_gdro.pth'
-                except:
-                    os.makedirs(path)
-            elif mode=='cur_gDRO':
-                try:
-                    torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
-                    path = './models/Best_model_cur_gdro.pth'
-                except:
-                    os.makedirs(path)
-            elif mode=='random_gDRO':
-                try:
-                    torch.save(model.state_dict(), './models/Best_model_rand2.pth')
-                except:
-                    pass
-            elif mode=='Cur_gDRO':
-                torch.save(model.state_dict(), './models/Best_model_cur2.pth')
-            else:
-                print("Model weights unsaved")
-                pass
-            perfect_epoch = epoch
-            print("perfect epoch",perfect_epoch)
+                model.eval() 
+                cur_model = model       
+                over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(valloader,model, 5)
+                valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
+                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
+                if valacc > max_val_acc:
+                    max_val_acc = valacc
+                    model = cur_model
+                    old_model = model
+                    if mode=='gDRO':
+                        try:
+                            torch.save(model.state_dict(), './models/Best_model_gdro.pth')
+                            path = './models/Best_model_gdro.pth'
+                        except:
+                            os.makedirs(path)
+                    elif mode=='cur_gDRO':
+                        try:
+                            torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
+                            path = './models/Best_model_cur_gdro.pth'
+                        except:
+                            os.makedirs(path)
+                    elif mode=='random_gDRO':
+                        try:
+                            torch.save(model.state_dict(), './models/Best_model_rand2.pth')
+                        except:
+                            pass
+                    elif mode=='Cur_gDRO':
+                        torch.save(model.state_dict(), './models/Best_model_cur2.pth')
+                    else:
+                        print("Model weights unsaved")
+                        pass
+                    perfect_epoch = epoch
+                    print("perfect epoch",perfect_epoch)
                 
             
-        else:
-            try:
-                model = old_model
-            except:
-                old_model = model
+                else:
+                    try:
+                        model = old_model
+                    except:
+                        old_model = model
                 
-        if params['scheduler_choice'] == 1:
-            scheduler.step(valacc)
-        else:
-            pass
+                if params['scheduler_choice'] == 1:
+                    scheduler.step(valacc)
+                else:
+                    pass
         
                 
                 
      
-        return model,max_val_acc
+    return model,max_val_acc
