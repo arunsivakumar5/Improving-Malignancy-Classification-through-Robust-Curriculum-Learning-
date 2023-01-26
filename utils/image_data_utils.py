@@ -640,8 +640,10 @@ def random_split(prop,split_file):
     
     
     
-
-    df_splits = pd.read_csv(split_file)
+    try:
+        df_splits = pd.read_csv(split_file)
+    except:
+        pass
     df_splits = df_splits[df_splits['splits'] <= 1]
     
     
