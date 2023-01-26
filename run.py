@@ -617,9 +617,9 @@ elif method =='gDRO':
 
             device = torch.device('cuda')
             if args.freeze == 'Yes':
-                model = models.TransferModel18()
+                model = models.TransferModel18(num_classes=3)
             else:
-                model = models.TransferModel18(freeze=False)
+                model = models.TransferModel18(freeze=False,num_classes=3)
 
             modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
