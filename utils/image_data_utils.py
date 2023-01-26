@@ -795,7 +795,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
 
         dfs = []
     
-        for i in range(3):
+        for i in range(2):
             dfs.append(df_features.loc[(df_splits1['splits'] == i).values])
 
         datas = []
@@ -896,7 +896,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
     
         dfs = []
     
-        for i in range(3):
+        for i in range(2):
             dfs.append(df_features.loc[(df_splits1['splits'] == i).values])
 
         datas2 = []
