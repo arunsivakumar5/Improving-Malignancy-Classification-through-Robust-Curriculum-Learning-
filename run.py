@@ -476,7 +476,7 @@ elif method =='gDRO':
                 
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
-            data_easy,datas_hard = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='split')  #mode =='' curriculum
+            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='experiment1_unsorted')  #mode =='' curriculum
 
             datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum') 
 
@@ -548,7 +548,7 @@ elif method =='gDRO':
                 model = models.TransferModel18(freeze=False,num_classes=2)
                 model2 = models.TransferModel18(freeze=False,num_classes=2)
             
-            modelA,max_acc = train_gdro_ct(params,model,model2,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=300,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2)
+            modelA,max_acc = train_gdro_ct(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=300,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
