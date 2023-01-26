@@ -640,10 +640,8 @@ def random_split(prop,split_file):
     
     
     
-    try:
-        df_splits = pd.read_csv(split_file)
-    except:
-        df_splits = split_file
+    df_splits = split_file
+
     df_splits = df_splits[df_splits['splits'] <= 1]
     
     
@@ -654,7 +652,7 @@ def random_split(prop,split_file):
     df5 = df_splits[df_splits['Malignancy'] == 5 ]
 
     df_sample = df1.sample(frac=1)
-    print(prop)
+    print(df_splits)
     print("splitting data into",int(prop*100),":",int((1-prop)*100),"splits")
     train_size1 = int(prop* len(df_sample))
     
