@@ -483,9 +483,9 @@ elif method =='gDRO':
             _,cv_data,test_data = datas_cur
             
 
-            train_data_easy,cv_data_easy,_ = data_easy
+            train_data_easy,cv_data_easy = data_easy
 
-            train_data_hard,cv_data_hard,_ = datas_hard
+            train_data_hard,cv_data_hard = datas_hard
 
             trainDataset1 = LIDC_Dataset(*train_data_easy)
             validDataset1 = LIDC_Dataset(*cv_data_easy)
