@@ -745,7 +745,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         df_features = images_to_df()
     
 
-        df_features = df_features.loc[df_features["curriculum"] == "0"]
+        #df_features = df_features.loc[df_features["curriculum"] == "0"]
         df_features.reset_index(inplace=True,drop = True)
         
     
@@ -786,10 +786,13 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         print(df_splits1)
         
         df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
-
         df_splits1.sort_values('noduleID', inplace=True)
         df_splits1.reset_index(drop=True, inplace=True)
     
+        df_features = df_features[df_features['noduleID'].isin(df_splits1['noduleID'])]
+        df_features.sort_values('noduleID', inplace=True)
+        df_features.reset_index(drop=True, inplace=True)
+
         dfs = []
     
         for i in range(3):
@@ -879,10 +882,17 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
     
         df_splits1 = df_splits2
         df_splits1 = pd.read_csv(file,index_col=0)
-        df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
 
+        df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
         df_splits1.sort_values('noduleID', inplace=True)
         df_splits1.reset_index(drop=True, inplace=True)
+
+
+        df_features = df_features[df_features['noduleID'].isin(df_splits1['noduleID'])]
+        df_features.sort_values('noduleID', inplace=True)
+        df_features.reset_index(drop=True, inplace=True)
+
+        
     
         dfs = []
     
