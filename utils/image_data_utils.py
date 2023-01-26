@@ -698,10 +698,10 @@ def random_split(prop,split_file):
     df_split2 = pd.concat([df_split22, df_split02], axis=0)
 
     df_split1.sort_values('noduleID', inplace=True)
-    #df_splits1.reset_index(drop=True, inplace=True)
+    df_splits1.reset_index(drop=True, inplace=True)
     
     df_split2.sort_values('noduleID', inplace=True)
-    #df_splits2.reset_index(drop=True, inplace=True)
+    df_splits2.reset_index(drop=True, inplace=True)
     
     #df_split1 = (df_split1.iloc[: , 1:]).reset_index(drop = True)
     #df_split2 = (df_split2.iloc[: , 1:]).reset_index(drop = True)
