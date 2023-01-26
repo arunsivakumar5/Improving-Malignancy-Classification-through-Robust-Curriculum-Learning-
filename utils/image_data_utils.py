@@ -741,8 +741,8 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
 
         split1,split2 = random_split(50,split_file=df_splits)
 
-        df_split1 = split1
-        df_split2 = split2
+        df_splits1 = split1
+        df_splits2 = split2
 
         df_features = images_to_df()
     
@@ -879,7 +879,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
 
         
     
-    
+        df_splits1 = df_splits2
         df_splits1 = pd.read_csv(file,index_col=0)
         df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
 
