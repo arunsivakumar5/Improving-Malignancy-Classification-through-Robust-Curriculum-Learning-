@@ -799,7 +799,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
             dfs.append(df_features.loc[(df_splits1['splits'] == i).values])
 
         datas = []
-
+        print(dfs)
         # If we choose to do curriculum learning, sort data based on wMSE computed from multiple radiologist labels
         #dfs2=[]
     
