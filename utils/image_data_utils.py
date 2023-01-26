@@ -785,7 +785,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
 
     
     
-    
+        print(df_splits1)
         
         df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
 
