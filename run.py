@@ -479,7 +479,13 @@ elif method =='gDRO':
 
             
             subclass_counts1=trainDataset1.get_class_counts('subclass')
-            train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset1),shuffle=False)
+
+            train_weights1 = im_utils.get_sampler_weights(trainDataset1.subclasses)    
+
+
+            
+            train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights1,len(train_weights1)) )
+            #train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset1),shuffle=False)
 
             try:
                 val_weights1 =   im_utils.get_sampler_weights(validDataset1.subclasses)
@@ -494,7 +500,12 @@ elif method =='gDRO':
             val = validDataset2
 
             subclass_counts2=trainDataset2.get_class_counts('subclass')
-            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset2),shuffle=False)
+            train_weights2 = im_utils.get_sampler_weights(trainDataset2.subclasses)    
+
+
+            
+            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights2,len(train_weights2)) )
+            #train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset2),shuffle=False)
 
             val_weights2 =   im_utils.get_sampler_weights(validDataset2.subclasses)
             val_dataloader2 = DataLoader(val,batch_size = len(validDataset2) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights2,len(val_weights2)) )
