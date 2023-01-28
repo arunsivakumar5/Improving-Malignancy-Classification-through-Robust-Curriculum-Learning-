@@ -364,14 +364,6 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
                 print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
 
 
-                
-                    
-                    
-                if params['scheduler_choice'] == 1:
-                    scheduler.step(valacc)
-                else:
-                    pass
-
             else:
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
