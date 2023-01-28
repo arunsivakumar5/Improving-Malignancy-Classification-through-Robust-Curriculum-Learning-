@@ -421,6 +421,7 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
                         model_new.fc = nn.Linear(num_ftrs, 3)
                         model = model_new
                         model = model.to(device)   
+                        max_val_acc =0
                     else:
                         pass
  
