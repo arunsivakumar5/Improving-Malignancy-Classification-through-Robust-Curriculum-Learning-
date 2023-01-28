@@ -438,9 +438,7 @@ elif method =='gDRO':
         for i in range(1,args.trials + 1): 
 
             
-            if args.freeze =='No':
-            
-                params ={'learning_rate': 0.0005,
+            params ={'learning_rate': 0.0005,
                                 'patience':2,
                                 'batch_size': 128,  
                                 'w_d': 0.005,
@@ -448,29 +446,7 @@ elif method =='gDRO':
                                 'scheduler_choice':1,
                                 'opt': 'Adam' }
             
-                params_cur ={'learning_rate': 0.001,
-                            'patience': 50,
-                            'batch_size':1024,       
-                            'w_d': 0.6,
-                            'factor': 0.6,
-                            'scheduler_choice': 2,
-                            'opt': 'SGD'}
-            else:
-                params ={
-                        'learning_rate': 0.01,
-                        'patience': 100,
-                        'batch_size': 256,
-                        'w_d': 0.4,
-                        'factor': 0.8,
-                        'scheduler_choice': 1,
-                        'opt': 'SGD' }
-                params_cur = {'learning_rate': 0.01,
-                            'patience': 50,
-                            'batch_size': 512,
-                            'w_d': 0.9,
-                            'factor': 0.3,
-                            'scheduler_choice': 2,
-                            'opt': 'Adam'}
+                
 
 
                 
