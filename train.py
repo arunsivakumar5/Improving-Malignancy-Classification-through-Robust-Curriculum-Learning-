@@ -293,7 +293,7 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
     device = torch.device("cuda")
     
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
-    for param in model_ft.parameters():
+    for param in model_new.parameters():
         param.requires_grad = False
     num_ftrs = model_new.fc.in_features
     model_new.fc = nn.Linear(num_ftrs, 2)
