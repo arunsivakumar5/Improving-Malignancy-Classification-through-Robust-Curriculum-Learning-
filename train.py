@@ -155,7 +155,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
     
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
     num_ftrs = model_new.fc.in_features
-    model_new.fc = nn.Linear(num_ftrs, 2)
+    model_new.fc = nn.Linear(num_ftrs, 3)
     model = model_new
     
     model = model.to(device)
