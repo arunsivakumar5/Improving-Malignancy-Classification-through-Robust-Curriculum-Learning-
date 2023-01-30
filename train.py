@@ -325,7 +325,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,val_d
             model.train()
             if epoch <75:
                 model.train()
-                for train_input,train_label in trainDataloader1:
+                for train_input,train_label in train_dataloader1:
 
 
                     train_label = train_label['superclass']
@@ -357,7 +357,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,val_d
             
                 with torch.no_grad():
 
-                        acc,a1,a2,a3,a4,a5 = d_utils.evaluate(validDataloader,model,5,verbose = True)
+                        acc,a1,a2,a3,a4,a5 = d_utils.evaluate(val_dataloader,model,5,verbose = True)
                         if scheduler:
                             scheduler.step(acc) 
                         else:
@@ -390,7 +390,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,val_d
 
 
             else:
-                for train_input,train_label in trainDataloader2:
+                for train_input,train_label in train_dataloader2:
 
 
                     train_label = train_label['superclass']
@@ -431,7 +431,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,val_d
             
                 with torch.no_grad():
 
-                        acc,a1,a2,a3,a4,a5 = d_utils.evaluate(validDataloader,model,5,verbose = True)
+                        acc,a1,a2,a3,a4,a5 = d_utils.evaluate(val_dataloader,model,5,verbose = True)
                         if scheduler:
                             scheduler.step(acc) 
                         else:
