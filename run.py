@@ -572,14 +572,7 @@ elif method =='gDRO':
             with open('./test_results/acc5_gdro_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
             
-            params ={
-                        'learning_rate': 0.01,
-                        'patience': 100,
-                        'batch_size': 256,
-                        'w_d': 0.4,
-                        'factor': 0.8,
-                        'scheduler_choice': 1,
-                        'opt': 'SGD' }
+            
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
             train_data,cv_data,test_data = datas
