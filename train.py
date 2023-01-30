@@ -432,10 +432,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,val_d
                 with torch.no_grad():
 
                         acc,a1,a2,a3,a4,a5 = d_utils.evaluate(val_dataloader,model,5,verbose = True)
-                        if scheduler:
-                            scheduler.step(acc) 
-                        else:
-                            pass
+                        
                     
                         print("acc",acc)
                         print("Max acc",max_val_acc)
@@ -477,7 +474,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,val_d
                     
                     
                 if params['scheduler_choice'] == 1:
-                    scheduler.step(valacc)
+                    scheduler.step(acc)
                 else:
                     pass
                 
