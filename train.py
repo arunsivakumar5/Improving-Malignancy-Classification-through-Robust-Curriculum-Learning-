@@ -283,7 +283,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
 
     return model,max_val_acc
 
-def train_erm_ct(params,train_dataloader,val_dataloader,train_dataloader2,val_dataloader2,model,num_epochs=300,mode='cur_erm'):
+def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,val_dataloader2,model,num_epochs=300,mode='cur_erm'):
     
     device = torch.device("cuda")
     
