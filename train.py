@@ -380,7 +380,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,val_d
                             else:
                                 print("Model weights unsaved")
                                 pass
-                            perfect_epoch = epoch_num
+                            perfect_epoch = epoch
                             print("perfect epoch",perfect_epoch)
                         else:
                             try:
@@ -454,7 +454,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,val_d
                             else:
                                 print("Model weights unsaved")
                                 pass
-                            perfect_epoch = epoch_num
+                            perfect_epoch = epoch
                             print("perfect epoch",perfect_epoch)
                         else:
                             try:
