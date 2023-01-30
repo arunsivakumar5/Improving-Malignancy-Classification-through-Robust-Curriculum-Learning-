@@ -214,25 +214,18 @@ DEVICE =  torch.device('cuda')
 
 if method =='ERM':
     
-    params ={
-        'learning_rate': 0.01,
-        'patience':90,
-        'batch_size': 64,
-        'w_d': 0.3,
-        'factor': 0.3,
-        'scheduler_choice': 2,
-        'opt': 'SGD' }
-        
-    params2 ={
-        'learning_rate': 0.1,
-        'patience': 20,
-        'batch_size': 1024,
-        'w_d': 0.9,
-        'factor': 0.3,
-        'scheduler_choice': 1,
-        'opt': 'SGD'  }
+    print("file",i)
+            
      
     if args.curriculum == 'Both':
+        
+        params ={'learning_rate': 0.0005,
+                                'patience':2,
+                                'batch_size': 128,  
+                                'w_d': 0.005,
+                                'factor': 0.2,
+                                'scheduler_choice':1,
+                                'opt': 'Adam' }
 
         for i in range(1,args.trials + 1): 
             
@@ -384,9 +377,9 @@ if method =='ERM':
             device = torch.device('cuda')
 
             if args.freeze == 'Yes':
-                model = models.TransferModel18(num_classes=2)
+                model = models.TransferModel18(num_classes=3)
             else:
-                model = models.TransferModel18(freeze=False,num_classes=2)
+                model = models.TransferModel18(freeze=False,num_classes=3)
 
             modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=300,mode='erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
