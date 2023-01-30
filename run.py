@@ -214,7 +214,7 @@ DEVICE =  torch.device('cuda')
 
 if method =='ERM':
     
-    print("file",i)
+    
             
      
     if args.curriculum == 'Both':
@@ -228,6 +228,8 @@ if method =='ERM':
                                 'opt': 'Adam' }
 
         for i in range(1,args.trials + 1): 
+
+            print("file",i)
             
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
