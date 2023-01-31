@@ -148,7 +148,7 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
 
 
 
-def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts=None):
+def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts=None,Class='three'):
     
     
     device = torch.device("cuda")
@@ -203,7 +203,10 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
             
             inputs = inputs.to(device)
             
-            loss_targets = targets['superclass']
+            if Class =='three':
+                loss_targets = targets['superclass']
+            else:
+                loss_targets = targets['subclass']
             loss_targets_cur = targets['subclass']
             loss_targets = loss_targets.to(device)
             loss_targets_cur = loss_targets_cur.to(device)

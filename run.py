@@ -763,7 +763,7 @@ elif method =='gDRO':
             else:
                 model = models.TransferModel18(freeze=False,num_classes=3)
 
-            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts)
+            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts,Class='five')
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
