@@ -236,6 +236,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
         cur_model = model       
         over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(val_dataloader,model, 5)
         valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
+        print("epoch", epoch,"training Accuracy",trains_accs)
         print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
         if valacc > max_val_acc:
             max_val_acc = valacc
@@ -619,6 +620,7 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
                 
                 
                 valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
+                print("epoch", epoch,"training Accuracy",trains_accs)
                 print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
                 
                 
