@@ -1074,7 +1074,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         
     
         df_splits1 = df_splits2
-        df_splits1 = pd.read_csv(file,index_col=0)
+        #df_splits1 = pd.read_csv(file,index_col=0)
 
         df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
         df_splits1.sort_values('noduleID', inplace=True)
@@ -1162,7 +1162,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         
     
         df_splits1 = df_splits3
-        df_splits1 = pd.read_csv(file,index_col=0)
+        #df_splits1 = pd.read_csv(file,index_col=0)
 
         df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
         df_splits1.sort_values('noduleID', inplace=True)
