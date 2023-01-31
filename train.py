@@ -812,7 +812,7 @@ def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_da
                     loss_targets_cur = targets['subclass']
                     loss_targets = loss_targets.to(device)
                     loss_targets_cur = loss_targets_cur.to(device)
-                    if epoch==156:
+                    if epoch==150:
                         model_new = model
                         num_ftrs = model_new.fc.in_features
                         model_new.fc = nn.Linear(num_ftrs, 5)
