@@ -767,6 +767,7 @@ def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_da
                         model = model_new
                         model = model.to(device)   
                         max_val_acc =-1
+                        print("swithcing to 3")
                     else:
                         pass
  
@@ -833,7 +834,7 @@ def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_da
             
                     loss.backward()
                     predicteds = logits.argmax(1)
-                    actuals = targets['superclass']
+                    actuals = targets['subclass']
                     actuals = actuals.to(device)
             
                     trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
