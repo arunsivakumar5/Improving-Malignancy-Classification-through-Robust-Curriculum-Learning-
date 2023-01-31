@@ -394,66 +394,7 @@ if method =='ERM':
         
         
             
-    if args.curriculum == 'Yes':
-        datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum')
-    else:
-        datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
-
-        
-    train_data,cv_data,test_data = datas
-
-    trainDataset = LIDC_Dataset(*train_data)
-    validDataset = LIDC_Dataset(*cv_data)
-    testDataset = LIDC_Dataset(*test_data)
-
-
-    tr = trainDataset
-    val = validDataset
-    test=testDataset
-
-
-        
-        
-    if args.curriculum == 'Yes':
-
-        sampler = SequentialSampler(trainDataset)
-        train_dataloader = DataLoader(tr, batch_size =params2['batch_size'],sampler=sampler )
-
-    else:
-        train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
-
-
-        sampler = torch.utils.data.WeightedRandomSampler(
-                    train_weights,
-                    len(train_weights))
-        train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
-
-    val_dataloader = DataLoader(val,batch_size = len(validDataset),shuffle = False, num_workers=0)
-    test_dataloader = DataLoader(test, batch_size = len(testDataset) , shuffle = False, num_workers=0)    
-        
-
-    device = torch.device('cuda')
-
-
-
-
-        
-    model = models.TransferModel18()
-
-
-
-
-    #Training ERM model
-    if args.curriculum == 'Yes':
-        modelA,max_acc = train_erm(params2,train_dataloader,val_dataloader,model,num_epochs=150,mode='cur_erm')
-        modelA.load_state_dict(torch.load('.//models//Best_model_cur_erm.pth'))
-        print("Cur ERM trained!")
-    else:
-        modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=150,mode='erm')
-        modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
-        print("Traditional ERM trained!")
-
-    over_acc_erm,erm1,erm2,erm3,erm4,erm5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
+    
 
 elif method =='gDRO':
 
