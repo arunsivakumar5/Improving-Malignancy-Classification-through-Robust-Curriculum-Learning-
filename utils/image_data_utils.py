@@ -1033,9 +1033,10 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
                 datas.append((X, y, c))
 
         
-
-        
         df_features = images_to_df()
+        df_features.reset_index(inplace=True,drop = True)
+        
+        
         df_features['clusters'] = df_features['malignancy']
     
         df_features.sort_values('noduleID', inplace=True)
@@ -1120,6 +1121,10 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
             
                
                 datas2.append((X, y, c))
+
+        df_features = images_to_df()
+        df_features.reset_index(inplace=True,drop = True)
+
         df_features['clusters'] = df_features['malignancy']
     
         df_features.sort_values('noduleID', inplace=True)
@@ -1149,7 +1154,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         df_features['cur_cls'] = df_features['clusters'].astype(int)
     
         df_features['clusters'] = df_features['clusters'].astype(int)
-        df_features['malignancy_b'] =  df_features.apply(lambda row: label_cls_subclass(row), axis=1)
+        df_features['malignancy_b'] =  df_features.apply(lambda row: label_cls(row), axis=1)
         df_features['malignancy'] =  df_features.apply(lambda row: label_cls_subclass(row), axis=1)
 
         df_features['clusters'] = df_features['malignancy']
@@ -1157,7 +1162,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         
     
         df_splits1 = df_splits3
-        
+        df_splits1 = pd.read_csv(file,index_col=0)
 
         df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
         df_splits1.sort_values('noduleID', inplace=True)
