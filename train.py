@@ -793,10 +793,10 @@ def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_da
         
                 model.eval() 
                 cur_model = model      
-                over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader2,model, 5)
+                over_val_acc,vacc1,vacc2,vacc3,vacc4,v5= d_utils.evaluate(val_dataloader2,model, 5)
 
-                valacc = min(vacc1,vacc2,vacc3,vacc4)
-                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
+                valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
+                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
             
    
                 
@@ -844,10 +844,10 @@ def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_da
 
                 model.eval() 
                 cur_model = model      
-                over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader3,model, 5)
+                over_val_acc,vacc1,vacc2,vacc3,vacc4,v5= d_utils.evaluate(val_dataloader3,model, 5)
 
-                valacc = min(vacc1,vacc2,vacc3,vacc4)
-                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
+                valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
+                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
 
                 if valacc > max_val_acc:
                     max_val_acc = valacc
