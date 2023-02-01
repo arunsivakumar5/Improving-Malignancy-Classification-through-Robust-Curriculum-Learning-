@@ -108,6 +108,7 @@ acc_lst3 = []
 
 acc_lst4 = []
 
+file_num = []
 
 acc_list_new1 = []
 
@@ -413,7 +414,7 @@ elif method =='gDRO':
             
                 
 
-
+            file_num.append(i)
                 
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
