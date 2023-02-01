@@ -538,6 +538,9 @@ elif method =='gDRO':
             with open('./test_results/acc5_gdro_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
             
+            itemlist = file_num
+            with open('./test_results/test_logs.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
             
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
