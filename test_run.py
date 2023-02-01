@@ -401,9 +401,9 @@ elif method =='gDRO':
 
     if args.curriculum == 'Both':
 
-        for i in range(1,args.trials + 1): 
+        f = [13,20,21,22,27]
 
-            print("file",i)
+        for i in f:
             params ={'learning_rate': 0.0005,
                                 'patience':2,
                                 'batch_size': 128,  
@@ -416,7 +416,7 @@ elif method =='gDRO':
 
             file_num.append(i)
                 
-            split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
+            split_file = os.path.join('./data/splits/nodule_split_?.csv').replace("?",str(i))
             
             data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='experiment1_unsorted')  #mode =='' curriculum
 
