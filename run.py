@@ -234,37 +234,26 @@ if method =='ERM':
             
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
-            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='experiment1_unsorted')  
+            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='experiment1_unsorted') 
+
             datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum') 
 
             _,cv_data,test_data = datas_cur
             
-            train_data_easy,cv_data_easy = data_easy
-            train_data_hard,cv_data_hard = datas_hard
+            train_data_easy,_ = data_easy
+            train_data_hard,_ = datas_hard
 
             trainDataset1 = LIDC_Dataset(*train_data_easy)
             trainDataset2 = LIDC_Dataset(*train_data_hard)
-            
-           
-            
+         
 
             tr = trainDataset1
-            subclass_counts1=trainDataset1.get_class_counts('subclass')
-            train_weights1 = im_utils.get_sampler_weights(trainDataset1.labels)    
-            train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights1,len(train_weights1)) )
+            train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.RandomSampler()) 
             
 
-            
+            tr = trainDataset2           
+            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.RandomSampler())
 
-
-
-            tr = trainDataset2
-            subclass_counts2=trainDataset2.get_class_counts('subclass')
-            train_weights2 = im_utils.get_sampler_weights(trainDataset2.labels)    
-            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights2,len(train_weights2)) )
-            
-
-            
 
             validDataset = LIDC_Dataset(*cv_data)
             testDataset = LIDC_Dataset(*test_data)
@@ -272,10 +261,10 @@ if method =='ERM':
 
             
             val = validDataset
-            val_weights =   im_utils.get_sampler_weights(validDataset.labels)
+            val_weights =   im_utils.get_sampler_weights(validDataset.subclasses)
 
             test =testDataset
-            test_weights =   im_utils.get_sampler_weights(testDataset.labels)
+            test_weights =   im_utils.get_sampler_weights(testDataset.subclasses)
 
             
             val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights,len(val_weights)) )
@@ -340,7 +329,7 @@ if method =='ERM':
             tr = trainDataset
            
 
-            train_weights = im_utils.get_sampler_weights(trainDataset.labels)    
+            train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
 
 
             sampler = torch.utils.data.WeightedRandomSampler(
