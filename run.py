@@ -324,19 +324,11 @@ if method =='ERM':
             train_data,cv_data,test_data = datas
 
             trainDataset = LIDC_Dataset(*train_data)
+                  
+
+            tr = trainDataset           
+            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.RandomSampler(tr,replacement=True))
             
-
-
-            tr = trainDataset
-           
-
-            train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
-
-
-            sampler = torch.utils.data.WeightedRandomSampler(
-                        train_weights,
-                        len(train_weights))
-            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
             
 
             device = torch.device('cuda')
