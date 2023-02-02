@@ -368,17 +368,37 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                 
             
                    
-                    
-                model.eval()
-                cur_model = model
+                with torch.no_grad():    
+                    model.eval()
+                    cur_model = model
             
-                acc,a1,a2,a3,a4= d_utils.evaluate(val_dataloader,model,4,verbose = True)
-                if scheduler:
-                    scheduler.step(acc) 
-                else:
-                    pass
-                print("epoch", epoch,"Validation Accuracy",acc)
+                    acc,a1,a2= d_utils.evaluate(val_dataloader,model,2,verbose = True)
+                    if scheduler:
+                        scheduler.step(acc) 
+                    else:
+                        pass
+                    print("epoch", epoch,"Validation Accuracy",acc)
                     
+                    print("Max acc",max_val_acc)
+                    if acc > max_val_acc:
+                        max_val_acc =acc
+                        model = cur_model
+                        old_model = model
+                        if mode=='erm':
+                            torch.save(model.state_dict(), './models/Best_model_erm.pth')
+                        elif mode=='cur_erm':
+                            torch.save(model.state_dict(), './models/Best_model_cur_erm.pth')
+                        elif mode=='random_feature_ext':
+                            torch.save(model.state_dict(), './models/Best_model_rand1.pth')
+                        elif mode=='Cur_feature_ext':
+                            torch.save(model.state_dict(), './models/Best_model_cur1.pth')
+                        else:
+                            print("Model weights unsaved")
+                            pass
+                        perfect_epoch = epoch
+                        print("perfect epoch",perfect_epoch)
+                    else:
+                        model = old_model
 
 
             else:
@@ -392,6 +412,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                 
                     optimizer.zero_grad()
                     if epoch==75:
+                        
                         model_new = model
                         num_ftrs = model_new.fc.in_features
                         model_new.fc = nn.Linear(num_ftrs, 3)
@@ -424,6 +445,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                 with torch.no_grad():
 
                         acc,a1,a2,a3,a4,a5 = d_utils.evaluate(val_dataloader,model,5,verbose = True)
+                        
                         if scheduler:
                             scheduler.step(acc) 
                         else:
@@ -449,10 +471,8 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                             perfect_epoch = epoch
                             print("perfect epoch",perfect_epoch)
                         else:
-                            try:
-                                model = old_model
-                            except:
-                                old_model = model
+                            model = old_model
+                            
                     
  
     
