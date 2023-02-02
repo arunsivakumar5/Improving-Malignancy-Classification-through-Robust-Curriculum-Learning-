@@ -374,9 +374,9 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
             
                 acc,a1,a2,a3,a4= d_utils.evaluate(val_dataloader,model,4,verbose = True)
                 if scheduler:
-                        scheduler.step(acc) 
-                    else:
-                        pass
+                    scheduler.step(acc) 
+                else:
+                    pass
                 print("epoch", epoch,"Validation Accuracy",acc)
                     
 
