@@ -248,11 +248,12 @@ if method =='ERM':
          
 
             tr = trainDataset1
-            train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.RandomSampler(replacement=True,tr)) 
+            train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.RandomSampler(tr,replacement=True)) 
+            
             
 
             tr = trainDataset2           
-            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.RandomSampler(replacement=True,tr))
+            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.RandomSampler(tr,replacement=True))
 
 
             validDataset = LIDC_Dataset(*cv_data)
