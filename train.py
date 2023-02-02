@@ -59,7 +59,7 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
     
     num_ftrs = model_new.fc.in_features
-    model_new.fc = nn.Linear(num_ftrs, 2)
+    model_new.fc = nn.Linear(num_ftrs,3)
     model = model_new
     
     model = model.to(device)
