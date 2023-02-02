@@ -372,7 +372,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                 model.eval()
                 cur_model = model
             
-                acc,a1,a2,a3,a4,a5 = d_utils.evaluate(val_dataloader,model,5,verbose = True)
+                acc,a1,a2,a3,a4= d_utils.evaluate(val_dataloader,model,4,verbose = True)
                 if scheduler:
                         scheduler.step(acc) 
                     else:
