@@ -54,6 +54,8 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
 
     max_val_acc = 0
 
+    device = torch.device("cuda")
+
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
     
     num_ftrs = model_new.fc.in_features
