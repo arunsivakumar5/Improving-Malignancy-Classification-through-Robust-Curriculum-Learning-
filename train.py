@@ -95,7 +95,7 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
                 train_label = train_label.to(device)
                 train_input = train_input.to(device)
                 
-                optimizer.zero_grad()
+                
                 output = model(train_input)
                 
                 _, predictions = output.max(1)
@@ -104,9 +104,6 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
                 batch_loss =loss
                 
 
-                
-                
-                model.zero_grad()
                 
                 batch_loss.backward()
                 optimizer.step()
@@ -145,10 +142,8 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
                         perfect_epoch = epoch_num
                         print("perfect epoch",perfect_epoch)
                     else:
-                        try:
-                            model = old_model
-                        except:
-                            old_model = model
+                        model = old_model
+                        
                     
                    
                         
@@ -350,7 +345,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                     train_label = train_label.to(device)
                     train_input = train_input.to(device)
                 
-                    optimizer.zero_grad()
+                   
                     output = model(train_input)
                 
                     _, predictions = output.max(1)
@@ -361,7 +356,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
 
                 
                 
-                    model.zero_grad()
+                    
                 
                     batch_loss.backward()
                     optimizer.step()
