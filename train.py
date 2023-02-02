@@ -367,7 +367,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                     model.eval()
                     cur_model = model
             
-                    acc,a1,a2= d_utils.evaluate(val_dataloader,model,2,verbose = True)
+                    acc,a1,a2,a3,a4,a5= d_utils.evaluate(val_dataloader,model,5,verbose = True)
                     if scheduler:
                         scheduler.step(acc) 
                     else:
@@ -405,7 +405,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                     train_label = train_label.to(device)
                     train_input = train_input.to(device)
                 
-                    optimizer.zero_grad()
+                    
                     if epoch==75:
                         
                         model_new = model
@@ -426,7 +426,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
 
                 
                 
-                    model.zero_grad()
+                    
                 
                     batch_loss.backward()
                     optimizer.step()
