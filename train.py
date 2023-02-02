@@ -54,6 +54,14 @@ def train_erm(params,trainDataloader,validDataloader,model,num_epochs=None,mode=
 
     max_val_acc = 0
 
+    model_new = torchvision.models.resnet18(pretrained=True).to(device)
+    
+    num_ftrs = model_new.fc.in_features
+    model_new.fc = nn.Linear(num_ftrs, 2)
+    model = model_new
+    
+    model = model.to(device)
+
     criterion = nn.CrossEntropyLoss()
     
     if params['opt'] =='Adam':
