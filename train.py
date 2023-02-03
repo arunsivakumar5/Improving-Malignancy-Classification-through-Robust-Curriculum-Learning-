@@ -335,7 +335,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
             
             
             model.train()
-            if epoch <75:
+            if epoch <150:
                 model.train()
                 for train_input,train_label in train_dataloader1:
 
@@ -405,7 +405,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                     train_input = train_input.to(device)
                 
                     
-                    if epoch==75:
+                    if epoch==150:
                         
                         model_new = model
                         num_ftrs = model_new.fc.in_features
