@@ -85,8 +85,9 @@ def train_erm(params,trainDataloader,validDataloader,model,steps=None,num_epochs
             else:
                 pass
             
+            model.train()
             for i in range(steps):
-                model.train()
+                
                 for train_input,train_label in trainDataloader:
 
 
@@ -111,38 +112,38 @@ def train_erm(params,trainDataloader,validDataloader,model,steps=None,num_epochs
             
                    
                     
-                model.eval()
-                cur_model = model
+            model.eval()
+            cur_model = model
             
-                with torch.no_grad():
+            with torch.no_grad():
 
-                        acc,a1,a2,a3,a4,a5 = d_utils.evaluate(validDataloader,model,5,verbose = True)
-                        if scheduler:
-                            scheduler.step(acc) 
-                        else:
-                            pass
+                    acc,a1,a2,a3,a4,a5 = d_utils.evaluate(validDataloader,model,5,verbose = True)
+                    if scheduler:
+                        scheduler.step(acc) 
+                    else:
+                        pass
                     
-                        print("acc",acc)
-                        print("Max acc",max_val_acc)
-                        if acc > max_val_acc:
-                            max_val_acc =acc
-                            model = cur_model
-                            old_model = model
-                            if mode=='erm':
-                                torch.save(model.state_dict(), './models/Best_model_erm.pth')
-                            elif mode=='cur_erm':
-                                torch.save(model.state_dict(), './models/Best_model_cur_erm.pth')
-                            elif mode=='random_feature_ext':
-                                torch.save(model.state_dict(), './models/Best_model_rand1.pth')
-                            elif mode=='Cur_feature_ext':
-                                torch.save(model.state_dict(), './models/Best_model_cur1.pth')
-                            else:
-                                print("Model weights unsaved")
-                                pass
-                            perfect_epoch = epoch_num
-                            print("perfect epoch",perfect_epoch)
+                    print("acc",acc)
+                    print("Max acc",max_val_acc)
+                    if acc > max_val_acc:
+                        max_val_acc =acc
+                        model = cur_model
+                        old_model = model
+                        if mode=='erm':
+                            torch.save(model.state_dict(), './models/Best_model_erm.pth')
+                        elif mode=='cur_erm':
+                            torch.save(model.state_dict(), './models/Best_model_cur_erm.pth')
+                        elif mode=='random_feature_ext':
+                            torch.save(model.state_dict(), './models/Best_model_rand1.pth')
+                        elif mode=='Cur_feature_ext':
+                            torch.save(model.state_dict(), './models/Best_model_cur1.pth')
                         else:
-                            model = old_model
+                            print("Model weights unsaved")
+                            pass
+                        perfect_epoch = epoch_num
+                        print("perfect epoch",perfect_epoch)
+                    else:
+                        model = old_model
                         
                     
                    
