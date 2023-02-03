@@ -357,7 +357,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                 
                 
                     
-                
+                    optimizer.zero_grad()
                     batch_loss.backward()
                     optimizer.step()
                 
@@ -395,9 +395,79 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                     else:
                         model = old_model
 
-
             else:
-                pass
+                for train_input,train_label in train_dataloader2:
+
+
+                    train_label = train_label['superclass']
+                
+                    train_label = train_label.to(device)
+                    train_input = train_input.to(device)
+                
+                    
+                    if epoch==75:
+                        
+                        model_new = model
+                        num_ftrs = model_new.fc.in_features
+                        model_new.fc = nn.Linear(num_ftrs, 3)
+                        model = model_new
+                        model = model.to(device)   
+                        max_val_acc =-1
+                    else:
+                        pass
+                    output = model(train_input)
+                
+                    _, predictions = output.max(1)
+      
+                    loss = criterion(output,train_label)
+                    batch_loss =loss
+                
+
+                
+                
+                    
+                    optimizer.zero_grad()
+                    batch_loss.backward()
+                    optimizer.step()
+                
+            
+                   
+                    
+                model.eval()
+                cur_model = model
+            
+                with torch.no_grad():
+
+                        acc,a1,a2,a3,a4,a5 = d_utils.evaluate(val_dataloader,model,5,verbose = True)
+                        
+                        if scheduler:
+                            scheduler.step(acc) 
+                        else:
+                            pass
+                    
+                        print("acc",acc)
+                        print("Max acc",max_val_acc)
+                        if acc > max_val_acc:
+                            max_val_acc =acc
+                            model = cur_model
+                            old_model = model
+                            if mode=='erm':
+                                torch.save(model.state_dict(), './models/Best_model_erm.pth')
+                            elif mode=='cur_erm':
+                                torch.save(model.state_dict(), './models/Best_model_cur_erm.pth')
+                            elif mode=='random_feature_ext':
+                                torch.save(model.state_dict(), './models/Best_model_rand1.pth')
+                            elif mode=='Cur_feature_ext':
+                                torch.save(model.state_dict(), './models/Best_model_cur1.pth')
+                            else:
+                                print("Model weights unsaved")
+                                pass
+                            perfect_epoch = epoch
+                            print("perfect epoch",perfect_epoch)
+                        else:
+                            model = old_model
+
+            
                             
                     
  
