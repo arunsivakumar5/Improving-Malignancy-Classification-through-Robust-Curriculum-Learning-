@@ -302,7 +302,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
     
     num_ftrs = model_new.fc.in_features
-    model_new.fc = nn.Linear(num_ftrs, 2)
+    model_new.fc = nn.Linear(num_ftrs, 3)
     model = model_new
     
     model = model.to(device)
@@ -337,7 +337,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
             model.train()
             if epoch <75:
                 model.train()
-                for train_input,train_label in train_dataloader1:
+                for train_input,train_label in train_dataloader2:
 
 
                     train_label = train_label['superclass']
