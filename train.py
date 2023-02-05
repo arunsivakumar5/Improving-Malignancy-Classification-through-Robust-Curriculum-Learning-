@@ -152,7 +152,7 @@ def train_erm(params,trainDataloader,validDataloader,model,steps=None,num_epochs
             
     return model,max_val_acc
 
-def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts=None,Class='three',steps=steps):
+def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts=None,Class='three',steps=None):
     
     
     device = torch.device("cuda")
@@ -822,7 +822,7 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
      
     return model,max_val_acc
 
-def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None, use_cuda = True, robust=True, stable= True, size_adjustment = None):
+def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None, use_cuda = True, robust=True, stable= True, size_adjustment = None,steps1=None,steps2=None):
     
     
     device = torch.device("cuda")
