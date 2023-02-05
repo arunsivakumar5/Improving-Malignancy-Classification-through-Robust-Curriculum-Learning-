@@ -907,6 +907,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
             else:
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
+                l =1
                 for i in range(steps2):
                     for batch_idx, (inputs, targets) in enumerate(train_dataloader2):
                                  
@@ -923,7 +924,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                             model_new.fc = nn.Linear(num_ftrs, 3)
                             model = model_new
                             model = model.to(device) 
-                            l =1
+                            
                             if l==1:
                                 max_val_acc =-1
                                 l+=1
