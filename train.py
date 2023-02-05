@@ -922,8 +922,13 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                             num_ftrs = model_new.fc.in_features
                             model_new.fc = nn.Linear(num_ftrs, 3)
                             model = model_new
-                            model = model.to(device)   
-                            max_val_acc =-1
+                            model = model.to(device) 
+                            l =1
+                            if l==1:
+                                max_val_acc =-1
+                                l+=1
+                            else:
+                                pass
                         else:
                             pass
  
