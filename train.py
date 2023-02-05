@@ -50,7 +50,7 @@ import os
 import utils.image_data_utils as im_utils
 import utils.data_utils as d_utils
 
-def train_erm(params,trainDataloader,validDataloader,model,steps=None,num_epochs=None,mode='erm'):
+def train_erm(params,trainDataloader,validDataloader,model,steps=1,num_epochs=None,mode='erm'):
 
     max_val_acc = 0
 
@@ -436,7 +436,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
 
     return model,max_val_acc
 
-def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model,steps1=None,steps2=None,num_epochs=300,mode='cur_erm'):
+def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model,steps1=1,steps2=1,num_epochs=300,mode='cur_erm'):
     
     device = torch.device("cuda")
     
