@@ -863,7 +863,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
             
             
             model.train()
-            if epoch <50:
+            if epoch <25:
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
 
@@ -917,7 +917,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                         loss_targets_cur = targets['subclass']
                         loss_targets = loss_targets.to(device)
                         loss_targets_cur = loss_targets_cur.to(device)
-                        if epoch==50:
+                        if epoch==25:
                             model_new = model
                             num_ftrs = model_new.fc.in_features
                             model_new.fc = nn.Linear(num_ftrs, 3)
