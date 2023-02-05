@@ -75,7 +75,7 @@ import utils.data_utils as d_utils
 import models
 from dataset import LIDC_Dataset
 from loss import LossComputer
-from train import train_erm,train_gdro,train_gdro_ct,train_erm_ct, train_gdro_ct_five
+from train import train_erm,train_gdro,train_gdro_ct,train_erm_ct, train_gdro_ct_five,train_gdro_new,train_gdro_ct_new
 
 
 
@@ -487,6 +487,217 @@ elif method =='gDRO':
                 model = models.TransferModel18(freeze=False,num_classes=2)
                 model2 = models.TransferModel18(freeze=False,num_classes=2)
             
+            steps1 = math.ceil(len(trainDataset1) / params['batch_size'])
+            steps2 = math.ceil(len(trainDataset2) / params['batch_size'])
+            
+
+            modelA,max_acc = train_gdro_ct_new(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=300,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
+            modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
+            print("Cur gDRO trained!")
+
+            over_acc_cur_gdro,cur_gdro1,cur_gdro2,cur_gdro3,cur_gdro4,cur_gdro5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
+      
+            over_acc_cur_gdro_lst.append(over_acc_cur_gdro)
+            cur_gdro1_lst.append(cur_gdro1)
+            cur_gdro2_lst.append(cur_gdro2)
+            cur_gdro3_lst.append(cur_gdro3)
+            cur_gdro4_lst.append(cur_gdro4)
+            cur_gdro5_lst.append(cur_gdro5)
+
+            itemlist =over_acc_cur_gdro_lst
+            with open('./test_results/over_test_acc_gdro_cur.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = cur_gdro1_lst
+            with open('./test_results/acc1_gdro_cur.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = cur_gdro2_lst
+            with open('./test_results/acc2_gdro_cur.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = cur_gdro3_lst
+            with open('./test_results/acc3_gdro_cur.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = cur_gdro4_lst
+            with open('./test_results/acc4_gdro_cur.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = cur_gdro5_lst
+            with open('./test_results/acc5_gdro_cur.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+            
+            itemlist = file_num
+            with open('./test_results/test_logs.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+            
+            datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
+
+            train_data,cv_data,test_data = datas
+
+            trainDataset = LIDC_Dataset(*train_data)
+            
+
+            subclass_counts=trainDataset.get_class_counts('subclass')
+
+            tr = trainDataset
+            
+
+            train_weights = im_utils.get_sampler_weights(trainDataset.subclasses)    
+
+
+            sampler = torch.utils.data.WeightedRandomSampler(
+                        train_weights,
+                        len(train_weights))
+            train_dataloader = DataLoader(tr, batch_size =params['batch_size'],sampler=sampler )
+
+            
+
+            device = torch.device('cuda')
+            if args.freeze == 'Yes':
+                model = models.TransferModel18(num_classes=3)
+            else:
+                model = models.TransferModel18(freeze=False,num_classes=3)
+            
+            steps = math.ceil(len(trainDataset) / params['batch_size'])
+   
+            
+            modelA,max_acc = train_gdro_new(params,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts,steps = steps)
+            modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
+            print("Traditional gDRO trained!")
+
+            over_acc_gdro,gdro1,gdro2,gdro3,gdro4,gdro5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
+
+            over_acc_gdro_lst.append(over_acc_gdro)
+            gdro1_lst.append(gdro1)
+            gdro2_lst.append(gdro2)
+            gdro3_lst.append(gdro3)
+            gdro4_lst.append(gdro4)
+            gdro5_lst.append(gdro5)
+        
+            itemlist =over_acc_gdro_lst
+            with open('./test_results/over_test_acc_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = gdro1_lst
+            with open('./test_results/acc1_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = gdro2_lst
+            with open('./test_results/acc2_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = gdro3_lst
+            with open('./test_results/acc3_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = gdro4_lst
+            with open('./test_results/acc4_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+            itemlist = gdro5_lst
+            with open('./test_results/acc5_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+    elif args.curriculum == 'Both_new':
+        for i in range(1,args.trials + 1): 
+
+            print("file",i)
+            params ={'learning_rate': 0.0005,
+                                'patience':2,
+                                'batch_size': 128,  
+                                'w_d': 0.005,
+                                'factor': 0.2,
+                                'scheduler_choice':1,
+                                'opt': 'Adam' }
+            
+                
+
+            file_num.append(i)
+                
+            split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
+            
+            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='experiment1_unsorted')  #mode =='' curriculum
+
+            datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum') 
+
+            _,cv_data,test_data = datas_cur
+            
+
+            train_data_easy,cv_data_easy = data_easy
+            train_data_hard,cv_data_hard = datas_hard
+
+            trainDataset1 = LIDC_Dataset(*train_data_easy)
+            validDataset1 = LIDC_Dataset(*cv_data_easy)
+
+            trainDataset2 = LIDC_Dataset(*train_data_hard)
+            validDataset2 = LIDC_Dataset(*cv_data_hard)
+
+            testDataset = LIDC_Dataset(*test_data)
+
+            
+
+            tr = trainDataset1
+            val = validDataset1
+            test=testDataset
+
+            
+            subclass_counts1=trainDataset1.get_class_counts('subclass')
+
+            train_weights1 = im_utils.get_sampler_weights(trainDataset1.subclasses)    
+
+
+            
+            train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights1,len(train_weights1)) )
+            #train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset1),shuffle=False)
+
+            try:
+                val_weights1 =   im_utils.get_sampler_weights(validDataset1.subclasses)
+            except:
+                val_weights1 =   im_utils.get_sampler_weights(validDataset1.labels)
+
+            val_dataloader1 = DataLoader(val,batch_size = len(validDataset1) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights1,len(val_weights1)) )
+
+
+
+            tr = trainDataset2
+            val = validDataset2
+
+            subclass_counts2=trainDataset2.get_class_counts('subclass')
+            train_weights2 = im_utils.get_sampler_weights(trainDataset2.subclasses)    
+
+
+            
+            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights2,len(train_weights2)) )
+            #train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset2),shuffle=False)
+
+            val_weights2 =   im_utils.get_sampler_weights(validDataset2.subclasses)
+            val_dataloader2 = DataLoader(val,batch_size = len(validDataset2) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights2,len(val_weights2)) )
+
+
+            validDataset = LIDC_Dataset(*cv_data)
+            testDataset = LIDC_Dataset(*test_data)
+
+
+            
+            val = validDataset
+            val_weights =   im_utils.get_sampler_weights(validDataset.subclasses)
+            test_weights =   im_utils.get_sampler_weights(testDataset.subclasses)
+
+            
+            val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights,len(val_weights)) )
+            test_dataloader = DataLoader(test, batch_size = len(testDataset) ,shuffle = False,sampler=torch.utils.data.WeightedRandomSampler(test_weights,len(test_weights)) )  
+            
+            
+
+            device = torch.device('cuda')
+
+            if args.freeze == 'Yes':
+                model = models.TransferModel18(num_classes=2)
+                model2 = models.TransferModel18(num_classes=2)  #Initially 2 for matching states and changed later.
+            else:
+                model = models.TransferModel18(freeze=False,num_classes=2)
+                model2 = models.TransferModel18(freeze=False,num_classes=2)
+            
             modelA,max_acc = train_gdro_ct(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=300,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
@@ -591,7 +802,6 @@ elif method =='gDRO':
             itemlist = gdro5_lst
             with open('./test_results/acc5_gdro.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
-
     elif args.curriculum == 'Both_five':
 
         for i in range(1,args.trials + 1): 
