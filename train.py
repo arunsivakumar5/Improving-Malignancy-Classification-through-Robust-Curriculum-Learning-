@@ -853,7 +853,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     if epochs<num_epochs:   
         
             if params['scheduler_choice'] == 1:
-                scheduler.last_epoch = epoch - 1
+                scheduler.last_epoch = epochs - 1
             else:
                 pass
         
@@ -862,7 +862,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
             
             
             model.train()
-            if epoch <75:
+            if epochs <75:
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 for batch_idx, (inputs, targets) in enumerate(train_dataloader1):
