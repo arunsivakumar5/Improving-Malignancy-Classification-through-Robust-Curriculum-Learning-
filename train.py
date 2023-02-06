@@ -846,7 +846,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     else:
         scheduler = None
     
-      
+    batch_n = 0
     epochs = 0
     max_val_acc = -1
     for epoch in range(num_epochs):
@@ -866,8 +866,8 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 for batch_idx, (inputs, targets) in enumerate(train_dataloader1):
-                                 
-            
+                             
+                    batch_n +=1
                     inputs = inputs.to(device)
             
                     loss_targets = targets['superclass']
@@ -900,8 +900,8 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
 
                 
                 valacc = min(vacc1,vacc2,vacc3,vacc4)
-                if batch_idx == steps1:
-                    epochs+=1
+                if batch_n == steps1:
+                    epochs+=1   
                     print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
                 else:
                     pass
@@ -912,9 +912,9 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 for batch_idx, (inputs, targets) in enumerate(train_dataloader2):
                                  
-            
+                    batch_n +=1
                     inputs = inputs.to(device)
-            
+                    
                     loss_targets = targets['superclass']
                     loss_targets_cur = targets['subclass']
                     loss_targets = loss_targets.to(device)
@@ -965,9 +965,9 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 print("epochs",epochs)
                 print("steps",steps2)
                 print("batch id",batch_idx)
-                if batch_idx == steps2:
+                if batch_n == steps2:
                     epochs+=1
-                    print("epoch", epochs,"training Accuracy",trains_accs)
+                    #print("epoch", epochs,"training Accuracy",trains_accs)
                     print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
                 else:
                     pass
