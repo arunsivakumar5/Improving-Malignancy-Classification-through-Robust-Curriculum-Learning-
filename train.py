@@ -189,7 +189,8 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
         scheduler = None
     
       
-    
+    batch_n = 0
+    epochs = 0
     max_val_acc = -1
     num_epochs = num_epochs*16
     for epoch in range(num_epochs):
