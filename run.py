@@ -747,6 +747,10 @@ elif method =='gDRO':
             itemlist = cur_vals
             with open('./test_results/cur_val_lst.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
+
+            itemlist = over_acc_cur_new
+            with open('./test_results/over_cur_val_lst.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
             train_data,cv_data,test_data = datas
@@ -820,6 +824,11 @@ elif method =='gDRO':
             itemlist = gdro_vals
             with open('./test_results/gdro_val_lst.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
+
+            itemlist = over_acc_new
+            with open('./test_results/over_gdro_val_lst.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+                
     elif args.curriculum == 'Both_five':
 
         for i in range(1,args.trials + 1): 

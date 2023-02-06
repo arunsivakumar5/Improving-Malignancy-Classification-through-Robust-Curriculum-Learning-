@@ -256,7 +256,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
             print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
             train_accs_lst.append(trains_accs.detach().cpu().numpy())
             val_accs_lst.append(valacc)
-            val_accs_lst2append(over_val_acc)
+            val_accs_lst2.append(over_val_acc)
         else:
             pass
         
