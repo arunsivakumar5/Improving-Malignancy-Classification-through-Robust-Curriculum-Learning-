@@ -849,7 +849,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     batch_n = 0
     epochs = 0
     max_val_acc = -1
-    for epoch in range(num_epochs):
+    for epoch in range(num_epochs):  #100
         
         
             if params['scheduler_choice'] == 1:
@@ -867,7 +867,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 for batch_idx, (inputs, targets) in enumerate(train_dataloader1):
                              
-                    batch_n +=1
+                    
                     inputs = inputs.to(device)
             
                     loss_targets = targets['superclass']
@@ -895,6 +895,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     
 
                 model.eval() 
+                batch_n +=1
                 cur_model = model      
                 over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader1,model, 4)
 
@@ -912,7 +913,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 for batch_idx, (inputs, targets) in enumerate(train_dataloader2):
                                  
-                    batch_n +=1
+                    
                     inputs = inputs.to(device)
                     
                     loss_targets = targets['superclass']
@@ -957,7 +958,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
             
                 model.eval() 
                 cur_model = model      
-                
+                batch_n +=1
                 over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(val_dataloader2,model, 5)
                 
                 
@@ -967,7 +968,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 print("batch id",batch_n)
                 if batch_n == steps2:
                     epochs+=1
-                    #print("epoch", epochs,"training Accuracy",trains_accs)
+                    
                     print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
                 else:
                     pass
