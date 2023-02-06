@@ -849,11 +849,12 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     batch_n = 0
     epochs = 0
     max_val_acc = -1
-    
-    if epochs<num_epochs:   
+    num_epochs =  num_epochs*16
+    for epoch in range(num_epochs):  #100
+        
         
             if params['scheduler_choice'] == 1:
-                scheduler.last_epoch = epochs - 1
+                scheduler.last_epoch = epoch - 1
             else:
                 pass
         
@@ -862,7 +863,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
             
             
             model.train()
-            if epochs <75:
+            if epoch <75:
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 for batch_idx, (inputs, targets) in enumerate(train_dataloader1):
@@ -1018,8 +1019,10 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 else:
                     pass
                 
-    else:           
-            return best_model,max_val_acc
+                
+                
+     
+    return best_model,max_val_acc
     
     
 def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,train_dataloader3,val_dataloader3,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None,subclass_counts3=None, use_cuda = True, robust=True, stable= True, size_adjustment = None):
