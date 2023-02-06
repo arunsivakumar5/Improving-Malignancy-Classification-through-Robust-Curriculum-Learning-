@@ -699,7 +699,7 @@ elif method =='gDRO':
             steps1 = math.ceil(len(trainDataset1) / params['batch_size'])
             steps2 = math.ceil(len(trainDataset2) / params['batch_size'])
 
-            modelA,max_acc = train_gdro_ct_new(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=100,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
+            modelA,max_acc,cur_train,cur_vals = train_gdro_ct_new(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=100,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
@@ -740,6 +740,13 @@ elif method =='gDRO':
             with open('./test_results/test_logs.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
             
+            itemlist = cur_train
+            with open('./test_results/cur_train_lst.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = cur_vals
+            with open('./test_results/cur_val_lst.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
             train_data,cv_data,test_data = datas
@@ -771,7 +778,7 @@ elif method =='gDRO':
             steps = math.ceil(len(trainDataset) / params['batch_size'])
             
 
-            modelA,max_acc = train_gdro_new(params,model,train_dataloader,val_dataloader,num_epochs=100,mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
+            modelA,max_acc,gdro_train,gdro_vals = train_gdro_new(params,model,train_dataloader,val_dataloader,num_epochs=100,mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
@@ -805,6 +812,13 @@ elif method =='gDRO':
                 pickle.dump(itemlist, fp)
             itemlist = gdro5_lst
             with open('./test_results/acc5_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+            itemlist = gdro_train
+            with open('./test_results/gdro_train_lst.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = gdro_vals
+            with open('./test_results/gdro_val_lst.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
     elif args.curriculum == 'Both_five':
 
