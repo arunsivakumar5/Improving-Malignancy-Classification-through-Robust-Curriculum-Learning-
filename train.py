@@ -834,8 +834,8 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     
     model = model.to(device)
     
-    
-    
+    steps1 = steps1-1
+    steps2 = steps2-1
     if params['opt'] =='Adam':
         optimizer = torch.optim.Adam(model.parameters(), lr =params['learning_rate'],weight_decay =params['w_d']) 
     else:
@@ -898,7 +898,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 cur_model = model      
                 over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader1,model, 4)
 
-                steps1 = steps1-1
+                
                 valacc = min(vacc1,vacc2,vacc3,vacc4)
                 if batch_idx == steps1:
                     epochs+=1
@@ -960,7 +960,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 
                 over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(val_dataloader2,model, 5)
                 
-                steps2 = steps2-1
+                
                 valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
                 print("epochs",epochs)
                 print("steps",steps2)
