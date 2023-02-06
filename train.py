@@ -982,6 +982,8 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     max_val_acc = valacc
                     model = cur_model
                     old_model = model
+                    best_model = model
+
                     if mode=='gDRO':
                         try:
                             torch.save(model.state_dict(), './models/Best_model_gdro.pth')
@@ -1010,7 +1012,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
             
                 else:
                     model = old_model
-                    
+                                        
                     
                 if params['scheduler_choice'] == 1:
                     scheduler.step(valacc)
@@ -1020,7 +1022,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 
                 
      
-    return model,max_val_acc
+    return best_model,max_val_acc
     
     
 def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,train_dataloader3,val_dataloader3,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None,subclass_counts3=None, use_cuda = True, robust=True, stable= True, size_adjustment = None):
