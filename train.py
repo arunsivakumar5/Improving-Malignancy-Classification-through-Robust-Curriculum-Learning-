@@ -208,29 +208,29 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
         for batch_idx, (inputs, targets) in enumerate(train_dataloader):
                                  
                     
-                    inputs = inputs.to(device)
+            inputs = inputs.to(device)
                     
-                    loss_targets = targets['superclass']
-                    loss_targets_cur = targets['subclass']
-                    loss_targets = loss_targets.to(device)
-                    loss_targets_cur = loss_targets_cur.to(device)
-                    logits = model(inputs)
-                    logits = logits.to(device)
-                    co = criterion(logits, loss_targets,loss_targets_cur)
+            loss_targets = targets['superclass']
+            loss_targets_cur = targets['subclass']
+            loss_targets = loss_targets.to(device)
+            loss_targets_cur = loss_targets_cur.to(device)
+            logits = model(inputs)
+            logits = logits.to(device)
+            co = criterion(logits, loss_targets,loss_targets_cur)
             
             
-                    loss, (losses, corrects) = co
+            loss, (losses, corrects) = co
             
-                    optimizer.zero_grad()
+            optimizer.zero_grad()
             
-                    loss.backward()
-                    predicteds = logits.argmax(1)
-                    actuals = targets['superclass']
-                    actuals = actuals.to(device)
+            loss.backward()
+            predicteds = logits.argmax(1)
+            actuals = targets['superclass']
+            actuals = actuals.to(device)
             
-                    trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
+            trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
             
-                    optimizer.step()
+            optimizer.step()
                     
         
         
@@ -265,7 +265,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
             old_model = model
             if mode=='gDRO':
                 try:
-                    best_model = model
+                    
                     torch.save(model.state_dict(), './models/Best_model_gdro.pth')
                     path = './models/Best_model_gdro.pth'
                 except:
@@ -291,7 +291,10 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
                 
             
         else:
-            model = old_model
+            try:
+                model = old_model
+            except:
+                old_model = model
             
                 
         if params['scheduler_choice'] == 1:
@@ -302,7 +305,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
                 
                 
 
-    return best_model,max_val_acc,train_accs_lst,val_accs_lst
+    return model,max_val_acc,train_accs_lst,val_accs_lst
     
 
 def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts=None,Class='three'):
@@ -1041,7 +1044,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 
                 
      
-    return best_model,max_val_acc,train_accs_lst,val_accs_lst,val_accs_lst
+    return model,max_val_acc,train_accs_lst,val_accs_lst,val_accs_lst
     
     
 def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,train_dataloader3,val_dataloader3,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None,subclass_counts3=None, use_cuda = True, robust=True, stable= True, size_adjustment = None):
