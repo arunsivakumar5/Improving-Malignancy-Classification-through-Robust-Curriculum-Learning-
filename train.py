@@ -892,6 +892,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
             
                     optimizer.step()
+                    
 
                 model.eval() 
                 cur_model = model      
@@ -945,7 +946,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
             
                     optimizer.step()
-            
+                    
         
         
             
@@ -962,7 +963,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
                 print("epochs",epochs)
                 print("steps",steps2)
-                print("batch id".batch_idx)
+                print("batch id",batch_idx)
                 if batch_idx == steps2:
                     epochs+=1
                     print("epoch", epochs,"training Accuracy",trains_accs)
