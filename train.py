@@ -156,6 +156,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
     
     train_accs_lst = []
     val_accs_lst = []
+    val_accs_lst2 = []
     device = torch.device("cuda")
     
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
@@ -255,6 +256,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
             print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
             train_accs_lst.append(trains_accs.detach().cpu().numpy())
             val_accs_lst.append(valacc)
+            val_accs_lst2append(over_val_acc)
         else:
             pass
         
@@ -303,7 +305,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
                 
                 
 
-    return best_model,max_val_acc,train_accs_lst,val_accs_lst
+    return best_model,max_val_acc,train_accs_lst,val_accs_lst,val_accs_lst2
     
 
 def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts=None,Class='three'):
@@ -839,6 +841,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     
     train_accs_lst = []
     val_accs_lst = []
+    val_accs_lst2 = []
     device = torch.device("cuda")
     
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
@@ -990,6 +993,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     batch_n =0
                     train_accs_lst.append(trains_accs.detach().cpu().numpy())
                     val_accs_lst.append(valacc)
+                    val_accs_lst2.append(over_val_acc)
                     print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
                 else:
                     pass
@@ -1041,7 +1045,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 
                 
      
-    return best_model,max_val_acc,train_accs_lst,val_accs_lst
+    return best_model,max_val_acc,train_accs_lst,val_accs_lst,val_accs_lst2
     
     
 def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,train_dataloader3,val_dataloader3,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None,subclass_counts3=None, use_cuda = True, robust=True, stable= True, size_adjustment = None):
