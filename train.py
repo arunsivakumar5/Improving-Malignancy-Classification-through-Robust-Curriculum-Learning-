@@ -849,6 +849,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     batch_n = 0
     epochs = 0
     max_val_acc = -1
+    num_epochs =  num_epochs*10
     for epoch in range(num_epochs):  #100
         
         
