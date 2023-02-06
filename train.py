@@ -903,6 +903,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 valacc = min(vacc1,vacc2,vacc3,vacc4)
                 if batch_n == steps1:
                     epochs+=1   
+                    batch_n=0
                     print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
                 else:
                     pass
@@ -968,7 +969,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 print("batch id",batch_n)
                 if batch_n == steps2:
                     epochs+=1
-                    
+                    batch_n =0
                     print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
                 else:
                     pass
