@@ -849,9 +849,8 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     batch_n = 0
     epochs = 0
     max_val_acc = -1
-    num_epochs =  num_epochs*10
-    for epoch in range(num_epochs):  #100
-        
+    
+    if epochs<num_epochs:   
         
             if params['scheduler_choice'] == 1:
                 scheduler.last_epoch = epoch - 1
@@ -1019,10 +1018,8 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 else:
                     pass
                 
-                
-                
-     
-    return best_model,max_val_acc
+     else:           
+         return best_model,max_val_acc
     
     
 def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,train_dataloader3,val_dataloader3,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None,subclass_counts3=None, use_cuda = True, robust=True, stable= True, size_adjustment = None):
