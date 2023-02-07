@@ -305,7 +305,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
                 
                 
 
-    return model,max_val_acc,train_accs_lst,val_accs_lst,val_accs_lst2
+    return model,max_val_acc,train_accs_lst,val_accs_lst,val_accs_lst2,best_model
     
 
 def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts=None,Class='three'):
@@ -411,6 +411,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
             old_model = model
             if mode=='gDRO':
                 try:
+                    
                     torch.save(model.state_dict(), './models/Best_model_gdro.pth')
                     path = './models/Best_model_gdro.pth'
                 except:
@@ -799,6 +800,7 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
                     old_model = model
                     if mode=='gDRO':
                         try:
+                            
                             torch.save(model.state_dict(), './models/Best_model_gdro.pth')
                             path = './models/Best_model_gdro.pth'
                         except:
@@ -1001,6 +1003,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                             os.makedirs(path)
                     elif mode=='cur_gDRO':
                         try:
+                            best_model = model
                             torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
                             path = './models/Best_model_cur_gdro.pth'
                         except:
@@ -1031,7 +1034,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 
                 
      
-    return model,max_val_acc,train_accs_lst,val_accs_lst,overall_val_lst
+    return model,max_val_acc,train_accs_lst,val_accs_lst,overall_val_lst,best_model
 
 
 
