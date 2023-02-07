@@ -156,6 +156,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
     
     train_accs_lst = []
     val_accs_lst = []
+    overall_val_accs_lst = []
     device = torch.device("cuda")
     
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
