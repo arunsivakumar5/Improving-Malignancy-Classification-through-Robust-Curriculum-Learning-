@@ -156,6 +156,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
     
     train_accs_lst = []
     val_accs_lst = []
+    val_accs_lst2 = []
     device = torch.device("cuda")
     
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
@@ -192,7 +193,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
     batch_n = 0
     epochs = 0
     max_val_acc = -1
-    num_epochs =300
+    num_epochs = num_epochs*16
     for epoch in range(num_epochs):
         
         
@@ -208,29 +209,29 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
         for batch_idx, (inputs, targets) in enumerate(train_dataloader):
                                  
                     
-            inputs = inputs.to(device)
+                    inputs = inputs.to(device)
                     
-            loss_targets = targets['superclass']
-            loss_targets_cur = targets['subclass']
-            loss_targets = loss_targets.to(device)
-            loss_targets_cur = loss_targets_cur.to(device)
-            logits = model(inputs)
-            logits = logits.to(device)
-            co = criterion(logits, loss_targets,loss_targets_cur)
+                    loss_targets = targets['superclass']
+                    loss_targets_cur = targets['subclass']
+                    loss_targets = loss_targets.to(device)
+                    loss_targets_cur = loss_targets_cur.to(device)
+                    logits = model(inputs)
+                    logits = logits.to(device)
+                    co = criterion(logits, loss_targets,loss_targets_cur)
             
             
-            loss, (losses, corrects) = co
+                    loss, (losses, corrects) = co
             
-            optimizer.zero_grad()
+                    optimizer.zero_grad()
             
-            loss.backward()
-            predicteds = logits.argmax(1)
-            actuals = targets['superclass']
-            actuals = actuals.to(device)
+                    loss.backward()
+                    predicteds = logits.argmax(1)
+                    actuals = targets['superclass']
+                    actuals = actuals.to(device)
             
-            trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
+                    trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
             
-            optimizer.step()
+                    optimizer.step()
                     
         
         
@@ -246,16 +247,16 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
                 
                 
         valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
-        #print("epochs",epochs)
-        #print("steps",steps)
-        #print("batch id",batch_n)
-        print("batch_n", batch_n,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
+        print("epochs",epochs)
+        print("steps",steps)
+        print("batch id",batch_n)
         if batch_n == steps:
             epochs+=1
-            #batch_n =0
-            #print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
+            batch_n =0
+            print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
             train_accs_lst.append(trains_accs.detach().cpu().numpy())
             val_accs_lst.append(valacc)
+            val_accs_lst2.append(over_val_acc)
         else:
             pass
         
@@ -265,7 +266,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
             old_model = model
             if mode=='gDRO':
                 try:
-                    
+                    best_model = model
                     torch.save(model.state_dict(), './models/Best_model_gdro.pth')
                     path = './models/Best_model_gdro.pth'
                 except:
@@ -295,7 +296,6 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
                 model = old_model
             except:
                 old_model = model
-            
                 
         if params['scheduler_choice'] == 1:
             scheduler.step(valacc)
@@ -305,7 +305,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
                 
                 
 
-    return model,max_val_acc,train_accs_lst,val_accs_lst,val_accs_lst
+    return model,max_val_acc,train_accs_lst,val_accs_lst,val_accs_lst2
     
 
 def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, robust=True, num_epochs = 0,stable= True, size_adjustment = None,mode =None,subclass_counts=None,Class='three'):
@@ -403,9 +403,8 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
         cur_model = model       
         over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(val_dataloader,model, 5)
         valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
-        #print("epoch", epoch,"training Accuracy",trains_accs)
-        print("batch_id", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
-        #print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
+        print("epoch", epoch,"training Accuracy",trains_accs)
+        print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
         if valacc > max_val_acc:
             max_val_acc = valacc
             model = cur_model
@@ -842,6 +841,205 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     
     train_accs_lst = []
     val_accs_lst = []
+    overall_val_lst = []
+    device = torch.device("cuda")
+    
+    model_new = torchvision.models.resnet18(pretrained=True).to(device)
+    
+    num_ftrs = model_new.fc.in_features
+    model_new.fc = nn.Linear(num_ftrs, 2)
+    model = model_new
+    
+    model = model.to(device)
+    
+    
+    
+    if params['opt'] =='Adam':
+        optimizer = torch.optim.Adam(model.parameters(), lr =params['learning_rate'],weight_decay =params['w_d']) 
+    else:
+        optimizer = torch.optim.SGD(model.parameters(), lr =params['learning_rate'],weight_decay =params['w_d']) 
+        
+    if params['scheduler_choice'] == 1:
+        scheduler =  d_utils.init_scheduler({'class_args': {'patience':params['patience'],'factor': params['factor'],'mode':'max'},'class_name': 'ReduceLROnPlateau'},optimizer) 
+    else:
+        scheduler = None
+    
+      
+    batch_n = 0
+    epochs = 0
+    max_val_acc = -1
+    for epoch in range(num_epochs):
+        
+        
+            if params['scheduler_choice'] == 1:
+                scheduler.last_epoch = epoch - 1
+            else:
+                pass
+        
+    
+            
+            
+            
+            model.train()
+            if epoch <75:
+                criterion = torch.nn.CrossEntropyLoss(reduction='none')
+                criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
+                for batch_idx, (inputs, targets) in enumerate(train_dataloader1):
+                                 
+            
+                    inputs = inputs.to(device)
+            
+                    loss_targets = targets['superclass']
+                    loss_targets_cur = targets['subclass']
+                    loss_targets = loss_targets.to(device)
+                    loss_targets_cur = loss_targets_cur.to(device)
+                    
+                    logits = model(inputs)
+                    logits = logits.to(device)
+                    co = criterion(logits, loss_targets,loss_targets_cur)
+            
+            
+                    loss, (losses, corrects) = co
+            
+                    optimizer.zero_grad()
+            
+                    loss.backward()
+                    predicteds = logits.argmax(1)
+                    actuals = targets['superclass']
+                    actuals = actuals.to(device)
+            
+                    trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
+            
+                    optimizer.step()
+
+                model.eval() 
+                cur_model = model      
+                over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader1,model, 4)
+
+                valacc = min(vacc1,vacc2,vacc3,vacc4)
+                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
+
+
+            else:
+                criterion = torch.nn.CrossEntropyLoss(reduction='none')
+                criterion = LossComputer(criterion, robust,5, subclass_counts2, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
+                for batch_idx, (inputs, targets) in enumerate(train_dataloader2):
+                                 
+            
+                    inputs = inputs.to(device)
+            
+                    loss_targets = targets['superclass']
+                    loss_targets_cur = targets['subclass']
+                    loss_targets = loss_targets.to(device)
+                    loss_targets_cur = loss_targets_cur.to(device)
+                    if epoch==75:
+                        model_new = model
+                        num_ftrs = model_new.fc.in_features
+                        model_new.fc = nn.Linear(num_ftrs, 3)
+                        model = model_new
+                        model = model.to(device)   
+                        max_val_acc =-1
+                    else:
+                        pass
+ 
+    
+                    logits = model(inputs)
+                    logits = logits.to(device)
+                    co = criterion(logits, loss_targets,loss_targets_cur)
+            
+            
+                    loss, (losses, corrects) = co
+            
+                    optimizer.zero_grad()
+            
+                    loss.backward()
+                    predicteds = logits.argmax(1)
+                    actuals = targets['superclass']
+                    actuals = actuals.to(device)
+            
+                    trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
+            
+                    optimizer.step()
+            
+        
+        
+            
+            
+        
+            
+            
+                model.eval() 
+                batch_n +=1
+                cur_model = model      
+                
+                over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(val_dataloader2,model, 5)
+                
+                
+                valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
+                if batch_n == steps1:
+                    epochs+=1   
+                    batch_n=0
+                    
+                    overall_val_lst.append(over_val_acc)
+                    val_accs_lst.append(valacc)
+                    print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
+                else:
+                    pass
+                
+                
+                
+
+                if valacc > max_val_acc:
+                    max_val_acc = valacc
+                    model = cur_model
+                    old_model = model
+                    if mode=='gDRO':
+                        try:
+                            torch.save(model.state_dict(), './models/Best_model_gdro.pth')
+                            path = './models/Best_model_gdro.pth'
+                        except:
+                            os.makedirs(path)
+                    elif mode=='cur_gDRO':
+                        try:
+                            torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
+                            path = './models/Best_model_cur_gdro.pth'
+                        except:
+                            os.makedirs(path)
+                    elif mode=='random_gDRO':
+                        try:
+                            torch.save(model.state_dict(), './models/Best_model_rand2.pth')
+                        except:
+                            pass
+                    elif mode=='Cur_gDRO':
+                        torch.save(model.state_dict(), './models/Best_model_cur2.pth')
+                    else:
+                        print("Model weights unsaved")
+                        pass
+                    perfect_epoch = epoch
+                    print("perfect epoch",perfect_epoch)
+                
+            
+                else:
+                    model = old_model
+                    
+                    
+                if params['scheduler_choice'] == 1:
+                    scheduler.step(valacc)
+                else:
+                    pass
+                
+                
+                
+     
+    return model,max_val_acc,train_accs_lst,val_accs_lst,overall_val_lst
+
+
+
+def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None, use_cuda = True, robust=True, stable= True, size_adjustment = None,steps1=None,steps2=None):
+    
+    train_accs_lst = []
+    val_accs_lst = []
+    val_accs_lst2 = []
     device = torch.device("cuda")
     
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
@@ -867,7 +1065,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     batch_n = 0
     epochs = 0
     max_val_acc = -1
-    num_epochs =  300
+    num_epochs =  num_epochs*16
     for epoch in range(num_epochs):  #100
         
         
@@ -881,7 +1079,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
             
             
             model.train()
-            if epoch <3:
+            if epoch <75:
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 for batch_idx, (inputs, targets) in enumerate(train_dataloader1):
@@ -942,7 +1140,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     loss_targets_cur = targets['subclass']
                     loss_targets = loss_targets.to(device)
                     loss_targets_cur = loss_targets_cur.to(device)
-                    if epoch==3:
+                    if epoch==75:
                         model_new = model
                         num_ftrs = model_new.fc.in_features
                         model_new.fc = nn.Linear(num_ftrs, 3)
@@ -993,6 +1191,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     batch_n =0
                     train_accs_lst.append(trains_accs.detach().cpu().numpy())
                     val_accs_lst.append(valacc)
+                    val_accs_lst2.append(over_val_acc)
                     print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
                 else:
                     pass
@@ -1044,7 +1243,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                 
                 
      
-    return model,max_val_acc,train_accs_lst,val_accs_lst,val_accs_lst
+    return best_model,max_val_acc,train_accs_lst,val_accs_lst,val_accs_lst2
     
     
 def train_gdro_ct_five(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,train_dataloader3,val_dataloader3,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None,subclass_counts3=None, use_cuda = True, robust=True, stable= True, size_adjustment = None):
