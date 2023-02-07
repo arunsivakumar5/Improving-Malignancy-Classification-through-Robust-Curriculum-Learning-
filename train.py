@@ -192,7 +192,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
     batch_n = 0
     epochs = 0
     max_val_acc = -1
-    num_epochs = num_epochs*16
+    num_epochs = 10
     for epoch in range(num_epochs):
         
         
@@ -867,7 +867,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     batch_n = 0
     epochs = 0
     max_val_acc = -1
-    num_epochs =  num_epochs*16
+    num_epochs =  10
     for epoch in range(num_epochs):  #100
         
         
@@ -881,7 +881,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
             
             
             model.train()
-            if epoch <75:
+            if epoch <3:
                 criterion = torch.nn.CrossEntropyLoss(reduction='none')
                 criterion = LossComputer(criterion, robust,5, subclass_counts1, 0.01, stable, 12, False, size_adjustment, use_cuda= use_cuda)
                 for batch_idx, (inputs, targets) in enumerate(train_dataloader1):
@@ -942,7 +942,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     loss_targets_cur = targets['subclass']
                     loss_targets = loss_targets.to(device)
                     loss_targets_cur = loss_targets_cur.to(device)
-                    if epoch==75:
+                    if epoch==3:
                         model_new = model
                         num_ftrs = model_new.fc.in_features
                         model_new.fc = nn.Linear(num_ftrs, 3)
