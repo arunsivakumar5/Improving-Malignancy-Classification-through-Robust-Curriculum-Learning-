@@ -193,7 +193,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
     batch_n = 0
     epochs = 0
     max_val_acc = -1
-    num_epochs = num_epochs*16
+   
     for epoch in range(num_epochs):
         
         
@@ -209,29 +209,29 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
         for batch_idx, (inputs, targets) in enumerate(train_dataloader):
                                  
                     
-                    inputs = inputs.to(device)
+            inputs = inputs.to(device)
                     
-                    loss_targets = targets['superclass']
-                    loss_targets_cur = targets['subclass']
-                    loss_targets = loss_targets.to(device)
-                    loss_targets_cur = loss_targets_cur.to(device)
-                    logits = model(inputs)
-                    logits = logits.to(device)
-                    co = criterion(logits, loss_targets,loss_targets_cur)
+            loss_targets = targets['superclass']
+            loss_targets_cur = targets['subclass']
+            loss_targets = loss_targets.to(device)
+            loss_targets_cur = loss_targets_cur.to(device)
+            logits = model(inputs)
+            logits = logits.to(device)
+            co = criterion(logits, loss_targets,loss_targets_cur)
             
             
-                    loss, (losses, corrects) = co
+            loss, (losses, corrects) = co
             
-                    optimizer.zero_grad()
+            optimizer.zero_grad()
             
-                    loss.backward()
-                    predicteds = logits.argmax(1)
-                    actuals = targets['superclass']
-                    actuals = actuals.to(device)
+            loss.backward()
+            predicteds = logits.argmax(1)
+            actuals = targets['superclass']
+            actuals = actuals.to(device)
             
-                    trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
+            trains_accs = (predicteds == actuals).sum()/predicteds.shape[0]
             
-                    optimizer.step()
+            optimizer.step()
                     
         
         
