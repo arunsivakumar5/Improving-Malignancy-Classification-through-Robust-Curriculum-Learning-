@@ -854,28 +854,7 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
      
     return model,max_val_acc
 
-    #
     
-
-    #1
-    #model.eval() 
-    #batch_n +=1
-    #cur_model = model      
-    #over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader1,model, 4)
-
-                
-    #valacc = min(vacc1,vacc2,vacc3,vacc4)
-    ##print("step",batch_n,"/",steps1)
-    #if batch_n == steps1:
-        #epochs+=1   
-        #batch_n=0
-        #train_accs_lst.append(trains_accs.detach().cpu().numpy())
-        #val_accs_lst.append(valacc)
-        #print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
-    #else:
-        #pass
-
-    #2
     
 
 def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None, use_cuda = True, robust=True, stable= True, size_adjustment = None,steps1=None,steps2=None):
@@ -1028,7 +1007,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     epochs+=1
                     batch_n =0
                     overall_val_accs_lst2.append(over_val_acc)
-                    train_accs_lst.append(trains_accs.detach().cpu().numpy())
+                    train_accs_lst.append(epochs)
                     val_accs_lst.append(valacc)
                     print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
                 else:
@@ -1039,22 +1018,13 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     model = cur_model
                     old_model = model
                     if mode=='gDRO':
-                        try:
-                            torch.save(model.state_dict(), './models/Best_model_gdro.pth')
-                            path = './models/Best_model_gdro.pth'
-                        except:
-                            os.makedirs(path)
+                        torch.save(model.state_dict(), './models/Best_model_gdro.pth')
                     elif mode=='cur_gDRO':
-                        try:
-                            torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
-                            path = './models/Best_model_cur_gdro.pth'
-                        except:
-                            os.makedirs(path)
+                        torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
+                            
                     elif mode=='random_gDRO':
-                        try:
-                            torch.save(model.state_dict(), './models/Best_model_rand2.pth')
-                        except:
-                            pass
+                        torch.save(model.state_dict(), './models/Best_model_rand2.pth')
+                        
                     elif mode=='Cur_gDRO':
                         torch.save(model.state_dict(), './models/Best_model_cur2.pth')
                     else:
