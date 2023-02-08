@@ -596,7 +596,10 @@ elif method =='gDRO':
             itemlist = gdro5_lst
             with open('./test_results/acc5_gdro.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
+
     elif args.curriculum == 'Both_new':
+
+        
         for i in range(1,args.trials + 1): 
 
             print("file",i)
@@ -614,7 +617,7 @@ elif method =='gDRO':
                 
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
-            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='experiment1_unsorted')  #mode =='' curriculum
+            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='experiment1_unsorted')  
 
             datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum') 
 
@@ -646,7 +649,7 @@ elif method =='gDRO':
 
             
             train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights1,len(train_weights1)) )
-            #train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset1),shuffle=False)
+            
 
             try:
                 val_weights1 =   im_utils.get_sampler_weights(validDataset1.subclasses)
@@ -666,7 +669,7 @@ elif method =='gDRO':
 
             
             train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights2,len(train_weights2)) )
-            #train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],sampler=SequentialSampler(trainDataset2),shuffle=False)
+            
 
             val_weights2 =   im_utils.get_sampler_weights(validDataset2.subclasses)
             val_dataloader2 = DataLoader(val,batch_size = len(validDataset2) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights2,len(val_weights2)) )
@@ -779,10 +782,9 @@ elif method =='gDRO':
                 model = models.TransferModel18(num_classes=3)
             else:
                 model = models.TransferModel18(freeze=False,num_classes=3)
-
+            
             steps = math.ceil(len(trainDataset) / params['batch_size'])
             
-
             modelA,max_acc,gdro_train,gdro_vals,overall_gdro_vals = train_gdro_new(params,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
@@ -818,6 +820,7 @@ elif method =='gDRO':
             itemlist = gdro5_lst
             with open('./test_results/acc5_gdro.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
+
             itemlist = gdro_train
             with open('./test_results/gdro_train_lst.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
