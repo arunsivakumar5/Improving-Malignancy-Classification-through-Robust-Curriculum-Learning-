@@ -208,7 +208,9 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
     epochs = 0  
     
     max_val_acc = -1
-    for epoch in range(num_epochs):
+
+    num_steps = num_epochs*steps
+    for epoch in range(num_steps):
         
         
         if params['scheduler_choice'] == 1:
@@ -282,27 +284,10 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
             model = cur_model
             old_model = model
             if mode=='gDRO':
-                try:
-                    torch.save(model.state_dict(), './models/Best_model_gdro.pth')
-                    path = './models/Best_model_gdro.pth'
-                except:
-                    os.makedirs(path)
-            elif mode=='cur_gDRO':
-                try:
-                    torch.save(model.state_dict(), './models/Best_model_cur_gdro.pth')
-                    path = './models/Best_model_cur_gdro.pth'
-                except:
-                    os.makedirs(path)
-            elif mode=='random_gDRO':
-                try:
-                    torch.save(model.state_dict(), './models/Best_model_rand2.pth')
-                except:
-                    pass
-            elif mode=='Cur_gDRO':
-                torch.save(model.state_dict(), './models/Best_model_cur2.pth')
+                torch.save(model.state_dict(), './models/Best_model_gdro.pth')
             else:
-                print("Model weights unsaved")
-                pass
+                print("unsaved")
+            
             perfect_epoch = epoch
             print("perfect epoch",perfect_epoch)
                 
@@ -891,9 +876,10 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
         scheduler = None
     
       
+    num_steps1 = num_epochs*steps1
     
     max_val_acc = -1
-    for epoch in range(num_epochs):
+    for epoch in range(num_steps1):
         
         
             if params['scheduler_choice'] == 1:
