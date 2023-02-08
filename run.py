@@ -69,7 +69,7 @@ from math import ceil
 
 
 
-
+import warnings
 import utils.image_data_utils as im_utils
 import utils.data_utils as d_utils
 import models
@@ -78,8 +78,7 @@ from loss import LossComputer
 from train import train_erm,train_gdro,train_gdro_ct,train_erm_ct, train_gdro_ct_five,train_gdro_new,train_gdro_ct_new
 
 
-import warnings
-warnings.filterwarnings("ignore")
+
 
 
 val_acc_base = []
@@ -179,7 +178,7 @@ DEVICE = torch.device('cuda')
 
 
 
-
+warnings.filterwarnings("ignore")
 
 
 
@@ -386,6 +385,9 @@ if method =='ERM':
     
 
 elif method =='gDRO':
+
+    
+    
 
     if args.curriculum == 'Both':
 
