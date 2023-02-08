@@ -652,8 +652,7 @@ def random_split(prop,split_file):
     df5 = df_splits[df_splits['Malignancy'] == 5 ]
 
     df_sample = df1.sample(frac=1)
-    print(df_splits)
-    print("splitting data into",int(prop*100),":",int((1-prop)*100),"splits")
+    
     train_size1 = int(prop* len(df_sample))
     
     df_split1_1 = df_sample[:train_size1]
@@ -703,9 +702,7 @@ def random_split(prop,split_file):
     df_split2.sort_values('noduleID', inplace=True)
     df_split2.reset_index(drop=True, inplace=True)
     
-    #df_split1 = (df_split1.iloc[: , 1:]).reset_index(drop = True)
-    #df_split2 = (df_split2.iloc[: , 1:]).reset_index(drop = True)
-
+    
     
     return df_split1,df_split2
 def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
@@ -731,21 +728,13 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
            datas[i]: a list of size three, of features, labels, subclass labels
     '''
 
-    if mode =='experiment1_unsorted':
+    if mode =='unsorted':
 
         df_splits = pd.read_csv(file, index_col=0)
-
+        df_splits1 = df_splits
         
 
-        split1,split2 = random_split(50,split_file=df_splits)
-
-        df_splits1 = split1
-        df_splits2 = split2
-
         df_features = images_to_df()
-    
-
-        #df_features = df_features.loc[df_features["curriculum"] == "0"]
         df_features.reset_index(inplace=True,drop = True)
         
     
@@ -774,16 +763,12 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
     
     
         df_features['cur_cls'] = df_features['clusters'].astype(int)
-    
         df_features['clusters'] = df_features['clusters'].astype(int)
         df_features['malignancy_b'] =  df_features.apply(lambda row: label_cls(row), axis=1)
         df_features['malignancy'] =  df_features.apply(lambda row: label_cls_subclass(row), axis=1)
 
         df_features['clusters'] = df_features['malignancy']
 
-    
-    
-        print(df_splits1)
         
         df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
         df_splits1.sort_values('noduleID', inplace=True)
@@ -799,15 +784,8 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
             dfs.append(df_features.loc[(df_splits1['splits'] == i).values])
 
         datas = []
-        print(dfs)
-        # If we choose to do curriculum learning, sort data based on wMSE computed from multiple radiologist labels
-        #dfs2=[]
-    
-        #for i in dfs:
-            #i = sort_df(i)
-            #dfs2.append(i)
         
-        #print(dfs2)
+        
         for i, d in enumerate(dfs):
                 # If the training dataset, we need to do data augmentation
                 if i == 0:
@@ -836,14 +814,9 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
                 datas.append((X, y, c))
 
         
-
-        print( "easy",d['malignancy_b'].value_counts())
         df_features = images_to_df()
     
 
-    
-        
-    
         df_features['clusters'] = df_features['malignancy']
     
         df_features.sort_values('noduleID', inplace=True)
@@ -880,7 +853,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
 
         
     
-        df_splits1 = df_splits2
+        #Dont split data to prevent lose of information
         df_splits1 = pd.read_csv(file,index_col=0)
 
         df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
@@ -901,14 +874,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
 
         datas2 = []
 
-        # If we choose to do curriculum learning, sort data based on wMSE computed from multiple radiologist labels
-        #dfs2=[]
-    
-        #for i in dfs:
-            #i = sort_df(i)
-            #dfs2.append(i)
         
-        #print(dfs2)
         for i, d in enumerate(dfs):
                 # If the training dataset, we need to do data augmentation
                 if i == 0:
@@ -938,8 +904,9 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
 
         return datas,datas2
 
-    elif mode =='experiment2_unsorted':
-
+    elif mode =='experiment2_unsorted':  #Compute datasets with superclasses 2->3->5
+        
+        
         df_splits = pd.read_csv(file, index_col=0)
 
         split1,split3 = random_split(50,split_file=df_splits)
@@ -1074,7 +1041,7 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         
     
         df_splits1 = df_splits2
-        #df_splits1 = pd.read_csv(file,index_col=0)
+       
 
         df_splits1 = df_splits1[df_splits1['noduleID'].isin(df_features['noduleID'])]
         df_splits1.sort_values('noduleID', inplace=True)
