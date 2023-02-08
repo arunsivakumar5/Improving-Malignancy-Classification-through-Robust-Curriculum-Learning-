@@ -705,7 +705,7 @@ elif method =='gDRO':
             modelA,max_acc,cur_train,cur_vals,overall_val = train_gdro_ct_new(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=50,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
-
+            print(file_num)
             over_acc_cur_gdro,cur_gdro1,cur_gdro2,cur_gdro3,cur_gdro4,cur_gdro5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
       
             over_acc_cur_gdro_lst.append(over_acc_cur_gdro)
