@@ -78,7 +78,8 @@ from loss import LossComputer
 from train import train_erm,train_gdro,train_gdro_ct,train_erm_ct, train_gdro_ct_five,train_gdro_new,train_gdro_ct_new
 
 
-
+import warnings
+warnings.filterwarnings("ignore")
 
 
 val_acc_base = []

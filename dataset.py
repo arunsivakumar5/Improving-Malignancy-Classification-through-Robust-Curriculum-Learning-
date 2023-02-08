@@ -86,9 +86,9 @@ class LIDC_Dataset(Dataset):
             else:
                 yList.append(2)
         subYList = []
-        print("subclasses",subclasses)
+        
         for j in subclasses:
-            print(j)
+            
             if j == 0:
                 subYList.append(0)
             elif j ==1:
@@ -106,8 +106,7 @@ class LIDC_Dataset(Dataset):
                 
                 
                 
-    def __getitem__(self, index):
-        
+    def __getitem__(self, index):        
         return self.X[index], {'superclass':self.Y_dict['superclass'][index], 'subclass':self.Y_dict['subclass'][index]}
         
     
