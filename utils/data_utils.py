@@ -104,7 +104,7 @@ def evaluate(dataloader, model, num_subclasses, verbose=False):
                 torch.float).sum().item()
 
     subgroup_accuracy = subgroup_correct / num_samples
-    print(subgroup_correct, " / ", num_samples)
+    
     accuracy = sum(subgroup_correct) / sum(num_samples)
 
     if verbose:
@@ -259,7 +259,7 @@ def get_train_splits(file='./data/LIDC_3_4_Ratings_wMSE.csv',val_prop=0.10,test_
         df_all.reset_index(drop=True, inplace=True)
         
         
-        print(df_all['splits'].value_counts())
+        
         save_at = os.path.join('./data/Train_splits/nodule_split_', str(i) ,'.csv').replace("\\","")
 
         df_all.to_csv(save_at)
