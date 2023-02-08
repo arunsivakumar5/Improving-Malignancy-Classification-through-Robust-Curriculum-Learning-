@@ -617,7 +617,7 @@ elif method =='gDRO':
 
             file_num.append(i)
                 
-            split_file = os.path.join('./data/splits/nodule_split_?.csv').replace("?",str(i))
+            split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
             data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='unsorted')  
 
