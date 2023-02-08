@@ -600,9 +600,9 @@ elif method =='gDRO':
     elif args.curriculum == 'Both_new':
 
         
-        f = [10,12,13,14,16,17,18,19,20,21,22,23,27,7,9]
+        for i in range(1,args.trials + 1): 
 
-        for i in f:
+        
 
             print("file",i)
             params ={'learning_rate': 0.0005,
@@ -619,7 +619,7 @@ elif method =='gDRO':
                 
             split_file = os.path.join('./data/splits/nodule_split_?.csv').replace("?",str(i))
             
-            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='experiment1_unsorted')  
+            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='unsorted')  
 
             datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum') 
 
