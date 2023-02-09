@@ -839,11 +839,12 @@ elif method =='gDRO':
             with open('./test_results/gdro_val_overall.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
 
-    elif args.curriculum == 'Both_five':
+    elif args.curriculum == 'Five_class':
 
-        for i in range(1,args.trials + 1): 
-
-            print("file",i)
+        for i in range(11): 
+            
+            i=1
+            print("Trial",i)
             params ={'learning_rate': 0.0005,
                                 'patience':2,
                                 'batch_size': 128,  
@@ -852,11 +853,13 @@ elif method =='gDRO':
                                 'scheduler_choice':1,
                                 'opt': 'Adam' }
             
-            
+                
+
+            file_num.append(i)
                 
             split_file = os.path.join('./data/Train_splits/nodule_split_?.csv').replace("?",str(i))
             
-            data_easy,datas_hard,datas3 = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='experiment2_unsorted')  
+            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='unsorted')  
 
             datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum') 
 
@@ -865,7 +868,6 @@ elif method =='gDRO':
 
             train_data_easy,cv_data_easy = data_easy
             train_data_hard,cv_data_hard = datas_hard
-            train_data3,cv_data3 = datas3
 
             trainDataset1 = LIDC_Dataset(*train_data_easy)
             validDataset1 = LIDC_Dataset(*cv_data_easy)
@@ -873,57 +875,62 @@ elif method =='gDRO':
             trainDataset2 = LIDC_Dataset(*train_data_hard)
             validDataset2 = LIDC_Dataset(*cv_data_hard)
 
-            trainDataset3 = LIDC_Dataset(*train_data3)
-            validDataset3 = LIDC_Dataset(*cv_data3)
+            testDataset = LIDC_Dataset(*test_data)
 
             
-            
+
             tr = trainDataset1
+            val = validDataset1
+            test=testDataset
+
+            
             subclass_counts1=trainDataset1.get_class_counts('subclass')
+
             train_weights1 = im_utils.get_sampler_weights(trainDataset1.subclasses)    
+
+
+            
             train_dataloader1 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights1,len(train_weights1)) )
             
-            
-            tr = trainDataset2
-            subclass_counts2=trainDataset2.get_class_counts('subclass')
-            train_weights2 = im_utils.get_sampler_weights(trainDataset2.subclasses)    
-            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights2,len(train_weights2)) )
-            
 
-            trainDataset3 = LIDC_Dataset(*train_data3)
-            tr = trainDataset3
-            subclass_counts3=trainDataset3.get_class_counts('subclass')
-            train_weights3 = im_utils.get_sampler_weights(trainDataset3.subclasses)    
-            train_dataloader3 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights3,len(train_weights3)) )
+            try:
+                val_weights1 =   im_utils.get_sampler_weights(validDataset1.subclasses)
+            except:
+                val_weights1 =   im_utils.get_sampler_weights(validDataset1.labels)
 
-            val = validDataset1
-            val_weights1 =   im_utils.get_sampler_weights(validDataset1.subclasses)
             val_dataloader1 = DataLoader(val,batch_size = len(validDataset1) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights1,len(val_weights1)) )
 
 
+
+            tr = trainDataset2
             val = validDataset2
+
+            subclass_counts2=trainDataset2.get_class_counts('subclass')
+            train_weights2 = im_utils.get_sampler_weights(trainDataset2.subclasses)    
+
+
+            
+            train_dataloader2 = DataLoader(tr, batch_size =params['batch_size'],shuffle=False,sampler=torch.utils.data.WeightedRandomSampler(train_weights2,len(train_weights2)) )
+            
+
             val_weights2 =   im_utils.get_sampler_weights(validDataset2.subclasses)
             val_dataloader2 = DataLoader(val,batch_size = len(validDataset2) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights2,len(val_weights2)) )
-            
-            validDataset3 = LIDC_Dataset(*cv_data3)
-            val = validDataset3
-            val_weights3 =   im_utils.get_sampler_weights(validDataset3.subclasses)
-            val_dataloader3 = DataLoader(val,batch_size = len(validDataset3) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights3,len(val_weights3)) )
 
 
             validDataset = LIDC_Dataset(*cv_data)
+            testDataset = LIDC_Dataset(*test_data)
+
+
+            
             val = validDataset
             val_weights =   im_utils.get_sampler_weights(validDataset.subclasses)
-            val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights,len(val_weights)) )
-
-            testDataset = LIDC_Dataset(*test_data)
-            test=testDataset
             test_weights =   im_utils.get_sampler_weights(testDataset.subclasses)
+
+            
+            val_dataloader = DataLoader(val,batch_size = len(validDataset) ,shuffle = False,sampler = torch.utils.data.WeightedRandomSampler(val_weights,len(val_weights)) )
             test_dataloader = DataLoader(test, batch_size = len(testDataset) ,shuffle = False,sampler=torch.utils.data.WeightedRandomSampler(test_weights,len(test_weights)) )  
             
             
-            
-
 
             device = torch.device('cuda')
 
@@ -934,10 +941,13 @@ elif method =='gDRO':
                 model = models.TransferModel18(freeze=False,num_classes=2)
                 model2 = models.TransferModel18(freeze=False,num_classes=2)
             
-            modelA,max_acc = train_gdro_ct_five(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,train_dataloader3,val_dataloader3,num_epochs=300,mode='Cur_gdro_five',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,subclass_counts3=subclass_counts3)
-            modelA.load_state_dict(torch.load('./models/Best_model_cur2.pth'))
+            steps1 = math.ceil(len(trainDataset1) / params['batch_size'])
+            steps2 = math.ceil(len(trainDataset2) / params['batch_size'])
+
+            modelA,max_acc,cur_train,cur_vals,overall_val = train_gdro_ct_new(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=50,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
+            modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
-            
+            print(file_num)
             over_acc_cur_gdro,cur_gdro1,cur_gdro2,cur_gdro3,cur_gdro4,cur_gdro5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
       
             over_acc_cur_gdro_lst.append(over_acc_cur_gdro)
@@ -971,7 +981,22 @@ elif method =='gDRO':
             with open('./test_results/acc5_gdro_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
             
+            itemlist = file_num
+            with open('./test_results/test_logs.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
             
+            itemlist = cur_train
+            with open('./test_results/cur_train_lst.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = cur_vals
+            with open('./test_results/cur_val_lst.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = overall_val
+            with open('./test_results/overall_val_cur.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
             train_data,cv_data,test_data = datas
@@ -999,8 +1024,10 @@ elif method =='gDRO':
                 model = models.TransferModel18(num_classes=3)
             else:
                 model = models.TransferModel18(freeze=False,num_classes=3)
-
-            modelA,max_acc = train_gdro(params,model,train_dataloader,val_dataloader,num_epochs=300,mode ='gDRO',subclass_counts = subclass_counts,Class='five')
+            
+            steps = math.ceil(len(trainDataset) / params['batch_size'])
+            
+            modelA,max_acc,gdro_train,gdro_vals,overall_gdro_vals = train_gdro_new(params,model,train_dataloader,val_dataloader,num_epochs=50,mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
@@ -1034,6 +1061,18 @@ elif method =='gDRO':
                 pickle.dump(itemlist, fp)
             itemlist = gdro5_lst
             with open('./test_results/acc5_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = gdro_train
+            with open('./test_results/gdro_train_lst.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist = gdro_vals
+            with open('./test_results/gdro_val_lst.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist =    overall_gdro_vals
+            with open('./test_results/gdro_val_overall.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
 
 
