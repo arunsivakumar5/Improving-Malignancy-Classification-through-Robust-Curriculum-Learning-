@@ -394,7 +394,7 @@ elif method =='gDRO':
 
         for i in range(1,args.trials + 1): 
 
-            print("file",i)
+            print("Trial",i)
             params ={'learning_rate': 0.0005,
                                 'patience':2,
                                 'batch_size': 128,  
@@ -608,7 +608,7 @@ elif method =='gDRO':
 
         
 
-            print("file",i)
+            print("Trial",i)
             params ={'learning_rate': 0.0005,
                                 'patience':2,
                                 'batch_size': 128,  
