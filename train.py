@@ -1010,6 +1010,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     pass
 
                 if valacc > max_val_acc:
+                    
                     max_val_acc = valacc
                     model = cur_model
                     old_model = model
@@ -1027,7 +1028,14 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                         print("Model weights unsaved")
                         pass
                     perfect_epoch = epoch
-                    print("perfect epoch",perfect_epoch)
+
+                    if perfect_epoch == old_epoch:
+                        pass
+                    else:
+                        print("Saving Model weights at epoch",perfect_epoch)
+
+                    old_epoch = perfect_epoch
+                    
                 
             
                 else:
