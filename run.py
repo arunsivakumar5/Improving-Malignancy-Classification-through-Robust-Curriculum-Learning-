@@ -200,10 +200,7 @@ args = parser.parse_args()
 
 
 method = args.method
-if method =='random':
-    prop = int(args.prop)
-else:
-    pass
+
 
 
 
@@ -601,7 +598,7 @@ elif method =='gDRO':
             with open('./test_results/acc5_gdro.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
 
-    elif args.curriculum == 'Both_new':
+    elif args.curriculum == 'Both_verbose':
 
         
         for i in range(1,args.trials + 1): 
