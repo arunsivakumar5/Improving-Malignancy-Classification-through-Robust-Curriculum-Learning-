@@ -916,7 +916,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     loss, (losses, corrects) = co
             
                     optimizer.zero_grad()
-            
+                    model.zero_grad()
                     loss.backward()
                     predicteds = logits.argmax(1)
                     actuals = targets['superclass']
@@ -937,7 +937,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     epochs+=1
                     batch_n =0
                     overall_val_accs_lst2.append(over_val_acc)
-                    train_accs_lst.append(epochs)
+                    
                     val_accs_lst.append(valacc)
                     print("epoch", epochs,'\n'
                           "Worst Group Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5),'\n'
@@ -977,7 +977,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     loss, (losses, corrects) = co
             
                     optimizer.zero_grad()
-            
+                    model.zero_grad()
                     loss.backward()
                     predicteds = logits.argmax(1)
                     actuals = targets['superclass']
