@@ -419,7 +419,7 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
 
         
 
-        print( "easy",d['malignancy_b'].value_counts())
+        
         df_features = images_to_df()
     
 
@@ -579,7 +579,7 @@ def get_erm_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
                 i = sort_df(i)
                 dfs2.append(i)
         
-            print(dfs2)
+            
             for i, d in enumerate(dfs2):
                     # If the training dataset, we need to do data augmentation
                     if i == 0:
