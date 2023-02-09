@@ -1028,7 +1028,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     else:
                         print("Model weights unsaved")
                         pass
-                    perfect_epoch = epoch
+                    perfect_epoch = epochs
 
                     if perfect_epoch == old_epoch:
                         pass
