@@ -1,3 +1,4 @@
+import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore")
 
@@ -72,7 +73,7 @@ from math import ceil
 
 
 
-import warnings
+
 import utils.image_data_utils as im_utils
 import utils.data_utils as d_utils
 import models
