@@ -272,7 +272,9 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
         if batch_n == steps:
             epochs+=1
             batch_n = 0
-            print("Epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
+            print("Epoch", epochs,'\n'
+                  "Worst Group Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5),'\n'
+                  "Overall Validation Accuracy",over_val_acc)
             train_accs_lst.append(trains_accs.detach().cpu().numpy())
             val_accs_lst.append(valacc)
             overall_val_accs_lst.append(over_val_acc)
