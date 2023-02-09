@@ -937,7 +937,9 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     overall_val_accs_lst2.append(over_val_acc)
                     train_accs_lst.append(epochs)
                     val_accs_lst.append(valacc)
-                    print("epoch", epochs,"Worst Group Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5),"Overall Validation Accuracy",over_val_acc)
+                    print("epoch", epochs,'\n'
+                          "Worst Group Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5),'\n'
+                          "Overall Validation Accuracy",over_val_acc)
                 else:
                     pass
 
@@ -1006,7 +1008,9 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     overall_val_accs_lst2.append(over_val_acc)
                     train_accs_lst.append(epochs)
                     val_accs_lst.append(valacc)
-                    print("epoch", epochs,"Worst Group Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5),"Overall Validation Accuracy",over_val_acc)
+                    print("epoch", epochs,'\n'
+                          "Worst Group Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5),'\n'
+                          "Overall Validation Accuracy",over_val_acc)
                     
                 else:
                     pass
