@@ -435,8 +435,14 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
             else:
                 print("Model weights unsaved")
                 pass
-            perfect_epoch = epoch
-            print("perfect epoch",perfect_epoch)
+            perfect_epoch = epochs
+
+            if perfect_epoch == old_epoch:
+                pass
+            else:
+                print("Saving Model weights at epoch",perfect_epoch)
+
+            old_epoch = perfect_epoch
                 
             
         else:
