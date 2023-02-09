@@ -203,7 +203,7 @@ else:
     pass
 
 OUTDATED_IGNORE=1 
-
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
 
