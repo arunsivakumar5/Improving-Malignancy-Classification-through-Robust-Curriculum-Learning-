@@ -924,6 +924,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
                     optimizer.step()
 
                 model.eval() 
+                batch_n +=1
                 cur_model = model      
                 over_val_acc,vacc1,vacc2,vacc3,vacc4,v5= d_utils.evaluate(val_dataloader1,model, 5)
 
