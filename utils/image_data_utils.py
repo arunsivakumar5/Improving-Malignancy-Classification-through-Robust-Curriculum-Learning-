@@ -215,7 +215,8 @@ def images_to_df(image_folder='./data/LIDC(MaxSlices)_Nodules',
     scalar = scale_image(image_dim)
     cols = {'noduleID': [], 'malignancy': [], 'image': [], 'curriculum': [],'wMSE':[]}
 
-    for file in os.listdir(image_folder):
+    print("Loading LIDC images..")
+    for file in tqdm(os.listdir(image_folder)):
         nodule_id = int(file.split('.')[0]) 
           
         malignancy =LIDC_labels.loc[LIDC_labels['noduleID'] == nodule_id, 'malignancy'].values
