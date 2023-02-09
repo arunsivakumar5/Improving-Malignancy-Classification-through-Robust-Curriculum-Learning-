@@ -178,7 +178,6 @@ DEVICE = torch.device('cuda')
 
 
 
-warnings.filterwarnings("ignore")
 
 
 
@@ -202,7 +201,6 @@ if method =='random':
 else:
     pass
 
-OUTDATED_IGNORE=1 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
