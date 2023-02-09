@@ -862,6 +862,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     steps1 = steps1-1
     steps2 = steps2-1
 
+    old_epoch=0
     batch_n = 0
     epochs = 0
     
