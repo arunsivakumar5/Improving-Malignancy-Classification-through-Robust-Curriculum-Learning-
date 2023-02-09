@@ -925,10 +925,19 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
 
                 model.eval() 
                 cur_model = model      
-                over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader1,model, 4)
+                over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader1,model, 5)
 
                 valacc = min(vacc1,vacc2,vacc3,vacc4)
-                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
+                print("step",batch_n,"/",steps1)
+                if batch_n == steps1:
+                    epochs+=1
+                    batch_n =0
+                    overall_val_accs_lst2.append(over_val_acc)
+                    train_accs_lst.append(epochs)
+                    val_accs_lst.append(valacc)
+                    print("epoch", epochs,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
+                else:
+                    pass
 
 
             else:
