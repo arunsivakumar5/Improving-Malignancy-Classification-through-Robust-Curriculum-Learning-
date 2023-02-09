@@ -1,3 +1,6 @@
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore")
+
 import argparse
 
 import matplotlib.pyplot as plt
@@ -201,7 +204,6 @@ if method =='random':
 else:
     pass
 
-warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
 
