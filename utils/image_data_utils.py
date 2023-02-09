@@ -10,7 +10,7 @@ import torch.optim as optim # optimzer
 import torch.optim.lr_scheduler as schedulers
 import sklearn 
 from sklearn.metrics import accuracy_score
-
+from tqdm import tqdm
 import pickle
 from torchvision import datasets, models, transforms
 
@@ -779,14 +779,16 @@ def get_cur_features(file='./data/LIDC_3_4_Ratings_wMSE.csv',
         df_features.reset_index(drop=True, inplace=True)
 
         dfs = []
-    
-        for i in range(2):
+        
+        print("Converting Image to Arrays..")
+        
+        for i in tqdm(range(2)):
             dfs.append(df_features.loc[(df_splits1['splits'] == i).values])
 
         datas = []
         
-        
-        for i, d in enumerate(dfs):
+        print("Splitting Training validation and testing data..")
+        for i, d in enumerate(tqdm(dfs)):
                 # If the training dataset, we need to do data augmentation
                 if i == 0:
                     
