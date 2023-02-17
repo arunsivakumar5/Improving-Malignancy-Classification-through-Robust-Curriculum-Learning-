@@ -600,7 +600,7 @@ elif method =='gDRO':
 
     elif args.curriculum == 'Both_verbose':
 
-        ii = [25,26]
+        ii = [7,9]
         for i in ii: 
 
             
