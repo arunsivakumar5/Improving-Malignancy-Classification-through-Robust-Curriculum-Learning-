@@ -715,13 +715,7 @@ elif method =='gDRO':
             cur_gdro4_lst.append(cur_gdro4)
             cur_gdro5_lst.append(cur_gdro5)
 
-            itemlist =modelA
-            with open('./test_results/model_gdro_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
             
-            itemlist =test_dataloader
-            with open('./test_results/test_dataloader.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
             itemlist =over_acc_cur_gdro_lst
             with open('./test_results/over_test_acc_gdro_cur.txt', 'wb') as fp:
@@ -793,11 +787,11 @@ elif method =='gDRO':
             
             steps = math.ceil(len(trainDataset) / params['batch_size'])
             
-            modelA,max_acc,gdro_train,gdro_vals,overall_gdro_vals = train_gdro_new(params,model,train_dataloader,val_dataloader,num_epochs=50,mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
+            modelB,max_acc,gdro_train,gdro_vals,overall_gdro_vals = train_gdro_new(params,model,train_dataloader,val_dataloader,num_epochs=50,mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
-            over_acc_gdro,gdro1,gdro2,gdro3,gdro4,gdro5 = d_utils.evaluate(test_dataloader,modelA, 5,verbose = True)
+            over_acc_gdro,gdro1,gdro2,gdro3,gdro4,gdro5 = d_utils.evaluate(test_dataloader,modelB, 5,verbose = True)
 
             over_acc_gdro_lst.append(over_acc_gdro)
             gdro1_lst.append(gdro1)
@@ -807,6 +801,14 @@ elif method =='gDRO':
             gdro5_lst.append(gdro5)
             
             itemlist =modelA
+            with open('./test_results/model_gdro_cur.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+            
+            itemlist =test_dataloader
+            with open('./test_results/test_dataloader.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
+            itemlist =modelB
             with open('./test_results/model_gdro.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
             
