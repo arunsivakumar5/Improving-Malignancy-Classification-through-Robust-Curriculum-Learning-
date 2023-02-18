@@ -600,11 +600,8 @@ elif method =='gDRO':
 
     elif args.curriculum == 'Both_verbose':
 
-        ii = [7,9]
-        for i in ii: 
+        for i in range(1,args.trials + 1): 
 
-            
-            
             print("Trial",i)
             params ={'learning_rate': 0.0005,
                                 'patience':2,
