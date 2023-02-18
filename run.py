@@ -715,6 +715,14 @@ elif method =='gDRO':
             cur_gdro4_lst.append(cur_gdro4)
             cur_gdro5_lst.append(cur_gdro5)
 
+            itemlist =modelA
+            with open('./test_results/model_gdro_cur.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+            
+            itemlist =test_dataloader
+            with open('./test_results/test_dataloader.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+
             itemlist =over_acc_cur_gdro_lst
             with open('./test_results/over_test_acc_gdro_cur.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
@@ -797,7 +805,11 @@ elif method =='gDRO':
             gdro3_lst.append(gdro3)
             gdro4_lst.append(gdro4)
             gdro5_lst.append(gdro5)
-        
+            
+            itemlist =modelA
+            with open('./test_results/model_gdro.txt', 'wb') as fp:
+                pickle.dump(itemlist, fp)
+            
             itemlist =over_acc_gdro_lst
             with open('./test_results/over_test_acc_gdro.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
