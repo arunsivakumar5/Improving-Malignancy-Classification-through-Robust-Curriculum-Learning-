@@ -487,6 +487,8 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
 
     val_accs_lst = []
     num_steps = num_epochs*steps1  
+    old_epoch=0
+    batch_n = 0
     epochs = 0
     max_val_acc = -1
     for epoch in range(num_steps):
