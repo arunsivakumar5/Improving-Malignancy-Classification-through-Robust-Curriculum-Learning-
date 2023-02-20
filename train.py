@@ -533,7 +533,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                 
                 model.eval() 
                 cur_model = model      
-                over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader1,model, 5)
+                over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader,model, 5)
 
                 valacc = min(vacc1,vacc2,vacc3,vacc4)
                 print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
