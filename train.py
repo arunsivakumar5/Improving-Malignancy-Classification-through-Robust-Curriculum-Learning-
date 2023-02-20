@@ -484,7 +484,8 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
         scheduler =  d_utils.init_scheduler({'class_args': {'patience':params['patience'],'factor': params['factor'],'mode':'max'},'class_name': 'ReduceLROnPlateau'},optimizer) 
     else:
         scheduler = None
-    
+
+    val_accs_lst = []
     num_steps = num_epochs*steps1  
     epochs = 0
     max_val_acc = -1
@@ -533,12 +534,11 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                 
                 model.eval() 
                 cur_model = model      
-                over_val_acc,vacc1,vacc2,vacc3,vacc4= d_utils.evaluate(val_dataloader,model, 5)
+                over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(val_dataloader,model, 5)
 
-                valacc = min(vacc1,vacc2,vacc3,vacc4)
-                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4))
+                valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
+                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
 
-                model.eval() 
                 batch_n +=1
                 
                 print("step",batch_n,"/",steps1)
