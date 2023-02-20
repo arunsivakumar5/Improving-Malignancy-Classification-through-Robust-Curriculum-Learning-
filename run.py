@@ -283,7 +283,7 @@ if method =='ERM':
             #steps1 = math.ceil(len(trainDataset1) / params['batch_size'])
             #steps2 = math.ceil(len(trainDataset2) / params['batch_size'])
             
-            modelA,max_acc = train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model,num_epochs=300,mode='cur_erm')
+            modelA,max_acc = train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model,num_epochs=50,mode='cur_erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_erm.pth'))
             print("Cur ERM trained!")
       
@@ -341,7 +341,7 @@ if method =='ERM':
 
             
             #steps = math.ceil(len(trainDataset) / params['batch_size'])
-            modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=300,mode='erm')
+            modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=50,mode='erm')
             modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
             print("Traditional ERM trained!")
 
