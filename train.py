@@ -331,7 +331,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
     model = model.to(device)
     
     
-    
+    old_epoch = 0
     
     print('subclass_counts',subclass_counts)
     criterion = torch.nn.CrossEntropyLoss(reduction='none')
@@ -349,7 +349,7 @@ def train_gdro(params,model, train_dataloader, val_dataloader, use_cuda = True, 
     else:
         scheduler = None
     
-      
+   
     
     max_val_acc = -1
     for epoch in range(num_epochs):
