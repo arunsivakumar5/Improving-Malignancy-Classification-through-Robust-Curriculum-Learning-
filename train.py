@@ -536,8 +536,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                 cur_model = model      
                 over_val_acc,vacc1,vacc2,vacc3,vacc4,v5 = d_utils.evaluate(val_dataloader,model, 5)
 
-                valacc = min(vacc1,vacc2,vacc3,vacc4,v5)
-                print("epoch", epoch,"Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5))
+                
 
                 batch_n +=1
                 
@@ -547,7 +546,7 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                     batch_n =0
                     
                     
-                    val_accs_lst.append(valacc)
+                    val_accs_lst.append(over_val_acc)
                     print("epoch", epochs,'\n'
                           "Worst Group Validation Accuracy",min(vacc1,vacc2,vacc3,vacc4,v5),'\n'
                           "Overall Validation Accuracy",over_val_acc)
@@ -584,11 +583,6 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                     loss = criterion(output,train_label)
                     batch_loss =loss
                 
-
-                
-                
-                    
-                    optimizer.zero_grad()
                     batch_loss.backward()
                     optimizer.step()
                 
@@ -618,7 +612,10 @@ def train_erm_ct(params,train_dataloader1,val_dataloader,train_dataloader2,model
                     perfect_epoch = epoch
                     print("perfect epoch",perfect_epoch)
                 else:
-                    model = old_model
+                    try:
+                        model = old_model
+                    except:
+                        old_model = model
 
                 if scheduler:
                     scheduler.step(acc) 
