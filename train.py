@@ -56,6 +56,8 @@ def train_erm(params,trainDataloader,validDataloader,model,steps=1,num_epochs=No
 
     device = torch.device("cuda")
 
+    num_steps = num_epochs*steps
+
     model_new = torchvision.models.resnet18(pretrained=True).to(device)
     
     num_ftrs = model_new.fc.in_features
@@ -79,35 +81,35 @@ def train_erm(params,trainDataloader,validDataloader,model,steps=1,num_epochs=No
     EPOCHS=num_epochs
     device = torch.device("cuda")
 
-    for epoch_num in range(EPOCHS):
+    for epoch_num in range(num_steps):
             if scheduler:
                 scheduler.last_epoch = epoch_num - 1
             else:
                 pass
             
             model.train()
-            for i in range(steps):
+            
                 
-                for train_input,train_label in trainDataloader:
+            for train_input,train_label in trainDataloader:
 
 
-                    train_label = train_label['superclass']
+                train_label = train_label['superclass']
                 
-                    train_label = train_label.to(device)
-                    train_input = train_input.to(device)
+                train_label = train_label.to(device)
+                train_input = train_input.to(device)
                 
                 
-                    output = model(train_input)
+                output = model(train_input)
                 
-                    _, predictions = output.max(1)
+                _, predictions = output.max(1)
       
-                    loss = criterion(output,train_label)
-                    batch_loss =loss
+                loss = criterion(output,train_label)
+                batch_loss =loss
                 
 
                 
-                    batch_loss.backward()
-                    optimizer.step()
+                batch_loss.backward()
+                optimizer.step()
                 
             
                    

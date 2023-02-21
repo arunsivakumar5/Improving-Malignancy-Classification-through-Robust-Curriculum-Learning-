@@ -340,8 +340,8 @@ if method =='ERM':
                 model = models.TransferModel18(freeze=False,num_classes=3)
 
             
-            #steps = math.ceil(len(trainDataset) / params['batch_size'])
-            modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=50,mode='erm',steps1=steps1,steps2=steps2)
+            steps = math.ceil(len(trainDataset) / params['batch_size'])
+            modelA,max_acc = train_erm(params,train_dataloader,val_dataloader,model,num_epochs=50,mode='erm',steps=steps)
             modelA.load_state_dict(torch.load('.//models//Best_model_erm.pth'))
             print("Traditional ERM trained!")
 
