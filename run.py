@@ -404,9 +404,9 @@ elif method =='gDRO':
 
             file_num.append(i)
                 
-            split_file = os.path.join('./data/splits/nodule_split_?.csv').replace("?",str(i))
+            split_file = os.path.join('./data/Train_splits1/nodule_split_?.csv').replace("?",str(i))
             
-            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='unsorted')  #mode =='' curriculum
+            data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='unsorted')  
 
             datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum') 
 
