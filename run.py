@@ -190,10 +190,9 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--method', '-n', default='ERM', help='The method using which the classifier is trained ')
 parser.add_argument('--trials',  type=int, default=30, help='The number of times we repeat the experiment with different train-validation-test splits ')
-parser.add_argument('--epochs',  type=int, default=50,  help='The total number of epochs the deep learning model must be trained')
+parser.add_argument('--epochs',  '-t', default=50,  help='The total number of epochs the deep learning model must be trained')
 parser.add_argument('--threshold_epoch',  type=int, default=2,  help='The epoch at which we change from 2-class problem to 3-class problem')
 parser.add_argument('--freeze', action='store',  help='If all layers except the classifier layer are to be frozen to carry out transfer learning or to just use the pretrained weights as initial weights')
-parser.add_argument('--prop', '-t', default=100, help='The proprtion by which the dataset is to be split. The given proprtion goes to classifier retraining. Note: This parameter is needed for CRIS ')
 parser.add_argument('--curriculum', action='store',  help='If curriculum information has to be used to sort the instances by Easy to hard as data is fed into the classiifer sequentially')
 parser.add_argument('--significance', action='store',  help='If significance tests should be carried out between the results of a classifier with curriculum learning and the same classifier without curriculum learning')
 
@@ -742,7 +741,7 @@ elif method =='gDRO':
             steps1 = math.ceil(len(trainDataset1) / params['batch_size'])
             steps2 = math.ceil(len(trainDataset2) / params['batch_size'])
 
-            modelA,max_acc,cur_train,cur_vals,overall_val = train_gdro_ct_new(params,model_cur,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=args.trials,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
+            modelA,max_acc,cur_train,cur_vals,overall_val = train_gdro_ct_new(params,model_cur,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=int(args.epochs),mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
             print(file_num)
@@ -827,7 +826,7 @@ elif method =='gDRO':
             
             steps = math.ceil(len(trainDataset) / params['batch_size'])
             
-            modelB,max_acc,gdro_train,gdro_vals,overall_gdro_vals = train_gdro_new(params,model_gdro,train_dataloader,val_dataloader,num_epochs=50,mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
+            modelB,max_acc,gdro_train,gdro_vals,overall_gdro_vals = train_gdro_new(params,model_gdro,train_dataloader,val_dataloader,num_epochs=int(args.epochs),mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
