@@ -172,20 +172,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
     val_accs_lst = []
     overall_val_accs_lst = []
 
-    device = torch.device("cuda")
     
-    model_new = torchvision.models.resnet18(pretrained=True).to(device)
-    
-    num_ftrs = model_new.fc.in_features
-
-    if Class =='three':
-        model_new.fc = nn.Linear(num_ftrs, 3)
-    else:
-        model_new.fc = nn.Linear(num_ftrs, 5)
-
-    model = model_new
-    
-    model = model.to(device)
     
     
     steps = steps-1
@@ -836,15 +823,7 @@ def train_gdro_ct(params,model, train_dataloader1, val_dataloader1,train_dataloa
 def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dataloader2,val_dataloader2,num_epochs = 0,mode =None, subclass_counts1=None,subclass_counts2=None, use_cuda = True, robust=True, stable= True, size_adjustment = None,steps1=None,steps2=None):
     
     
-    device = torch.device("cuda")
     
-    model_new = torchvision.models.resnet18(pretrained=True).to(device)
-    
-    num_ftrs = model_new.fc.in_features
-    model_new.fc = nn.Linear(num_ftrs, 2)
-    model = model_new
-    
-    model = model.to(device)
     
     train_accs_lst = []
     val_accs_lst = []
