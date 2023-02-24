@@ -742,7 +742,7 @@ elif method =='gDRO':
             steps1 = math.ceil(len(trainDataset1) / params['batch_size'])
             steps2 = math.ceil(len(trainDataset2) / params['batch_size'])
 
-            modelA,max_acc,cur_train,cur_vals,overall_val = train_gdro_ct_new(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=args.trials,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
+            modelA,max_acc,cur_train,cur_vals,overall_val = train_gdro_ct_new(params,model_cur,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=args.trials,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
             print(file_num)
@@ -827,7 +827,7 @@ elif method =='gDRO':
             
             steps = math.ceil(len(trainDataset) / params['batch_size'])
             
-            modelB,max_acc,gdro_train,gdro_vals,overall_gdro_vals = train_gdro_new(params,model,train_dataloader,val_dataloader,num_epochs=50,mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
+            modelB,max_acc,gdro_train,gdro_vals,overall_gdro_vals = train_gdro_new(params,model_gdro,train_dataloader,val_dataloader,num_epochs=50,mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
