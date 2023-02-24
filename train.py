@@ -173,7 +173,7 @@ def train_gdro_new(params,model, train_dataloader, val_dataloader, use_cuda = Tr
     overall_val_accs_lst = []
 
     
-    
+    device = torch.device("cuda")
     
     steps = steps-1
     
@@ -824,7 +824,7 @@ def train_gdro_ct_new(params,model, train_dataloader1, val_dataloader1,train_dat
     
     
     
-    
+    device = torch.device("cuda")
     train_accs_lst = []
     val_accs_lst = []
     overall_val_accs_lst2 = []
