@@ -190,6 +190,8 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--method', '-n', default='ERM', help='The method using which the classifier is trained ')
 parser.add_argument('--trials',  type=int, default=30, help='The number of times we repeat the experiment with different train-validation-test splits ')
+parser.add_argument('--epochs',  type=int, default=50,  help='The total number of epochs the deep learning model must be trained')
+parser.add_argument('--threshold_epoch',  type=int, default=2,  help='The epoch at which we change from 2-class problem to 3-class problem')
 parser.add_argument('--freeze', action='store',  help='If all layers except the classifier layer are to be frozen to carry out transfer learning or to just use the pretrained weights as initial weights')
 parser.add_argument('--prop', '-t', default=100, help='The proprtion by which the dataset is to be split. The given proprtion goes to classifier retraining. Note: This parameter is needed for CRIS ')
 parser.add_argument('--curriculum', action='store',  help='If curriculum information has to be used to sort the instances by Easy to hard as data is fed into the classiifer sequentially')
@@ -482,13 +484,31 @@ elif method =='gDRO':
             device = torch.device('cuda')
 
             if args.freeze == 'Yes':
-                model = models.TransferModel18(num_classes=2)
-                model2 = models.TransferModel18(num_classes=2)  #Initially 2 for matching states and changed later.
+                
+                model = torchvision.models.resnet18(pretrained=True).to(device)   
+                for param in model.parameters():
+                    param.requires_grad = False
+                num_ftrs = model.fc.in_features
+                model.fc = nn.Linear(num_ftrs, 2)
+                model_cur = model.to(device)  #Initially 2 for matching states and changed later.
+
+                model = torchvision.models.resnet18(pretrained=True).to(device)   
+                for param in model.parameters():
+                    param.requires_grad = False
+                num_ftrs = model.fc.in_features
+                model.fc = nn.Linear(num_ftrs, 3)
+                model_gdro = model.to(device)  
             else:
-                model = models.TransferModel18(freeze=False,num_classes=2)
-                model2 = models.TransferModel18(freeze=False,num_classes=2)
+                
+                model = torchvision.models.resnet18(pretrained=True).to(device)   
+                num_ftrs = model.fc.in_features
+                model.fc = nn.Linear(num_ftrs, 2)
+                model_cur = model.to(device)  #Initially 2 for matching states and changed later.
             
-            
+                model = torchvision.models.resnet18(pretrained=True).to(device)   
+                num_ftrs = model.fc.in_features
+                model.fc = nn.Linear(num_ftrs, 3)
+                model_gdro = model.to(device)  
             
 
             modelA,max_acc = train_gdro_ct(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=300,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2)
@@ -619,7 +639,7 @@ elif method =='gDRO':
             
             data_easy,datas_hard = im_utils.get_cur_features(device=DEVICE,file=split_file,mode='unsorted')  
 
-            datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='curriculum') 
+            datas_cur = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional') 
 
             _,cv_data,test_data = datas_cur
             
@@ -693,16 +713,36 @@ elif method =='gDRO':
             device = torch.device('cuda')
 
             if args.freeze == 'Yes':
-                model = models.TransferModel18(num_classes=2)
-                model2 = models.TransferModel18(num_classes=2)  #Initially 2 for matching states and changed later.
+                
+                model = torchvision.models.resnet18(pretrained=True).to(device)   
+                for param in model.parameters():
+                    param.requires_grad = False
+                num_ftrs = model.fc.in_features
+                model.fc = nn.Linear(num_ftrs, 2)
+                model_cur = model.to(device)  #Initially 2 for matching states and changed later.
+
+                model = torchvision.models.resnet18(pretrained=True).to(device)   
+                for param in model.parameters():
+                    param.requires_grad = False
+                num_ftrs = model.fc.in_features
+                model.fc = nn.Linear(num_ftrs, 3)
+                model_gdro = model.to(device)  
             else:
-                model = models.TransferModel18(freeze=False,num_classes=2)
-                model2 = models.TransferModel18(freeze=False,num_classes=2)
+                
+                model = torchvision.models.resnet18(pretrained=True).to(device)   
+                num_ftrs = model.fc.in_features
+                model.fc = nn.Linear(num_ftrs, 2)
+                model_cur = model.to(device)  #Initially 2 for matching states and changed later.
+            
+                model = torchvision.models.resnet18(pretrained=True).to(device)   
+                num_ftrs = model.fc.in_features
+                model.fc = nn.Linear(num_ftrs, 3)
+                model_gdro = model.to(device) 
             
             steps1 = math.ceil(len(trainDataset1) / params['batch_size'])
             steps2 = math.ceil(len(trainDataset2) / params['batch_size'])
 
-            modelA,max_acc,cur_train,cur_vals,overall_val = train_gdro_ct_new(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=50,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
+            modelA,max_acc,cur_train,cur_vals,overall_val = train_gdro_ct_new(params,model,train_dataloader1,val_dataloader1,train_dataloader2,val_dataloader2,num_epochs=args.trials,mode='cur_gDRO',subclass_counts1=subclass_counts1,subclass_counts2=subclass_counts2,steps1=steps1,steps2=steps2)
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
             print(file_num)
