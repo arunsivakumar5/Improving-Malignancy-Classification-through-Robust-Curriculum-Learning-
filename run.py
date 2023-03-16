@@ -827,7 +827,7 @@ elif method =='gDRO':
             steps = math.ceil(len(trainDataset) / params['batch_size'])
             
             modelB,max_acc,gdro_train,gdro_vals,overall_gdro_vals = train_gdro_new(params,model_gdro,train_dataloader,val_dataloader,num_epochs=int(args.epochs),mode ='gDRO',subclass_counts = subclass_counts,steps=steps)
-            modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
+            modelB.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
             over_acc_gdro,gdro1,gdro2,gdro3,gdro4,gdro5 = d_utils.evaluate(test_dataloader,modelB, 5,verbose = True)
