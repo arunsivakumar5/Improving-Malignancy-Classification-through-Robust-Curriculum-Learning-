@@ -514,7 +514,7 @@ elif method =='gDRO':
             modelA.load_state_dict(torch.load('.//models//Best_model_cur_gdro.pth'))
             print("Cur gDRO trained!")
 
-            over_acc_cur_gdro,cur_gdro1,cur_gdro2,cur_gdro3,cur_gdro4,cur_gdro5 = d_utils.evaluate_confusion_matrix(test_dataloader,modelA, 5,verbose = True)
+            over_acc_cur_gdro,cur_gdro1,cur_gdro2,cur_gdro3,cur_gdro4,cur_gdro5 = d_utils.evaluate_confusion_matrix(test_dataloader,modelA,verbose = True)
       
             over_acc_cur_gdro_lst.append(over_acc_cur_gdro)
             cur_gdro1_lst.append(cur_gdro1)
@@ -585,7 +585,7 @@ elif method =='gDRO':
             modelA.load_state_dict(torch.load('.//models//Best_model_gdro.pth'))
             print("Traditional gDRO trained!")
 
-            over_acc_gdro,gdro1,gdro2,gdro3,gdro4,gdro5 = d_utils.evaluate_confusion_matrix(test_dataloader,modelA, 5,verbose = True)
+            over_acc_gdro,gdro1,gdro2,gdro3,gdro4,gdro5 = d_utils.evaluate_confusion_matrix(test_dataloader,modelA,verbose = True)
 
             over_acc_gdro_lst.append(over_acc_gdro)
             gdro1_lst.append(gdro1)
