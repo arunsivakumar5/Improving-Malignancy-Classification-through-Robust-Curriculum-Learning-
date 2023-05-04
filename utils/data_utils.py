@@ -140,9 +140,10 @@ def evaluate_spec(dataloader, model, num_subclasses, verbose=False):
             num_samples[subclass] += torch.sum(subclass_idx)
             # Calculate true negatives and false positives
             subgroup_true_negatives[subclass] += (pred[~subclass_idx].argmax(1) != subclass) \
-                .eq((y[~subclass_idx] != subclass), torch.tensor([1]*pred[~subclass_idx].shape[0])).type(torch.float).sum().item()
+                .eq((y[~subclass_idx] != subclass).all(), torch.tensor(True)).type(torch.float).sum().item()
+
             subgroup_false_positives[subclass] += (pred[subclass_idx].argmax(1) != subclass) \
-                .eq((y[subclass_idx] != subclass), torch.tensor([1]*pred[subclass_idx].shape[0])).type(torch.float).sum().item()
+                .eq((y[~subclass_idx] != subclass).all(), torch.tensor(True)).type(torch.float).sum().item()
 
     subgroup_specificity = subgroup_true_negatives / (subgroup_true_negatives + subgroup_false_positives)
     
