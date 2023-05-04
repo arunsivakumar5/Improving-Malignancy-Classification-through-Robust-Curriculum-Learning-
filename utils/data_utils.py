@@ -188,7 +188,7 @@ def evaluate_confusion_matrix(dataloader,model,verbose=False,device = torch.devi
             import gc
             gc.collect()
         accuracy = total_acc_val/len(test_input)       
-        cm = confusion_matrix(label,pred)
+        cm = confusion_matrix(label.cpu().numpy(),pred)
         ax= plt.subplot()
         sns.heatmap(cm, annot=True, fmt='g', ax=ax);  
 
