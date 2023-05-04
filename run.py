@@ -748,54 +748,15 @@ elif method =='gDRO':
             print(file_num)
             over_acc_cur_gdro,cm1 = d_utils.evaluate_confusion_matrix(test_dataloader,modelA,verbose = True)
             cm1_lst.append(cm1)
-            over_acc_cur_gdro_lst.append(over_acc_cur_gdro)
-            cur_gdro1_lst.append(cur_gdro1)
-            cur_gdro2_lst.append(cur_gdro2)
-            cur_gdro3_lst.append(cur_gdro3)
-            cur_gdro4_lst.append(cur_gdro4)
-            cur_gdro5_lst.append(cur_gdro5)
+            
 
             
 
-            itemlist =over_acc_cur_gdro_lst
-            with open('./test_results/over_test_acc_gdro_cur.txt', 'wb') as fp:
+            itemlist =cm1_lst
+            with open('./test_results/cm1_lst.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
 
-            itemlist = cur_gdro1_lst
-            with open('./test_results/acc1_gdro_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = cur_gdro2_lst
-            with open('./test_results/acc2_gdro_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = cur_gdro3_lst
-            with open('./test_results/acc3_gdro_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = cur_gdro4_lst
-            with open('./test_results/acc4_gdro_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = cur_gdro5_lst
-            with open('./test_results/acc5_gdro_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
             
-            itemlist = file_num
-            with open('./test_results/test_logs.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-            
-            itemlist = cur_train
-            with open('./test_results/cur_train_lst.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = cur_vals
-            with open('./test_results/cur_val_lst.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = overall_val
-            with open('./test_results/overall_val_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
             datas = im_utils.get_erm_features(device=DEVICE,file=split_file,mode='traditional')
 
@@ -833,58 +794,13 @@ elif method =='gDRO':
 
             over_acc_gdro,cm2 = d_utils.evaluate_confusion_matrix(test_dataloader,modelB,verbose = True)
             cm2_lst.append(cm2)
-            over_acc_gdro_lst.append(over_acc_gdro)
-            gdro1_lst.append(gdro1)
-            gdro2_lst.append(gdro2)
-            gdro3_lst.append(gdro3)
-            gdro4_lst.append(gdro4)
-            gdro5_lst.append(gdro5)
             
-            itemlist =modelA
-            with open('./test_results/model_gdro_cur.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
             
-            itemlist =test_dataloader
-            with open('./test_results/test_dataloader.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
-            itemlist =modelB
-            with open('./test_results/model_gdro.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
             
-            itemlist =over_acc_gdro_lst
-            with open('./test_results/over_test_acc_gdro.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
 
-            itemlist = gdro1_lst
-            with open('./test_results/acc1_gdro.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = gdro2_lst
-            with open('./test_results/acc2_gdro.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = gdro3_lst
-            with open('./test_results/acc3_gdro.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = gdro4_lst
-            with open('./test_results/acc4_gdro.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-            itemlist = gdro5_lst
-            with open('./test_results/acc5_gdro.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = gdro_train
-            with open('./test_results/gdro_train_lst.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist = gdro_vals
-            with open('./test_results/gdro_val_lst.txt', 'wb') as fp:
-                pickle.dump(itemlist, fp)
-
-            itemlist =    overall_gdro_vals
-            with open('./test_results/gdro_val_overall.txt', 'wb') as fp:
+            itemlist =cm2_lst
+            with open('./test_results/cm2_lst.txt', 'wb') as fp:
                 pickle.dump(itemlist, fp)
 
     elif args.curriculum == 'Five_class':
