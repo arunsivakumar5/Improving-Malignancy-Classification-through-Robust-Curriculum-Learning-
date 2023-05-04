@@ -209,6 +209,7 @@ def evaluate_confusion_matrix(dataloader,model,verbose=False,device = torch.devi
         print("F1-score %.4f"%(class_report['1']['f1-score']))
         if verbose:
             print("accuracy of model",accuracy)
+            print(cm)
         return accuracy
 
 
