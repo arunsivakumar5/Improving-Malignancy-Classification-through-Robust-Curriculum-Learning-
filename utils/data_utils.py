@@ -170,7 +170,7 @@ def evaluate_confusion_matrix(dataloader,model,verbose=False,device = torch.devi
     labels = []
     print("printing conf matrix")
     with torch.no_grad():
-        for test_input,label,_ in dataloader:
+        for test_input,label in dataloader:
             test_input, label = test_input.to(device), label.to(device)
             model.eval()
             
