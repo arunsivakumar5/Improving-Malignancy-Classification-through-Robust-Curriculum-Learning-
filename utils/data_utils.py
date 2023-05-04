@@ -184,11 +184,10 @@ def evaluate_confusion_matrix(dataloader,model,verbose=False,device = torch.devi
             
             preds.append(y_hat)
             labels.append(label.cpu().numpy() )
-            if verbose:
-                print("model predictions",pred,"/",label)
+            
             import gc
             gc.collect()
-        accuracy = total_acc_val/len(test_csv)       
+        accuracy = total_acc_val/len(test_input)       
         cm = confusion_matrix(label,pred)
         ax= plt.subplot()
         sns.heatmap(cm, annot=True, fmt='g', ax=ax);  
