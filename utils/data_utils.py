@@ -114,6 +114,45 @@ def evaluate(dataloader, model, num_subclasses, verbose=False):
     return (accuracy, *subgroup_accuracy)
 
 
+def evaluate_spec(dataloader, model, num_subclasses, verbose=False):
+    """
+    Evaluate the model's accuracy and subclass specificity
+    :param dataloader: The dataloader for the validation/testing data
+    :param model: The model to evaluate
+    :param num_subclasses: The number of subclasses to evaluate on, this should be equal to the number of subclasses present in the data
+    :param verbose: Whether to print the results
+    :return: A tuple containing the overall accuracy and the specificity for each subclass
+    """
+    model.eval()
+
+    num_samples = np.zeros(num_subclasses)
+    subgroup_true_negatives = np.zeros(num_subclasses)
+    subgroup_false_positives = np.zeros(num_subclasses)
+    with torch.no_grad():
+        X = dataloader.dataset.features.cuda()
+        y = dataloader.dataset.labels.cuda()
+        c = dataloader.dataset.subclasses.cuda()
+
+        pred = model(X)
+
+        for subclass in range(num_subclasses):
+            subclass_idx = c == subclass
+            num_samples[subclass] += torch.sum(subclass_idx)
+            # Calculate true negatives and false positives
+            subgroup_true_negatives[subclass] += (pred[~subclass_idx].argmax(1) != subclass) \
+                .eq((y[~subclass_idx] != subclass), torch.tensor([1]*pred[~subclass_idx].shape[0])).type(torch.float).sum().item()
+            subgroup_false_positives[subclass] += (pred[subclass_idx].argmax(1) != subclass) \
+                .eq((y[subclass_idx] != subclass), torch.tensor([1]*pred[subclass_idx].shape[0])).type(torch.float).sum().item()
+
+    subgroup_specificity = subgroup_true_negatives / (subgroup_true_negatives + subgroup_false_positives)
+    
+    accuracy = sum(subgroup_true_negatives) / (sum(subgroup_true_negatives) + sum(subgroup_false_positives))
+
+    if verbose:
+        print("Accuracy:", accuracy, "\nSpecificity over subgroups:", subgroup_specificity, "\nWorst Group Specificity:",
+              min(subgroup_specificity))
+
+    return (accuracy, *subgroup_specificity)
 
 def get_train_splits(file='./data/LIDC_3_4_Ratings_wMSE.csv',val_prop=0.10,test_prop=0.3):
     
