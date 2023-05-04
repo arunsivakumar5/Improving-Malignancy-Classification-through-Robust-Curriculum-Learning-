@@ -195,23 +195,11 @@ def evaluate_confusion_matrix(dataloader,model,verbose=False,device = torch.devi
         # labels, title and ticks
         ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
         ax.set_title('Confusion Matrix'); 
-
-
-        class_report = metrics.classification_report(y_true = label, y_pred =pred, output_dict=True)
-
-        print("Sensitivity %.4f"%(class_report['1']['recall']))
-
-        print("Specificity %.4f"%(class_report['0']['recall']))
-
-        print("Precision %.4f"%(class_report['1']['precision']))
-
-        print("False Positive Rate %.4f"%(1-class_report['0']['recall']))
-
-        print("F1-score %.4f"%(class_report['1']['f1-score']))
+        print(cm)
         if verbose:
             print("accuracy of model",accuracy)
-            print(cm)
-        return accuracy
+            
+        return accuracy,cm
 
 
 
