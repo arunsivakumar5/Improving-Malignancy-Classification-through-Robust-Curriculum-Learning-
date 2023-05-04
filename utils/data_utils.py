@@ -113,7 +113,6 @@ def evaluate(dataloader, model, num_subclasses, verbose=False):
 
     return (accuracy, *subgroup_accuracy)
 
-
 def evaluate_spec(dataloader, model, num_subclasses, verbose=False):
     """
     Evaluate the model's accuracy and subclass specificity
@@ -139,11 +138,8 @@ def evaluate_spec(dataloader, model, num_subclasses, verbose=False):
             subclass_idx = c == subclass
             num_samples[subclass] += torch.sum(subclass_idx)
             # Calculate true negatives and false positives
-            subgroup_true_negatives[subclass] += (pred[~subclass_idx].argmax(1) != subclass) \
-                .eq((y[~subclass_idx] != subclass).all(), torch.tensor(True)).type(torch.float).sum().item()
-
-            subgroup_false_positives[subclass] += (pred[subclass_idx].argmax(1) != subclass) \
-                .eq((y[~subclass_idx] != subclass).all(), torch.tensor(True)).type(torch.float).sum().item()
+            subgroup_true_negatives[subclass] += torch.sum((pred[~subclass_idx].argmax(1) != subclass) & (y[~subclass_idx] != subclass))
+            subgroup_false_positives[subclass] += torch.sum((pred[subclass_idx].argmax(1) != subclass) & (y[subclass_idx] == subclass))
 
     subgroup_specificity = subgroup_true_negatives / (subgroup_true_negatives + subgroup_false_positives)
     
@@ -154,6 +150,8 @@ def evaluate_spec(dataloader, model, num_subclasses, verbose=False):
               min(subgroup_specificity))
 
     return (accuracy, *subgroup_specificity)
+
+
 
 def get_train_splits(file='./data/LIDC_3_4_Ratings_wMSE.csv',val_prop=0.10,test_prop=0.3):
     
