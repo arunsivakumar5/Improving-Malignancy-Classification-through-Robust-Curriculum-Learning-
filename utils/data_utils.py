@@ -153,6 +153,65 @@ def evaluate_spec(dataloader, model, num_subclasses, verbose=False):
 
 
 
+
+
+def evaluate_confusion_matrix(dataloader,model,verbose=False,device = torch.device("cuda")):
+    """
+    Evaluate the model's accuracy 
+    :param dataloader: The dataloader for the validation/testing data
+    :param model: The model to evaluate
+    :param verbose: Whether to print the results
+    :device: shows which device to use
+    :return: Accuracy ,Sensitivity, Specificity and confusion matrix of model
+    """
+    total_acc_val =0
+    model.eval()
+    preds =[]
+    labels = []
+    with torch.no_grad():
+        for test_input,label,_ in dataloader:
+            test_input, label = test_input.to(device), label.to(device)
+            model.eval()
+            
+            outputs = model(test_input)
+            y_hat = F.softmax(outputs)
+            acc = (outputs.argmax(dim=1) == label ).sum().item()
+            total_acc_val += acc
+            _, pred = outputs.max(1)
+            
+            preds.append(y_hat)
+            labels.append(label.cpu().numpy() )
+            if verbose:
+                print("model predictions",pred,"/",label)
+            import gc
+            gc.collect()
+        accuracy = total_acc_val/len(test_csv)       
+        cm = confusion_matrix(label,pred)
+        ax= plt.subplot()
+        sns.heatmap(cm, annot=True, fmt='g', ax=ax);  
+
+        # labels, title and ticks
+        ax.set_xlabel('Predicted labels');ax.set_ylabel('True labels'); 
+        ax.set_title('Confusion Matrix'); 
+
+
+        class_report = metrics.classification_report(y_true = label, y_pred =pred, output_dict=True)
+
+        print("Sensitivity %.4f"%(class_report['1']['recall']))
+
+        print("Specificity %.4f"%(class_report['0']['recall']))
+
+        print("Precision %.4f"%(class_report['1']['precision']))
+
+        print("False Positive Rate %.4f"%(1-class_report['0']['recall']))
+
+        print("F1-score %.4f"%(class_report['1']['f1-score']))
+        if verbose:
+            print("accuracy of model",accuracy)
+        return accuracy
+
+
+
 def get_train_splits(file='./data/LIDC_3_4_Ratings_wMSE.csv',val_prop=0.10,test_prop=0.3):
     
     ''' Randomizes the train-validation-Test instances with fixed proportion'''
