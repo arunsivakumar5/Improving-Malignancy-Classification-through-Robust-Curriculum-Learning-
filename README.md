@@ -18,14 +18,16 @@ Stage one: Training a gDRO model on the easier task
 for certain number of epochs, this is an additional
 hyperparameter which is tuned for our method. We name
 it as threshold epoch e
-Train model fgDRO on D1 (Binary classification) via
+
+Train model f gDRO on D1 (Binary classification) via
 gDRO.
 
 Stage two: Training gDRO model on the harder task after
 threshold epoch
+
 Train model f gDRO on D2 (three-class classification)
 via gDRO and then selecting the best model in terms of
-worst-group accuracy on Dv al as the final model.
+worst-group accuracy on Dval as the final model.
 
 ## References:
 [1]Miller, K. D., Nogueira, L., Devasia, T., Mariotto, A. B., Yabroff, K.
