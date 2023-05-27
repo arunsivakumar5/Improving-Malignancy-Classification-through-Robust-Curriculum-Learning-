@@ -8,8 +8,22 @@ clinical importance than improving classification accuracy for a malignant subgr
 malignancy is determinate or indeterminate for radiologists) first, then for a “hard” task (malignant, benign, or indeterminate nodule). Our results indicate that our approach boosts the worst group subclass accuracy from the malignant category, by up to 6 percentage points compared to standard methods that address and improve worst group classification performance.
 # Dataset:
 The LIDC dataset [32,33] contains 2,680 distinct nodules in computed tomography (CT) scans from 1,010 patients; nodules of three millimetres or larger are manually identified, delineated, and semantically characterized by up to four different radiologists across nine semantic characteristics (features).
-# Methodology: 
 
+# Algorithm: Curriculum gDRO
+Input: Training data D1 with two superclass labels, training
+data D2 with three superclass labels, and validation data
+Dv al with three superclass labels.
+Stage one: Training a gDRO model on the easier task
+for certain number of epochs, this is an additional
+hyperparameter which is tuned for our method. We name
+it as threshold epoch e
+Train model f gDRO on D1 (Binary classification) via
+gDRO.
+Stage two: Training gDRO model on the harder task after
+threshold epoch
+Train model f gDRO on D2 (three-class classification)
+via gDRO and then selecting the best model in terms of
+worst-group accuracy on Dv al as the final model.
 ## References:
 [1]Miller, K. D., Nogueira, L., Devasia, T., Mariotto, A. B., Yabroff, K.
 R., Jemal, A., Kramer, J., Siegel, R. L. (2022). Cancer treatment
