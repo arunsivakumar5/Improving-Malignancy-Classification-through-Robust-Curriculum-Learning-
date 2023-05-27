@@ -1,5 +1,5 @@
 # Improving-Malignancy-Classification-through-Robust-Curriculum-Learning
-Curriculum task learning in combination with worst group generalization leads to improved performance across worst-performing subclasses from the malignant category
+Curriculum task learning in combination with worst group generalization leads to improved performance in atypical subtypes from malignant category
 
 # Introduction
 Deep learning models used in Computer-Aided Diagnosis (CAD) systems are often trained with Empirical Risk Minimization (ERM) loss. These models often achieve high overall classification accuracy but with lower classification accuracy on certain subgroups. In the context of lung nodule malignancy classification task, these atypical subgroups exist due to the lung
