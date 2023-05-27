@@ -12,13 +12,13 @@ The LIDC dataset [32,33] contains 2,680 distinct nodules in computed tomography 
 # Algorithm: Curriculum gDRO
 Input: Training data D1 with two superclass labels, training
 data D2 with three superclass labels, and validation data
-Dv al with three superclass labels.
+Dval with three superclass labels.
 
 Stage one: Training a gDRO model on the easier task
 for certain number of epochs, this is an additional
 hyperparameter which is tuned for our method. We name
 it as threshold epoch e
-Train model f gDRO on D1 (Binary classification) via
+Train model fgDRO on D1 (Binary classification) via
 gDRO.
 
 Stage two: Training gDRO model on the harder task after
