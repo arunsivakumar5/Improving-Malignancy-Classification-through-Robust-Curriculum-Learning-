@@ -30,7 +30,7 @@ via gDRO and then selecting the best model in terms of
 worst-group accuracy on Dval as the final model.
 
 ## References:
-[1]Miller, K. D., Nogueira, L., Devasia, T., Mariotto, A. B., Yabroff, K.
+[1] Miller, K. D., Nogueira, L., Devasia, T., Mariotto, A. B., Yabroff, K.
 R., Jemal, A., Kramer, J., Siegel, R. L. (2022). Cancer treatment
 and survivorship statistics, 2022. CA: A Cancer Journal for Clinicians.
 https://doi.org/10.3322/caac.21731
